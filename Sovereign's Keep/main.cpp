@@ -2,6 +2,9 @@
 
 /*
 	Have a TODO list here?
+	> Add status to be applied to objects of the Character class
+	> Define and code each status
+	> Create an enemy class if we need one
 
 */
 
