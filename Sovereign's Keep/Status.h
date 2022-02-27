@@ -1,4 +1,5 @@
 #pragma once
+#include "Character.h"
 /*
 * This class will be responsible for applying different
 * types of statuses to the Character class.
@@ -6,6 +7,33 @@
 */
 class Status
 {
+private:
+	float duration = 0.0;
+	float DOT = 0.0;
+	bool Burning = false;
+	bool Wet = false;
+	bool Chilled = false;
+	bool Frozen = false;
+	bool Conductive = false;
+	bool Stunned = false;
+public:
+	void setNormal();
+	void setBurning();
+	void setWet();
+	void setChilled();
+	void setFrozen();
+	void setConductive();
+	void setStunned();
+
+	float getDuration();
+	void setDuration(float amt);
+	float getDOT();
+	bool isBurning();
+	bool isWet();
+	bool isChilled();
+	bool isFrozen();
+	bool isConductive();
+	bool isStunned();
 };
 
 /*

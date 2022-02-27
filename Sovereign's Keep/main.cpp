@@ -9,7 +9,6 @@
 */
 
 int main() {
-
 	//game class
 	Game game;
 
