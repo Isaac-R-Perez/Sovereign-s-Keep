@@ -3,60 +3,79 @@
 void Character::statusEffect()
 {
 	/*
-	* This function should be triggered every frame to
-	* use the Characters current status's effects
+	* This function should be run every frame of the game.
+	* Checks the character's current status and applies the
+	* effect while reducing the timer for that status.
+	* Will also handle buffs/debuffs.
 	*/
-	if (status.getDuration() > 0.0)
+
+	//Here we update the stats
+	currentAttack = baseAttack + buffAtk;
+	currentDefense = baseDefense + buffDef;
+	currentMoveSpeed = baseMoveSpeed + buffSpeed;
+
+	if (status.isBurning())
 	{
-		status.setDuration(-0.1);
-		if (status.getDOT() > 0.0)
-		{
-			removeHealth(status.getDOT());
-		}
+		airRES = 1.5;
+		iceRES = 0.5;
 	}
-	else
+	if (status.isWet()) 
 	{
-		status.setNormal();
+		electricityRES = 1.5;
+	}
+	if (status.isChilled())
+	{
+		iceRES = 1.5;
+	}
+	if (status.isFrozen())
+	{
+		earthRES = 1.5;
+	}
+	if (status.isConductive())
+	{
+
+	}
+	if (status.isStunned())
+	{
+
 	}
 }
 
-float Character::currentHealth()
+float Character::getCurrentHealth()
 {
-	return health;
+	return currentHealth;
 }
 
 void Character::restoreHealth(float amt)
 {
-	health += amt;
-	if (health > maxHealth) {
-		health = maxHealth;
+	currentHealth += amt;
+	if (currentHealth > maxHealth) {
+		currentHealth = maxHealth;
 	}
+}
+
+float Character::getMaxHealth()
+{
+	return maxHealth;
+}
+
+void Character::setMaxHealth(float amt)
+{
+	maxHealth = amt;
 }
 
 void Character::removeHealth(float amt)
 {
-	health -= amt;
-	if (health < 0)
+	currentHealth -= amt;
+	if (currentHealth < 0)
 	{
-		health = 0;
+		currentHealth = 0;
 	}
 }
 
 void Character::fullHeal()
 {
-	health = maxHealth;
-}
-
-//GETTER and SETTERS
-
-void Character::setMoveSpeed(float speed)
-{
-	moveSpeed = speed;
-}
-
-float Character::getMoveSpeed()
-{
-	return moveSpeed;
+	currentHealth = maxHealth;
 }
 
 void Character::setPhysicalRES(float amt)
@@ -64,19 +83,9 @@ void Character::setPhysicalRES(float amt)
 	physicalRES = amt;
 }
 
-float Character::getPhysicalRES()
-{
-	return physicalRES;
-}
-
 void Character::setFireRES(float amt)
 {
 	fireRES = amt;
-}
-
-float Character::getFireRES()
-{
-	return fireRES;
 }
 
 void Character::setWaterRES(float amt)
@@ -84,19 +93,9 @@ void Character::setWaterRES(float amt)
 	waterRES = amt;
 }
 
-float Character::getWaterRES()
-{
-	return waterRES;
-}
-
 void Character::setEarthRES(float amt)
 {
 	earthRES = amt;
-}
-
-float Character::getEarthRES()
-{
-	return earthRES;
 }
 
 void Character::setAirRES(float amt)
@@ -104,24 +103,44 @@ void Character::setAirRES(float amt)
 	airRES = amt;
 }
 
-float Character::getAirRES()
-{
-	return airRES;
-}
-
 void Character::setElectricityRES(float amt)
 {
 	electricityRES = amt;
 }
 
-float Character::getElectricityRES()
-{
-	return electricityRES;
-}
-
 void Character::setIceRES(float amt)
 {
 	iceRES = amt;
+}
+
+float Character::getPhysicalRES()
+{
+	return physicalRES;
+}
+
+float Character::getFireRES()
+{
+	return fireRES;
+}
+
+float Character::getWaterRES()
+{
+	return waterRES;
+}
+
+float Character::getEarthRES()
+{
+	return earthRES;
+}
+
+float Character::getAirRES()
+{
+	return airRES;
+}
+
+float Character::getElectricityRES()
+{
+	return electricityRES;
 }
 
 float Character::getIceRES()

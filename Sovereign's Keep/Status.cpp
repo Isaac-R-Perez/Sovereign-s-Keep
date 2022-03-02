@@ -10,27 +10,114 @@ void Status::setNormal()
 	Frozen = false;
 	Conductive = false;
 	Stunned = false;
+	Normal = true;
 }
 
 void Status::setBurning()
 {
-	duration = 5.0;
-	DOT = 0.5;
-	Burning = true;
+	if (isWet)
+	{
+		setNormal();
+		return;
+	}
+	if (isChilled)
+	{
+		setNormal();
+		return;
+	}
+	if (isFrozen)
+	{
+		freezeDuration = 0.0;
+		setNormal();
+		return;
+	}
+	if (isConductive)
+	{
+		Conductive = false;
+	}
+	if (isBurning)
+	{
+		duration += 2.0;
+	}
+	else
+	{
+		Burning = true;
+		duration = 5.0;
+		DOT = 0.5;
+	}
 }
 
 void Status::setWet()
 {
-	duration = 10;
-	DOT = 0.0;
-	Wet = true;
+	if (isBurning)
+	{
+		setNormal();
+		return;
+	}
+	if (isChilled)
+	{
+		Chilled = false;
+		setFrozen();
+		return;
+	}
+	if (isFrozen)
+	{
+		duration += 1.0;
+		return;
+	}
+	if (isConductive)
+	{
+		Conductive = false;
+		setStunned();
+		return;
+	}
+	if (isStunned)
+	{
+		return;
+	}
+	if (isWet)
+	{
+		duration += 2.0;
+	}
+	else
+	{
+		Wet = true;
+		duration = 10;
+		DOT = 0.0;
+	}
 }
 
 void Status::setChilled()
 {
-	duration = 10;
-	DOT = 0.0;
-	Chilled = true;
+	if (isBurning)
+	{
+		setNormal();
+		return;
+	}
+	if (isWet)
+	{
+		Wet = false;
+		setFrozen();
+		return;
+	}
+	if (isFrozen)
+	{
+		duration += 2.0;
+	}
+	if (isConductive)
+	{
+		Conductive = false;
+	}
+	if (isChilled)
+	{
+		duration += 1.0;
+	}
+	else
+	{
+		Chilled = true;
+		duration = 10;
+		DOT = 0.0;
+	}
 }
 
 void Status::setFrozen()
@@ -69,37 +156,52 @@ void Status::setDuration(float amt)
 	duration = amt;
 }
 
+float Status::getFreezeDuration()
+{
+	return freezeDuration;
+}
+
+void Status::setFreezeDuration(float amt)
+{
+	freezeDuration = amt;
+}
+
 float Status::getDOT()
 {
 	return DOT;
 }
 
+bool Status::isNormal()
+{
+	return Normal;
+}
+
 bool Status::isBurning()
 {
-	return isBurning;
+	return Burning;
 }
 
 bool Status::isWet()
 {
-	return isWet;
+	return Wet;
 }
 
 bool Status::isChilled()
 {
-	return isChilled;
+	return Chilled;
 }
 
 bool Status::isFrozen()
 {
-	return isFrozen;
+	return Frozen;
 }
 
 bool Status::isConductive()
 {
-	return isConductive;
+	return Conductive;
 }
 
 bool Status::isStunned()
 {
-	return isStunned;
+	return Stunned;
 }

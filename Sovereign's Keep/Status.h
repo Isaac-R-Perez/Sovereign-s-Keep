@@ -9,13 +9,17 @@ class Status
 {
 private:
 	float duration = 0.0;
+	float freezeDuration = 0.0;
 	float DOT = 0.0;
+
 	bool Burning = false;
 	bool Wet = false;
 	bool Chilled = false;
 	bool Frozen = false;
 	bool Conductive = false;
 	bool Stunned = false;
+	bool Normal = true;
+
 public:
 	void setNormal();
 	void setBurning();
@@ -27,7 +31,12 @@ public:
 
 	float getDuration();
 	void setDuration(float amt);
+	float getFreezeDuration();
+	void setFreezeDuration(float amt);
+
 	float getDOT();
+
+	bool isNormal();
 	bool isBurning();
 	bool isWet();
 	bool isChilled();
