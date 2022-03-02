@@ -60,7 +60,11 @@ public:
 	void fullHeal();
 	
 	void buffAttack(float amt, float time);
+	void debuffAttack(float amt, float time);
+	void buffDefense(float amt, float time);
+	void debuffDefense(float amt, float time);
 	void buffMoveSpeed(float amt, float time);
+	void debuffMoveSpeed(float amt, float time);
 
 	void setPhysicalRES(float amt);
 	void setFireRES(float amt);
