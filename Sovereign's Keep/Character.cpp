@@ -2,7 +2,6 @@
 
 void Character::statusEffect()
 {
-
 	/*
 	* This function should be run every frame of the game.
 	* Checks the character's current status and applies the
@@ -140,18 +139,26 @@ void Character::buffAttack(float amt, float time)
 	{
 		amt * -1.0; //Set amount to positive
 	}
-	buffAtk = amt;
-	buffAtkTimer = time;
+	if (amt > buffAtk)
+	{
+		//Will only apply buff if it is stronger than the current buff.
+		buffAtk = amt;
+		buffAtkTimer = time;
+	}
 }
 
 void Character::debuffAttack(float amt, float time)
 {
 	if (amt > 0.0)
 	{
-		amt * -1.0;
+		amt * -1.0; //Set amount to negative
 	}
-	debuffAtk = amt;
-	debuffAtkTimer = time;
+	if (amt < debuffAtk)
+	{
+		//Will only apply debuff if it reduces the stat even more than the current debuff.
+		debuffAtk = amt;
+		debuffAtkTimer = time;
+	}
 }
 
 void Character::buffDefense(float amt, float time)
@@ -160,8 +167,11 @@ void Character::buffDefense(float amt, float time)
 	{
 		amt * -1.0; //Set amount to positive
 	}
-	buffDef = amt;
-	buffDefTimer = time;
+	if (amt > debuffDef)
+	{
+		buffDef = amt;
+		buffDefTimer = time;
+	}
 }
 
 void Character::debuffDefense(float amt, float time)
@@ -170,18 +180,24 @@ void Character::debuffDefense(float amt, float time)
 	{
 		amt * -1.0;
 	}
-	debuffDef = amt;
-	debuffDefTimer = time;
+	if (amt < debuffDef)
+	{
+		debuffDef = amt;
+		debuffDefTimer = time;
+	}
 }
 
 void Character::buffMoveSpeed(float amt, float time)
 {
 	if (amt < 0.0)
 	{
-		amt * -1.0; //Set amount to positive
+		amt * -1.0;
 	}
-	buffSpeed = amt;
-	buffSpeedTimer = time;
+	if (amt > buffSpeed)
+	{
+		buffSpeed = amt;
+		buffSpeedTimer = time;
+	}
 }
 
 void Character::debuffMoveSpeed(float amt, float time)
@@ -190,8 +206,11 @@ void Character::debuffMoveSpeed(float amt, float time)
 	{
 		amt * -1.0;
 	}
-	debuffSpeed = amt;
-	debuffSpeedTimer = time;
+	if (amt < debuffSpeed)
+	{
+		debuffSpeed = amt;
+		debuffSpeedTimer = time;
+	}
 }
 
 void Character::setPhysicalRES(float amt)
