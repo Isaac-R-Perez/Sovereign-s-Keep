@@ -15,6 +15,11 @@ void Character::statusEffect()
 	currentDefense = baseDefense + buffDef - debuffDef;
 	currentMoveSpeed = baseMoveSpeed + buffSpeed - debuffSpeed;
 
+	/*
+	* This section will apply the additonal effects of
+	* the current status as well as reduce the time
+	* for it. There can only be one status active at a time.
+	*/
 	if (status.isBurning())
 	{
 		airRES = 1.5;
@@ -27,19 +32,34 @@ void Character::statusEffect()
 	if (status.isChilled())
 	{
 		iceRES = 1.5;
+		baseMoveSpeed = 0.5;
 	}
 	if (status.isFrozen())
 	{
 		earthRES = 1.5;
+		currentMoveSpeed = 0.0;
 	}
 	if (status.isConductive())
 	{
-
+		//Empty
 	}
 	if (status.isStunned())
 	{
-
+		currentMoveSpeed = 0.0;
 	}
+	if (status.getDuration() > 0.0)
+	{
+		//REDUCE DURATION HERE
+	}
+	else
+	{
+		status.setNormal();
+	}
+
+	/*
+	* This section will handle the buffs and debuffs
+	* and remove them when the timer has run out.
+	*/
 	//ATTACK
 	if (buffAtkTimer > 0.0)
 	{

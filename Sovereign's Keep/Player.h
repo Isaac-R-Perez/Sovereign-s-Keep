@@ -7,5 +7,12 @@
 */
 class Player: public Character
 {
+private:
+	int monsterSouls; //Stores the monster souls collected during the run.
+	int maxMonsterSouls = 999;
+public:
+	void setSouls(int amt);
+	void addSouls(int amt);
+	void removeSouls(int amt);
+	int getSouls();
 };
-

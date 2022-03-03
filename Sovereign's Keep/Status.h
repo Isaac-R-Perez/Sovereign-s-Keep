@@ -9,8 +9,7 @@ class Status
 {
 private:
 	float duration = 0.0;
-	float freezeDuration = 0.0;
-	float DOT = 0.0;
+	float DOT = 0.0; //Damage over time
 
 	bool Burning = false;
 	bool Wet = false;
@@ -31,8 +30,6 @@ public:
 
 	float getDuration();
 	void setDuration(float amt);
-	float getFreezeDuration();
-	void setFreezeDuration(float amt);
 
 	float getDOT();
 

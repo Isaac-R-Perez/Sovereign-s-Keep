@@ -15,33 +15,37 @@ void Status::setNormal()
 
 void Status::setBurning()
 {
-	if (isWet)
+	if (Wet)
 	{
 		setNormal();
 		return;
 	}
-	if (isChilled)
+	if (Chilled)
 	{
 		setNormal();
 		return;
 	}
-	if (isFrozen)
+	if (Frozen)
 	{
-		freezeDuration = 0.0;
 		setNormal();
 		return;
 	}
-	if (isConductive)
+	if (Conductive)
 	{
-		Conductive = false;
+		setNormal();
 	}
-	if (isBurning)
+	if (Stunned)
+	{
+		return;
+	}
+	if (Burning)
 	{
 		duration += 2.0;
 	}
 	else
 	{
 		Burning = true;
+		Normal = false;
 		duration = 5.0;
 		DOT = 0.5;
 	}
@@ -49,100 +53,190 @@ void Status::setBurning()
 
 void Status::setWet()
 {
-	if (isBurning)
+	if (Burning)
 	{
 		setNormal();
 		return;
 	}
-	if (isChilled)
+	if (Chilled)
 	{
 		Chilled = false;
 		setFrozen();
 		return;
 	}
-	if (isFrozen)
+	if (Frozen)
 	{
-		duration += 1.0;
 		return;
 	}
-	if (isConductive)
+	if (Conductive)
 	{
 		Conductive = false;
 		setStunned();
 		return;
 	}
-	if (isStunned)
+	if (Stunned)
 	{
 		return;
 	}
-	if (isWet)
+	if (Wet)
 	{
 		duration += 2.0;
 	}
 	else
 	{
 		Wet = true;
-		duration = 10;
+		Normal = false;
+		duration = 7.0;
 		DOT = 0.0;
 	}
 }
 
 void Status::setChilled()
 {
-	if (isBurning)
+	if (Burning)
 	{
 		setNormal();
 		return;
 	}
-	if (isWet)
+	if (Wet)
 	{
 		Wet = false;
 		setFrozen();
 		return;
 	}
-	if (isFrozen)
+	if (Frozen)
 	{
 		duration += 2.0;
+		return;
 	}
-	if (isConductive)
+	if (Conductive)
 	{
 		Conductive = false;
 	}
-	if (isChilled)
+	if (Stunned)
 	{
-		duration += 1.0;
+		return;
+	}
+	if (Chilled)
+	{
+		Chilled = true;
+		duration += 2.0;
 	}
 	else
 	{
 		Chilled = true;
-		duration = 10;
+		Normal = false;
+		duration = 5.0;
 		DOT = 0.0;
 	}
 }
 
 void Status::setFrozen()
 {
-	duration = 5;
-	DOT = 0.0;
-	Wet = false;
-	Chilled = false;
-	Frozen = true;
+	if (Burning)
+	{
+		Burning = false;
+	}
+	if (Wet)
+	{
+		Wet = false;
+	}
+	if (Chilled)
+	{
+		Chilled = false;
+	}
+	if (Conductive)
+	{
+		Conductive = false;
+	}
+	if (Stunned)
+	{
+		Stunned = false;
+	}
+	if (Frozen)
+	{
+		duration += 2.0;
+	}
+	else
+	{
+		Frozen = true;
+		Normal = false;
+		duration = 5.0;
+		DOT = 0.0;
+	}
 }
 
 void Status::setConductive()
 {
-	duration = 10;
-	DOT = 0.0;
-	Conductive = true;
+	if (Burning)
+	{
+		setNormal();
+		return;
+	}
+	if (Wet)
+	{
+		setNormal();
+		return;
+	}
+	if (Chilled)
+	{
+		setNormal();
+		return;
+	}
+	if (Frozen)
+	{
+		return;
+	}
+	if (Stunned)
+	{
+		return;
+	}
+	if (Conductive)
+	{
+		duration += 2.0;
+	}
+	else
+	{
+		Conductive = true;
+		Normal = false;
+		duration = 7.0;
+		DOT = 0.0;
+	}
 }
 
 void Status::setStunned()
 {
-	duration = 5;
-	DOT = 0.1;
-	Wet = false;
-	Conductive = false;
-	Stunned = true;
+	if (Burning)
+	{
+		Burning = false;
+	}
+	if (Wet)
+	{
+		Wet = false;
+	}
+	if (Chilled)
+	{
+		Chilled = false;
+	}
+	if (Frozen)
+	{
+		Frozen = false;
+	}
+	if (Conductive)
+	{
+		Conductive = false;
+	}
+	if (Stunned)
+	{
+		duration += 2.0;
+	}
+	else
+	{
+		Stunned = true;
+		Normal = false;
+		duration = 5.0;
+		DOT = 0.0;
+	}
 }
 
 //GETTERS and SETTERS
@@ -154,16 +248,6 @@ float Status::getDuration()
 void Status::setDuration(float amt)
 {
 	duration = amt;
-}
-
-float Status::getFreezeDuration()
-{
-	return freezeDuration;
-}
-
-void Status::setFreezeDuration(float amt)
-{
-	freezeDuration = amt;
 }
 
 float Status::getDOT()

@@ -1,5 +1,7 @@
 #pragma once
 #include "Status.h"
+#include <string>
+using namespace std;
 /*
 * Parent of the Player and Enemy classes
 * This will have the common methods and attributes
@@ -8,6 +10,9 @@
 class Character
 {
 private:
+
+	string name;
+
 	//Character stats
 	float maxHealth;
 	float currentHealth;
