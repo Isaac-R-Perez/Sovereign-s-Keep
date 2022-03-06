@@ -1,9 +1,127 @@
 #include "Game.h"
-
+#include "Background.h"
 
 //globals
 int SCREEN_HEIGHT;
 int SCREEN_WIDTH;
+
+
+
+
+
+
+/*
+
+	SHADER FUNCTION
+
+*/
+
+GLuint LoadShaders(const char* vertFilePath, const char* fragFilePath)
+{
+	//create the shaders
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+	//read vertex shader code from file
+	std::string vertexShaderCode;
+	std::ifstream vertexShaderStream(vertFilePath, std::ios::in);
+
+	if (vertexShaderStream.is_open())
+	{
+		std::stringstream sstr;
+		sstr << vertexShaderStream.rdbuf();
+		vertexShaderCode = sstr.str();
+		vertexShaderStream.close();
+	}
+	else
+	{
+		printf("could not open %s. Make sure the file path is correct!", vertFilePath);
+		getchar();
+		return 0;
+	}
+
+	//read fragment shader code from file
+	std::string fragmentShaderCode;
+	std::ifstream fragmentShaderStream(fragFilePath, std::ios::in);
+
+	if (fragmentShaderStream.is_open())
+	{
+		std::stringstream sstr;
+		sstr << fragmentShaderStream.rdbuf();
+		fragmentShaderCode = sstr.str();
+		fragmentShaderStream.close();
+	}
+
+
+	GLint Result = GL_FALSE;
+	int InfoLogLength;
+
+	//compile vertex shader
+	//printf("compiling shader : %s\n", vertFilePath);
+	char const* vertexSourcePointer = vertexShaderCode.c_str();
+	glShaderSource(vertexShader, 1, &vertexSourcePointer, NULL);
+	glCompileShader(vertexShader);
+
+	//check vertex shader
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &Result);
+	glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if (InfoLogLength > 0)
+	{
+		std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
+		glGetShaderInfoLog(vertexShader, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+		printf("%s\n", &VertexShaderErrorMessage[0]);
+	}
+
+
+	//compile fragment shader
+	//printf("compiling shader : %s\n", fragFilePath);
+	char const* fragmentSourcePointer = fragmentShaderCode.c_str();
+	glShaderSource(fragmentShader, 1, &fragmentSourcePointer, NULL);
+	glCompileShader(fragmentShader);
+
+	//check fragment shader
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &Result);
+	glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if (InfoLogLength > 0) {
+		std::vector<char> FragmentShaderErrorMessage(InfoLogLength + 1);
+		glGetShaderInfoLog(fragmentShader, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
+		printf("%s\n", &FragmentShaderErrorMessage[0]);
+	}
+
+
+	//link the program
+	//printf("Linking program\n");
+	GLuint programID = glCreateProgram();
+	glAttachShader(programID, vertexShader);
+	glAttachShader(programID, fragmentShader);
+	glLinkProgram(programID);
+
+	//check program
+	glGetProgramiv(programID, GL_LINK_STATUS, &Result);
+	glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if (InfoLogLength > 0) {
+		std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
+		glGetProgramInfoLog(programID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+		printf("%s\n", &ProgramErrorMessage[0]);
+	}
+
+	glDetachShader(programID, vertexShader);
+	glDetachShader(programID, fragmentShader);
+
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+	return programID;
+
+}
+
+
+
+
+Game::Game() {
+	
+}
+
 
 
 bool Game::initialize() {
@@ -22,16 +140,16 @@ bool Game::initialize() {
 
 	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 
-	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+	//const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 	
-	SCREEN_HEIGHT = mode->height;
-	SCREEN_WIDTH = mode->width;
+	//SCREEN_HEIGHT = mode->height;
+	//SCREEN_WIDTH = mode->width;
 
 	//create a window, not fullscreen
-	window = glfwCreateWindow(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, "Sovereign's Keep", NULL, NULL);
+	window = glfwCreateWindow(1920, 1080, "Sovereign's Keep", NULL, NULL);
 
 	//create a fullscreen window
-	//window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Sovereign's Keep", monitor, NULL);
+	//window = glfwCreateWindow(1920, 1080, "Sovereign's Keep", monitor, NULL);
 
 	if (window == nullptr) {
 		fprintf(stderr, "Failed to create a window!\n");
@@ -53,9 +171,13 @@ bool Game::initialize() {
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
+	
 
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -81,13 +203,112 @@ bool Game::initialize() {
 	cameraPosition = glm::vec3(0.0f, 0.0f, 1.0f);
 
 	
-	//load all shaders here
+	//load shaders
+	renderables_programID = LoadShaders("vertex_shader.txt", "fragment_shader.txt");
 	
+
+	glUseProgram(renderables_programID);
+
+
+	setupBuffers();
+
+
+
+
+
+	Renderable* b = new Background(this, 1, 1920, 1080, 3, "images/background/demo_background.png");
+	
+	renderQueue.push(b);
+
 
 
 	return true;
 
 }
+
+
+
+void Game::setupBuffers() {
+	
+	
+	vertices.emplace_back(1.0f);
+	vertices.emplace_back(1.0f); //positions
+	vertices.emplace_back(0.0f);
+
+	vertices.emplace_back(0.0f);
+	vertices.emplace_back(0.0f); //colors
+	vertices.emplace_back(0.0f);
+
+	vertices.emplace_back(1.0f);
+	vertices.emplace_back(1.0f); //texture coords
+
+
+	vertices.emplace_back(1.0f);
+	vertices.emplace_back(-1.0f); //positions
+	vertices.emplace_back(0.0f);
+
+	vertices.emplace_back(0.0f);
+	vertices.emplace_back(0.0f); //colors
+	vertices.emplace_back(0.0f);
+
+	vertices.emplace_back(1.0f);
+	vertices.emplace_back(0.0f); //texture coords
+
+
+	vertices.emplace_back(-1.0f);
+	vertices.emplace_back(-1.0f); //positions
+	vertices.emplace_back(0.0f);
+
+	vertices.emplace_back(0.0f);
+	vertices.emplace_back(0.0f); //colors
+	vertices.emplace_back(0.0f);
+
+	vertices.emplace_back(0.0f);
+	vertices.emplace_back(0.0f); //texture coords
+
+	vertices.emplace_back(-1.0f);
+	vertices.emplace_back(1.0f); //positions
+	vertices.emplace_back(0.0f);
+
+	vertices.emplace_back(0.0f);
+	vertices.emplace_back(0.0f); //colors
+	vertices.emplace_back(0.0f);
+
+	vertices.emplace_back(0.0f);
+	vertices.emplace_back(1.0f); //texture coords
+
+	indices[0] = 0; indices[1] = 1; indices[2] = 3; indices[3] = 1; indices[4] = 2; indices[5] = 3;
+
+
+	glBufferData(GL_ARRAY_BUFFER, 32 * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
+
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+
+
+	GLint vPosition = glGetAttribLocation(renderables_programID, "vPosition");
+	if (vPosition < 0) printf("Couldn't find vPosition in shader! SETUP\n");
+	glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
+	glEnableVertexAttribArray(vPosition);
+	
+	GLint vColor = glGetAttribLocation(renderables_programID, "vColor");
+	if (vColor < 0) printf("Couldn't find vColor in shader! SETUP\n");
+	glVertexAttribPointer(vColor, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(vColor);
+	
+	
+	
+	GLint vTexCoord = glGetAttribLocation(renderables_programID, "vTexCoord");
+	if (vTexCoord < 0) printf("Couldn't find vTexCoord in shader! SETUP\n");
+	glVertexAttribPointer(vTexCoord, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(vTexCoord);
+
+
+
+}
+
+
+
 
 
 
@@ -101,7 +322,17 @@ void Game::update() {
 //this functions renders Renderables, in the correct order
 void Game::render() {
 
+	//current solution is to create a total copy of the priority queue, MAY AFFECT PERFORMANCE WITH TONS OF ENTITIES!!!
 
+	std::priority_queue<Renderable*> temp = renderQueue;
+
+	while (!temp.empty())
+	{
+		temp.top()->render();
+
+		temp.pop();
+	}
+	
 }
 
 

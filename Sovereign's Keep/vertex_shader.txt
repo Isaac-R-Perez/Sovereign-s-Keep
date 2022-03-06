@@ -1,0 +1,16 @@
+#version 330 core
+
+in vec3 vPosition;
+in vec3 vColor;
+in vec2 vTexCoord;
+
+uniform mat4 objectToWorld;
+
+out vec3 ourColor;
+out vec2 TexCoord;
+
+void main(){
+	gl_Position = objectToWorld * vec4(vPosition,1.0);
+	ourColor = vColor;
+	TexCoord = vTexCoord;
+}
