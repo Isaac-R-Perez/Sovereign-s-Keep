@@ -7,8 +7,16 @@
 class Status
 {
 private:
-	float duration = 0.0;
-	float DOT = 0.0; //Damage over time
+	float statusDuration = 0.0f;
+	float DOT = 0.0f; //Damage over time
+
+	//How long each status will last
+	float burningDuration = 5.0f;
+	float wetDuration = 7.0f;
+	float chilledDuration = 5.0f;
+	float frozenDuration = 5.0f;
+	float conductiveDuration = 7.0f;
+	float stunnedDuration = 5.0f;
 
 	bool Burning = false;
 	bool Wet = false;

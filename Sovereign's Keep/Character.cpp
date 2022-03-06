@@ -137,7 +137,7 @@ void Character::buffAttack(float amt, float time)
 {
 	if (amt < 0.0)
 	{
-		amt * -1.0; //Set amount to positive
+		amt = amt * -1.0f; //Set amount to positive
 	}
 	if (amt > buffAtk)
 	{
@@ -151,7 +151,7 @@ void Character::debuffAttack(float amt, float time)
 {
 	if (amt > 0.0)
 	{
-		amt * -1.0; //Set amount to negative
+		amt = amt * -1.0f; //Set amount to negative
 	}
 	if (amt < debuffAtk)
 	{
@@ -165,7 +165,7 @@ void Character::buffDefense(float amt, float time)
 {
 	if (amt < 0.0)
 	{
-		amt * -1.0; //Set amount to positive
+		amt = amt * -1.0f; //Set amount to positive
 	}
 	if (amt > debuffDef)
 	{
@@ -178,7 +178,7 @@ void Character::debuffDefense(float amt, float time)
 {
 	if (amt > 0.0)
 	{
-		amt * -1.0;
+		amt = amt * -1.0f;
 	}
 	if (amt < debuffDef)
 	{
@@ -191,7 +191,7 @@ void Character::buffMoveSpeed(float amt, float time)
 {
 	if (amt < 0.0)
 	{
-		amt * -1.0;
+		amt = amt * -1.0f;
 	}
 	if (amt > buffSpeed)
 	{
@@ -204,7 +204,7 @@ void Character::debuffMoveSpeed(float amt, float time)
 {
 	if (amt > 0.0)
 	{
-		amt * -1.0;
+		amt = amt * -1.0f;
 	}
 	if (amt < debuffSpeed)
 	{

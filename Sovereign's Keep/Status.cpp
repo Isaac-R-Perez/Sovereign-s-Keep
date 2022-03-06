@@ -2,8 +2,8 @@
 
 void Status::setNormal()
 {
-	duration = 0.0;
-	DOT = 0.0;
+	statusDuration = 0.0f;
+	DOT = 0.0f;
 	Burning = false;
 	Wet = false;
 	Chilled = false;
@@ -40,14 +40,14 @@ void Status::setBurning()
 	}
 	if (Burning)
 	{
-		duration += 2.0;
+		statusDuration += 2.0f;
 	}
 	else
 	{
 		Burning = true;
 		Normal = false;
-		duration = 5.0;
-		DOT = 0.5;
+		statusDuration = burningDuration;
+		DOT = 0.5f;
 	}
 }
 
@@ -80,14 +80,14 @@ void Status::setWet()
 	}
 	if (Wet)
 	{
-		duration += 2.0;
+		statusDuration += 2.0f;
 	}
 	else
 	{
 		Wet = true;
 		Normal = false;
-		duration = 7.0;
-		DOT = 0.0;
+		statusDuration = wetDuration;
+		DOT = 0.0f;
 	}
 }
 
@@ -106,7 +106,7 @@ void Status::setChilled()
 	}
 	if (Frozen)
 	{
-		duration += 2.0;
+		statusDuration += 2.0f;
 		return;
 	}
 	if (Conductive)
@@ -120,14 +120,14 @@ void Status::setChilled()
 	if (Chilled)
 	{
 		Chilled = true;
-		duration += 2.0;
+		statusDuration += 2.0f;
 	}
 	else
 	{
 		Chilled = true;
 		Normal = false;
-		duration = 5.0;
-		DOT = 0.0;
+		statusDuration = chilledDuration;
+		DOT = 0.0f;
 	}
 }
 
@@ -155,14 +155,14 @@ void Status::setFrozen()
 	}
 	if (Frozen)
 	{
-		duration += 2.0;
+		statusDuration += 2.0f;
 	}
 	else
 	{
 		Frozen = true;
 		Normal = false;
-		duration = 5.0;
-		DOT = 0.0;
+		statusDuration = frozenDuration;
+		DOT = 0.0f;
 	}
 }
 
@@ -193,14 +193,14 @@ void Status::setConductive()
 	}
 	if (Conductive)
 	{
-		duration += 2.0;
+		statusDuration += 2.0f;
 	}
 	else
 	{
 		Conductive = true;
 		Normal = false;
-		duration = 7.0;
-		DOT = 0.0;
+		statusDuration = conductiveDuration;
+		DOT = 0.0f;
 	}
 }
 
@@ -228,26 +228,26 @@ void Status::setStunned()
 	}
 	if (Stunned)
 	{
-		duration += 2.0;
+		statusDuration += 2.0f;
 	}
 	else
 	{
 		Stunned = true;
 		Normal = false;
-		duration = 5.0;
-		DOT = 0.0;
+		statusDuration = stunnedDuration;
+		DOT = 0.0f;
 	}
 }
 
 //GETTERS and SETTERS
 float Status::getDuration()
 {
-	return duration;
+	return statusDuration;
 }
 
 void Status::setDuration(float amt)
 {
-	duration = amt;
+	statusDuration = amt;
 }
 
 float Status::getDOT()
