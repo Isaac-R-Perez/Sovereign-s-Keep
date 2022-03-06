@@ -1,5 +1,4 @@
 #pragma once
-#include "Character.h"
 /*
 * This class will be responsible for applying different
 * types of statuses to the Character class.

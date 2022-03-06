@@ -1,8 +1,8 @@
 #pragma once
-#include "Status.h"
 #include <string>
 using namespace std;
 #include "Renderable.h"
+#include "Status.h"
 /*
 * Parent of the Player and Enemy classes
 * This will have the common methods and attributes
