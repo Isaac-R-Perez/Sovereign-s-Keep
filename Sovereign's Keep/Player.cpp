@@ -1,5 +1,88 @@
 #include "Player.h"
 
+Player::Player(Game* game, int rOrder, int w, int h, int c, std::string path)
+	:Character(game, rOrder, w, h, c, path)
+{
+	glm::mat4 resize = glm::mat4(1.0f);
+
+	resize = glm::scale(glm::mat4(1.0f), glm::vec3(0.0375f, 0.05625f, 0.0f));
+	this->setO2W(resize);
+
+
+
+	FACING_RIGHT = true;
+	FACING_LEFT = false;
+
+	MOVING_UP = false;
+	MOVING_DOWN = false;
+	MOVING_LEFT = false;
+	MOVING_RIGHT = false;
+	
+	USING_BASIC_ATTACK = false;
+
+	ATTACK_UP = false;
+	ATTACK_DOWN = false;
+	ATTACK_LEFT = false;
+	ATTACK_RIGHT = false;
+
+	CAN_BASIC_ATTACK = true;
+
+	USING_SPELL = false;
+
+
+}
+
+
+void Player::update(double dt) {
+	
+	printf("x = %f,  y = %f\n", getOrigin().x, getOrigin().y);
+
+	//handle all movement, firing, spell casting, dying, and such logic
+	glm::mat4 move = glm::mat4(1.0f);
+	glm::vec3 movementVector = glm::vec3(0.0f);
+
+	//camera should be centered on origin of player, unless the player is next to the world border
+
+	glm::vec3 cam;
+
+	if (MOVING_UP) {
+		movementVector.y += (1920.0f / 1080.0f);
+		
+	}
+
+	if (MOVING_DOWN) {
+		movementVector.y -= (1920.0f / 1080.0f);
+	}
+
+	if (MOVING_RIGHT) {
+		movementVector.x += 1.0f;
+	}
+	if (MOVING_LEFT) {
+		movementVector.x -= 1.0f;
+	}
+
+	glm::normalize(movementVector);
+
+	move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * BASE_SPEED, movementVector.y * dt * BASE_SPEED, 0.0f));
+
+	updatePosition(move);
+
+}
+
+void Player::render() {
+
+	GLint objectToWorld = glGetUniformLocation(getGame()->getRenderablesProgID(), "objectToWorld");
+	if (objectToWorld < 0) printf("couldn't find objectToWorld in shader\n");
+	glUniformMatrix4fv(objectToWorld, 1, GL_FALSE, glm::value_ptr(getO2W()));
+
+	glBindTexture(GL_TEXTURE_2D, getTexture());
+	glBindVertexArray(getGame()->getVAO());
+
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+}
+
+
 void Player::setSouls(int amt)
 {
 	monsterSouls = amt;
@@ -8,9 +91,9 @@ void Player::setSouls(int amt)
 void Player::addSouls(int amt)
 {
 	monsterSouls += amt;
-	if (monsterSouls > maxMonsterSouls)
+	if (monsterSouls > MAX_MONSTER_SOULS)
 	{
-		monsterSouls = maxMonsterSouls;
+		monsterSouls = MAX_MONSTER_SOULS;
 	}
 }
 
@@ -28,27 +111,27 @@ int Player::getSouls()
 	return monsterSouls;
 }
 
-void Player::setMaxMana(int amt)
+void Player::setMaxMana(float amt)
 {
 	maxMana = amt;
 }
 
-int Player::getMaxMana()
+float Player::getMaxMana()
 {
 	return maxMana;
 }
 
-void Player::setCurrentMana(int amt)
+void Player::setCurrentMana(float amt)
 {
 	currentMana = amt;
 }
 
-int Player::getCurrentMana()
+float Player::getCurrentMana()
 {
 	return currentMana;
 }
 
-bool Player::spendMana(int amt)
+bool Player::spendMana(float amt)
 {
 	if (amt < currentMana)
 	{

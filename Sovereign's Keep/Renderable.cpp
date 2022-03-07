@@ -15,6 +15,8 @@ void Renderable::setTexture(int w, int h, int nrC, std::string path) {
 	textureHeight = h;
 	nrChannels = nrC;
 
+	stbi_set_flip_vertically_on_load(true);
+
 	data = stbi_load(path.c_str(), &textureWidth, &textureHeight, &nrChannels, 0);
 
 	if (!data) {
@@ -24,8 +26,8 @@ void Renderable::setTexture(int w, int h, int nrC, std::string path) {
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -56,4 +58,9 @@ void Renderable::render() {
 
 void Renderable::update(double dt)  {
 
+}
+
+void Renderable::updatePosition(glm::mat4 transform) {
+	objectToWorld = transform * objectToWorld;
+	origin = transform * glm::vec4(origin,1.0);
 }

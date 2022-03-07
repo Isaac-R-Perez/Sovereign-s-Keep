@@ -1,5 +1,14 @@
 #include "Character.h"
 
+Character::Character(Game* game, int rOrder, int w, int h, int c, std::string path)
+	:Renderable(game, rOrder, w, h, c, path)
+{
+
+}
+
+
+
+
 void Character::statusEffect()
 {
 	/*

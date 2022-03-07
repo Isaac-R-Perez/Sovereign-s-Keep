@@ -1,11 +1,17 @@
 #include "Game.h"
 #include "Background.h"
+#include "Player.h"
 
 //globals
 int SCREEN_HEIGHT;
 int SCREEN_WIDTH;
 
+//the last known position of the mouse, in screen coordinates
+double Last_Mouse_X;
+double Last_Mouse_Y;
 
+//use this to call game functions in the callback functions
+Game* gameREFERENCE;
 
 
 
@@ -119,8 +125,151 @@ GLuint LoadShaders(const char* vertFilePath, const char* fragFilePath)
 
 
 Game::Game() {
-	
+	paused = false;
+	gameREFERENCE = this;
 }
+
+
+
+/*
+	GAME CONTROLS and CONTROLS LOGIC
+*/
+
+
+void mouse_position_callback(GLFWwindow* window, double x, double y)
+{
+
+	
+
+	//this function tracks the position of the mouse, it does not track the mouse buttons!
+
+	//screen coordinates
+	Last_Mouse_X = x;
+	Last_Mouse_Y = y;
+
+
+}
+
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		
+		//need to check where mouse is, and what clicking will do
+
+
+	}
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_REPEAT) {
+		//do nothing
+	}
+	
+
+}
+
+
+
+void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	{
+		//FOR NOW, ESC closes the game, but later a pause menu will be added! Use pause bool for this.
+		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	}
+
+	//player's movement states are dependent on if a key is currently held down
+	//if w is held, they will move up until it is released.
+
+	//move up
+	if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+
+		//printf("w key pressed\n");
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingUp(true);
+
+	}
+	if (key == GLFW_KEY_W && action == GLFW_REPEAT) {
+
+	}
+
+	if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
+
+		
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingUp(false);
+	}
+
+
+	//move down
+	if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingDown(true);
+	}
+	if (key == GLFW_KEY_S && action == GLFW_REPEAT) {
+
+	}
+	//move backward
+	if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingDown(false);
+	}
+
+
+	//move left
+	if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+
+
+	}
+	if (key == GLFW_KEY_A && action == GLFW_REPEAT) {
+
+	}
+	//move left
+	if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
+
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(false);
+
+
+	}
+
+	//move right
+	if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
+	}
+	if (key == GLFW_KEY_D && action == GLFW_REPEAT) {
+
+	}
+	//move right
+	if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(false);
+	}
+
+
+	if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+
+	}
+
+
+	/*
+	tester
+	if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+
+		if (!gameREFERENCE->getEnemies().empty()) {
+			gameREFERENCE->getEnemies().at(0)->setAlive(false);
+		}
+
+
+	}
+
+	*/
+
+
+
+}
+
+
+
 
 
 
@@ -184,19 +333,19 @@ bool Game::initialize() {
 
 
 	//set callback functions,      THESE ARE FOR IMPLEMENTING THE CONTROLS FOR THE GAME
-	/*
+	
 	glfwSetCursorPosCallback(window, mouse_position_callback);
 	glfwSetKeyCallback(window, keyboard_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
-	*/
+	
 	
 	glClearColor(0.1, 0.1, 0.1, 1.0);
 
 	glfwSwapInterval(1); //Sets VSync for enforced 60 fps
 
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //enables transparency in textures!
 
 
 
@@ -215,11 +364,19 @@ bool Game::initialize() {
 
 
 
+	
+	
+
 
 	Renderable* b = new Background(this, 1, 1920, 1080, 3, "images/background/demo_background.png");
 	
-	renderQueue.push(b);
+	renderQueue.insert(pair<int, Renderable*>(b->renderOrder, b));
+	
+	
 
+	player = new Player(this, 2, 19, 29, 3, "images/player/player_idle.png");
+	
+	renderQueue.insert(pair<int, Renderable*>(player->renderOrder, player));
 
 
 	return true;
@@ -313,7 +470,21 @@ void Game::setupBuffers() {
 
 
 //this function updates ALL renderable entities
-void Game::update() {
+void Game::update(double dt) {
+
+	if (!paused) {
+		//this means that the game is not paused, so update all renderables here
+
+		std::multimap<int, Renderable*>::iterator itr;
+
+		for (itr = renderQueue.begin(); itr != renderQueue.end(); ++itr) {
+			itr->second->update(dt);
+		}
+
+	}
+
+
+
 
 
 }
@@ -324,13 +495,10 @@ void Game::render() {
 
 	//current solution is to create a total copy of the priority queue, MAY AFFECT PERFORMANCE WITH TONS OF ENTITIES!!!
 
-	std::priority_queue<Renderable*> temp = renderQueue;
+	std::multimap<int, Renderable*>::iterator itr;
 
-	while (!temp.empty())
-	{
-		temp.top()->render();
-
-		temp.pop();
+	for (itr = renderQueue.begin(); itr != renderQueue.end(); ++itr) {
+		itr->second->render();
 	}
 	
 }

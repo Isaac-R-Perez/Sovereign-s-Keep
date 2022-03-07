@@ -18,19 +18,18 @@ public:
 	~Renderable() {}
 
 	//these are overriden!
-	virtual void update(double dt) ; //update the Renderable
+	virtual void update(double dt); //update the Renderable
 
-	virtual void render() ; //draw Renderable to the screen
+	virtual void render(); //draw Renderable to the screen
 
-	
 
-	
+
+
 	int renderOrder; //from 1 - 6?
 
 	/*
-		CHECK IF THIS WORKS
-	*/
-	bool operator<(const Renderable& r2) {
+		
+		bool operator<(const Renderable& r2) {
 		if (this->renderOrder < r2.renderOrder) {
 			return true;
 		}
@@ -41,7 +40,17 @@ public:
 	}
 
 
+	*/
+	
+
+
 	void setTexture(int w, int h, int nrC, std::string path);
+
+
+	//this function adds this renderable to the pendingDestroy vector
+	void destroy();
+
+
 
 
 	/*
@@ -53,7 +62,13 @@ public:
 	void setO2W(glm::mat4 s) { objectToWorld = s; }
 	glm::mat4& getO2W() { return objectToWorld; }
 
+	glm::vec3& getOrigin() { return origin; }
+
+
 	GLuint getTexture() { return texture; }
+
+	//Send this a transformation matrix to move both the renderable and its origin.
+	void updatePosition(glm::mat4 transform);
 
 	//std::vector<GLfloat>& getPosition() { return position; }
 	//std::vector<GLfloat>& getColor() { return colors; }

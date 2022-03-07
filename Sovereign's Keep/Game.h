@@ -9,7 +9,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <queue>
+#include <map>
 #include "Renderable.h"
 #include "stb_image.h"
 
@@ -20,7 +20,7 @@ class Renderable;
 This class holds all references to all entities in the game. The main class. Will hold all functions for the game as well
 */
 
-
+const float SCREEN_Y_MOVE_MODIFIER = 1.7777f;
 
 
 
@@ -38,7 +38,7 @@ public:
 	void render();
 
 	//updates all Renderables
-	void update();
+	void update(double dt);
 
 	//deletes everything to shut down the program
 	void cleanup();
@@ -56,6 +56,11 @@ public:
 	GLuint getVAO() { return VAO; }
 
 	GLuint getRenderablesProgID() { return renderables_programID; }
+
+	bool isPaused() { return paused; }
+	bool setPaused(bool p) { paused = p; }
+
+	Renderable* getPlayer() { return player; }
 
 private:
 
@@ -87,13 +92,18 @@ private:
 	5 - GUI objects
 	6 - MENU objects
 	*/
-	std::priority_queue<Renderable*> renderQueue;
+	std::multimap<int, Renderable*> renderQueue;
 
 	//used for default buffer creation
 	
 	std::vector<GLfloat> vertices;
 
 	GLuint indices[6];
+
+	bool paused; //if the game is paused, render everything as normal, but only update the menus and track mouse activity
+
+	//use this pointer for ease of referencing the player, be sure to also add/change this pointer to/and the renderQueue!
+	Renderable* player;
 
 
 

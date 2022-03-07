@@ -55,6 +55,12 @@ private:
 	float iceRES = 1.0;
 
 public:
+
+	Character(Game* game, int rOrder, int w, int h, int c, std::string path);
+
+	
+
+
 	Status status;
 	void statusEffect();
 
