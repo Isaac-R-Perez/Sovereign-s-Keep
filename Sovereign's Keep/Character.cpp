@@ -7,8 +7,6 @@ Character::Character(Game* game, int rOrder, int w, int h, int c, std::string pa
 }
 
 
-
-
 void Character::statusEffect()
 {
 	/*
@@ -30,57 +28,44 @@ void Character::statusEffect()
 
 	/*
 	* This section will handle the buffs and debuffs
-	* and remove them when the timer has run out.
+	* and remove them from the vector when their timer has run out.
 	*/
 
-	//ATTACK BUFFS/DEBUFFS
-	for (int a = 0; a < atkBuff.size(); a++)
-	{
-		if (atkBuff[a].time > 0.0f)
-		{
-			//REDUCE TIME HERE
-		}
-		else
-		{
-			atkBuff.erase(atkBuff.begin() + a);
-			a--;
-		}
-	}
-	atkBuff.shrink_to_fit();
+	updateBuff(atkBuff);
+	updateBuff(defBuff);
+	updateBuff(spdBuff);
 
-	//DEFENSE BUFFS/DEBUFFS
-	for (int d = 0; d < defBuff.size(); d++)
-	{
-		if (defBuff[d].time > 0.0f)
-		{
-			//REDUCE TIME HERE
-		}
-		else
-		{
-			defBuff.erase(defBuff.begin() + d);
-			d--;
-		}
-	}
-	defBuff.shrink_to_fit();
+	updateBuff(fireDMGBuff);
+	updateBuff(waterDMGBuff);
+	updateBuff(earthDMGBuff);
+	updateBuff(airDMGBuff);
+	updateBuff(electricityDMGBuff);
+	updateBuff(iceDMGBuff);
 
-	//SPEED BUFFS/DEBUFFS
-	for (int s = 0; s < spdBuff.size(); s++)
-	{
-		if (spdBuff[s].time > 0.0f)
-		{
-			//REDUCE TIME HERE
-		}
-		else
-		{
-			spdBuff.erase(spdBuff.begin() + s);
-		}
-	}
-	spdBuff.shrink_to_fit();
+	updateBuff(fireRESBuff);
+	updateBuff(waterRESBuff);
+	updateBuff(earthRESBuff);
+	updateBuff(airRESBuff);
+	updateBuff(electricityRESBuff);
+	updateBuff(iceRESBuff);
 }
 
-float Character::getCurrentHealth()
+void Character::updateBuff(vector<Buff>& buff)
 {
-	return currentHealth;
+	for (int i = 0; i < buff.size(); i++) 
+	{
+		if (buff[i].time > 0.0f)
+		{
+			//REDUCE TIME HERE
+			//buff[i].time -= TIME;
+		}
+		else
+		{
+			buff.erase(buff.begin() + i);
+			i--;
+		}
+		buff.shrink_to_fit();
+	}
 }
 
 void Character::restoreHealth(float amt)
@@ -91,16 +76,6 @@ void Character::restoreHealth(float amt)
 	}
 }
 
-float Character::getMaxHealth()
-{
-	return maxHealth;
-}
-
-void Character::setMaxHealth(float amt)
-{
-	maxHealth = amt;
-}
-
 void Character::removeHealth(float amt)
 {
 	currentHealth -= amt;
@@ -108,11 +83,6 @@ void Character::removeHealth(float amt)
 	{
 		currentHealth = 0;
 	}
-}
-
-void Character::fullHeal()
-{
-	currentHealth = maxHealth;
 }
 
 float Character::getAttack()
@@ -125,16 +95,6 @@ float Character::getAttack()
 	return baseAttack + buffTotal;
 }
 
-float Character::getBaseAttack()
-{
-	return baseAttack;
-}
-
-void Character::setBaseAttack(float amt)
-{
-	baseAttack = amt;
-}
-
 float Character::getDefense()
 {
 	float buffTotal = 0.0f;
@@ -143,16 +103,6 @@ float Character::getDefense()
 		buffTotal += defBuff[i].amt;
 	}
 	return baseDefense + buffTotal;
-}
-
-float Character::getBaseDefense()
-{
-	return baseDefense;
-}
-
-void Character::setBaseDefense(float amt)
-{
-	baseDefense = amt;
 }
 
 float Character::getMoveSpeed()
@@ -170,109 +120,4 @@ float Character::getMoveSpeed()
 		}
 		return moveSpeed + buffTotal;
 	}
-}
-
-/*
-* The buff/debuff functions will take in the
-* amount to be added or subtracted to the stat
-* as well as the time that buff should last.
-*/
-void Character::buffAttack(float amt, float time)
-{
-	atkBuff.emplace_back(amt,time);
-}
-
-void Character::clearAttackBuffs()
-{
-	atkBuff.clear();
-}
-
-void Character::buffDefense(float amt, float time)
-{
-	defBuff.emplace_back(amt, time);
-}
-
-void Character::clearDefenseBuffs()
-{
-	defBuff.clear();
-}
-
-void Character::buffMoveSpeed(float amt, float time)
-{
-	spdBuff.emplace_back(amt, time);
-}
-
-void Character::clearMoveSpeedBuffs()
-{
-	spdBuff.clear();
-}
-
-void Character::setPhysicalRES(float amt)
-{
-	physicalRES = amt;
-}
-
-void Character::setFireRES(float amt)
-{
-	fireRES = amt;
-}
-
-void Character::setWaterRES(float amt)
-{
-	waterRES = amt;
-}
-
-void Character::setEarthRES(float amt)
-{
-	earthRES = amt;
-}
-
-void Character::setAirRES(float amt)
-{
-	airRES = amt;
-}
-
-void Character::setElectricityRES(float amt)
-{
-	electricityRES = amt;
-}
-
-void Character::setIceRES(float amt)
-{
-	iceRES = amt;
-}
-
-float Character::getPhysicalRES()
-{
-	return physicalRES;
-}
-
-float Character::getFireRES()
-{
-	return fireRES;
-}
-
-float Character::getWaterRES()
-{
-	return waterRES;
-}
-
-float Character::getEarthRES()
-{
-	return earthRES;
-}
-
-float Character::getAirRES()
-{
-	return airRES;
-}
-
-float Character::getElectricityRES()
-{
-	return electricityRES;
-}
-
-float Character::getIceRES()
-{
-	return iceRES;
 }
