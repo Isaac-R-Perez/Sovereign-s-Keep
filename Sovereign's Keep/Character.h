@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+//#include <vector>
 using namespace std;
 #include "Renderable.h"
 #include "Status.h"
@@ -24,24 +25,21 @@ private:
 	float baseMoveSpeed = 1.0;
 	float currentMoveSpeed;
 
-	//BUFFS/DEBUFFS
-	//ATK
-	float buffAtk = 0.0;
-	float buffAtkTimer = 0.0;
-	float debuffAtk = 0.0;
-	float debuffAtkTimer = 0.0;
+	struct Buff
+	{
+		float amt, time;
 
-	//DEF
-	float buffDef = 0.0;
-	float buffDefTimer = 0.0;
-	float debuffDef = 0.0;
-	float debuffDefTimer = 0.0;
-
-	//SPD
-	float buffSpeed = 0.0;
-	float buffSpeedTimer = 0.0;
-	float debuffSpeed = 0.0;
-	float debuffSpeedTimer = 0.0;
+		Buff(float amt, float time) : amt(amt), time(time)
+		{
+			
+		}
+	};
+	vector<Buff> atkBuff;
+	vector<Buff> defBuff;
+	vector<Buff> spdBuff;
+	float atkBuffTotal;
+	float defBuffTotal;
+	float spdBuffTotal;
 
 	//Higher number means they take more damage.
 	//Ex. 1.5 means they take 50% more damage for that element.
@@ -72,11 +70,11 @@ public:
 	void fullHeal();
 	
 	void buffAttack(float amt, float time);
-	void debuffAttack(float amt, float time);
+	void clearAttackBuffs();
 	void buffDefense(float amt, float time);
-	void debuffDefense(float amt, float time);
+	void clearDefenseBuffs();
 	void buffMoveSpeed(float amt, float time);
-	void debuffMoveSpeed(float amt, float time);
+	void clearMoveSpeedBuffs();
 
 	void setPhysicalRES(float amt);
 	void setFireRES(float amt);

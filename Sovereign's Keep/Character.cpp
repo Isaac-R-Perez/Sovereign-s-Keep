@@ -3,7 +3,9 @@
 Character::Character(Game* game, int rOrder, int w, int h, int c, std::string path)
 	:Renderable(game, rOrder, w, h, c, path)
 {
-
+	atkBuff.reserve(5);
+	defBuff.reserve(5);
+	spdBuff.reserve(5);
 }
 
 
@@ -19,9 +21,9 @@ void Character::statusEffect()
 	*/
 
 	//Here we update the stats
-	currentAttack = baseAttack + buffAtk - debuffAtk;
-	currentDefense = baseDefense + buffDef - debuffDef;
-	currentMoveSpeed = baseMoveSpeed + buffSpeed - debuffSpeed;
+	currentAttack = baseAttack + atkBuffTotal;
+	currentDefense = baseDefense + defBuffTotal;
+	currentMoveSpeed = baseMoveSpeed + spdBuffTotal;
 
 	/*
 	* This section will apply the additonal effects of
@@ -68,36 +70,53 @@ void Character::statusEffect()
 	* This section will handle the buffs and debuffs
 	* and remove them when the timer has run out.
 	*/
-	//ATTACK
-	if (buffAtkTimer > 0.0)
+
+	//ATTACK BUFFS/DEBUFFS
+	for (int a = 0; a < atkBuff.size(); a++)
 	{
-		//REDUCE buffAtkTimer HERE
+		if (atkBuff[a].time > 0.0f)
+		{
+			//REDUCE TIME HERE
+		}
+		else
+		{
+			atkBuffTotal -= atkBuff[a].amt;
+			atkBuff.erase(atkBuff.begin() + a);
+			a--;
+		}
 	}
-	else
+	atkBuff.shrink_to_fit();
+
+	//DEFENSE BUFFS/DEBUFFS
+	for (int d = 0; d < defBuff.size(); d++)
 	{
-		buffAtkTimer = 0.0;
-		buffAtk = 0.0;
+		if (defBuff[d].time > 0.0f)
+		{
+			//REDUCE TIME HERE
+		}
+		else
+		{
+			defBuffTotal -= defBuff[d].amt;
+			defBuff.erase(defBuff.begin() + d);
+			d--;
+		}
 	}
-	//DEFENSE
-	if (buffDefTimer > 0.0)
+	defBuff.shrink_to_fit();
+
+	//SPEED BUFFS/DEBUFFS
+	for (int s = 0; s < spdBuff.size(); s++)
 	{
-		//REDUCE buffDefTimer HERE
+		if (spdBuff[s].time > 0.0f)
+		{
+			//REDUCE TIME HERE
+		}
+		else
+		{
+			spdBuffTotal -= spdBuff[s].amt;
+			spdBuff.erase(spdBuff.begin() + s);
+		}
 	}
-	else
-	{
-		buffDefTimer = 0.0;
-		buffDef = 0.0;
-	}
-	//SPEED
-	if (buffSpeedTimer > 0.0)
-	{
-		//REDUCE buffSpeedTimer HERE
-	}
-	else
-	{
-		buffSpeedTimer = 0.0;
-		buffSpeed = 0.0;
-	}
+	spdBuff.shrink_to_fit();
 }
 
 float Character::getCurrentHealth()
@@ -144,82 +163,38 @@ void Character::fullHeal()
 */
 void Character::buffAttack(float amt, float time)
 {
-	if (amt < 0.0)
-	{
-		amt = amt * -1.0f; //Set amount to positive
-	}
-	if (amt > buffAtk)
-	{
-		//Will only apply buff if it is stronger than the current buff.
-		buffAtk = amt;
-		buffAtkTimer = time;
-	}
+	atkBuff.emplace_back(amt,time);
+	atkBuffTotal += amt;
 }
 
-void Character::debuffAttack(float amt, float time)
+void Character::clearAttackBuffs()
 {
-	if (amt > 0.0)
-	{
-		amt = amt * -1.0f; //Set amount to negative
-	}
-	if (amt < debuffAtk)
-	{
-		//Will only apply debuff if it reduces the stat even more than the current debuff.
-		debuffAtk = amt;
-		debuffAtkTimer = time;
-	}
+	atkBuff.clear();
+	atkBuffTotal = 0.0f;
 }
 
 void Character::buffDefense(float amt, float time)
 {
-	if (amt < 0.0)
-	{
-		amt = amt * -1.0f; //Set amount to positive
-	}
-	if (amt > debuffDef)
-	{
-		buffDef = amt;
-		buffDefTimer = time;
-	}
+	defBuff.emplace_back(amt, time);
+	defBuffTotal += amt;
 }
 
-void Character::debuffDefense(float amt, float time)
+void Character::clearDefenseBuffs()
 {
-	if (amt > 0.0)
-	{
-		amt = amt * -1.0f;
-	}
-	if (amt < debuffDef)
-	{
-		debuffDef = amt;
-		debuffDefTimer = time;
-	}
+	defBuff.clear();
+	defBuffTotal = 0.0f;
 }
 
 void Character::buffMoveSpeed(float amt, float time)
 {
-	if (amt < 0.0)
-	{
-		amt = amt * -1.0f;
-	}
-	if (amt > buffSpeed)
-	{
-		buffSpeed = amt;
-		buffSpeedTimer = time;
-	}
+	spdBuff.emplace_back(amt, time);
+	spdBuffTotal += amt;
 }
 
-void Character::debuffMoveSpeed(float amt, float time)
+void Character::clearMoveSpeedBuffs()
 {
-	if (amt > 0.0)
-	{
-		amt = amt * -1.0f;
-	}
-	if (amt < debuffSpeed)
-	{
-		debuffSpeed = amt;
-		debuffSpeedTimer = time;
-	}
+	spdBuff.clear();
+	spdBuffTotal = 0.0f;
 }
 
 void Character::setPhysicalRES(float amt)
