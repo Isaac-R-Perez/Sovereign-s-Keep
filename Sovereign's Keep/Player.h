@@ -12,8 +12,8 @@
 const int MAX_MONSTER_SOULS = 999;
 const int INITIAL_MAX_MANA = 100;
 
-const float BASE_SPEED = 0.3f;
-
+const float PLAYER_BASE_SPEED = 0.3f;
+const float BASE_BASIC_ATTACK_COOLDOWN = 0.2f;
 
 class Player: public Character
 {
@@ -45,6 +45,9 @@ private:
 
 	//true if the player has enough mana to cast the current active spell and the key to cast the spell is pressed
 	bool USING_SPELL;
+
+	//time until the player can use another basic attack
+	float basicAttackCooldown;
 
 
 

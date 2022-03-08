@@ -48,9 +48,9 @@ public:
 
 
 	//this function adds this renderable to the pendingDestroy vector
-	void destroy();
+	void kill() { destroy = true; }
 
-
+	bool shouldDestroy() { return destroy; }
 
 
 	/*
@@ -97,7 +97,8 @@ private:
 	//such as creating new enemies.
 	Game* game;
 
-	
+	//if this is true, the game engine will automatically destory in the next update call
+	bool destroy;
 
 
 };

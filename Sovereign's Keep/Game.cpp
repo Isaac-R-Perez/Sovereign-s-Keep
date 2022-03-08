@@ -127,6 +127,9 @@ GLuint LoadShaders(const char* vertFilePath, const char* fragFilePath)
 Game::Game() {
 	paused = false;
 	gameREFERENCE = this;
+	spellComboMode = false;
+	pendingAdd = std::vector<Renderable*>();
+	pendingDestroy = std::vector<Renderable*>();
 }
 
 
@@ -246,9 +249,167 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	}
 
 
+
+	//if SHIFT is pressed/held, then the arrow keys will add their corresponding elements into a vector?
+	//else they will just try to shoot a basic attack
+
+	if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS) {
+		gameREFERENCE->setSpellComboMode(true);
+	}
+	if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_REPEAT) {
+		
+	}
+	if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE) {
+		gameREFERENCE->setSpellComboMode(false);
+
+		//this is where you tell the player to combine their current elements into a spell
+	}
+
+
+	
+
+	/*
+		ELEMENT 1 = LEFT_ARROW
+		ELEMENT 2 = UP_ARROW
+		ELEMENT 3 = RIGHT_ARROW
+		ELEMENT 4 = DOWN_ARROW
+	*/
+
+	//basic attack left
 	if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+		
+		if (gameREFERENCE->getSpellComboMode() == true) {
+			//this means that the player is trying to input their element 1.
+			//printf("input element 1\n");
+
+
+
+		}
+		else
+		{
+			//SHIFT IS NOT HELD, so fire a basic attack in the left direction
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(true);
+			//printf("basic attack left\n");
+		}
 
 	}
+	if (key == GLFW_KEY_LEFT && action == GLFW_REPEAT) {
+
+	}
+	
+	if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
+		
+		if (gameREFERENCE->getSpellComboMode() == true) {
+			//DO NOTHING, the element was already added when it was initally pressed
+
+		}
+		else
+		{
+			//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(false);
+		}
+	}
+
+
+
+	//basic attack up
+	if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+
+		if (gameREFERENCE->getSpellComboMode() == true) {
+			//this means that the player is trying to input their element 2.
+
+		}
+		else
+		{
+			//SHIFT IS NOT HELD, so fire a basic attack in the left direction
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackUp(true);
+		}
+
+	}
+	if (key == GLFW_KEY_UP && action == GLFW_REPEAT) {
+
+	}
+
+	if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
+
+		if (gameREFERENCE->getSpellComboMode() == true) {
+			//DO NOTHING, the element was already added when it was initally pressed
+
+		}
+		else
+		{
+			//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackUp(false);
+		}
+	}
+
+
+	//basic attack right
+	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+
+		if (gameREFERENCE->getSpellComboMode() == true) {
+			//this means that the player is trying to input their element 3.
+
+		}
+		else
+		{
+			//SHIFT IS NOT HELD, so fire a basic attack in the left direction
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(true);
+		}
+
+	}
+	if (key == GLFW_KEY_RIGHT && action == GLFW_REPEAT) {
+
+	}
+
+	if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
+
+		if (gameREFERENCE->getSpellComboMode() == true) {
+			//DO NOTHING, the element was already added when it was initally pressed
+
+		}
+		else
+		{
+			//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(false);
+		}
+	}
+
+
+
+
+	//basic attack down
+	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+
+		if (gameREFERENCE->getSpellComboMode() == true) {
+			//this means that the player is trying to input their element 3.
+
+		}
+		else
+		{
+			//SHIFT IS NOT HELD, so fire a basic attack in the left direction
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackDown(true);
+		}
+
+	}
+	if (key == GLFW_KEY_DOWN && action == GLFW_REPEAT) {
+
+	}
+
+	if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
+
+		if (gameREFERENCE->getSpellComboMode() == true) {
+			//DO NOTHING, the element was already added when it was initally pressed
+
+		}
+		else
+		{
+			//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackDown(false);
+		}
+	}
+
+
 
 
 	/*
@@ -472,20 +633,55 @@ void Game::setupBuffers() {
 //this function updates ALL renderable entities
 void Game::update(double dt) {
 
+	//destroy all renderables in the pending destroy vector
+	std::multimap<int, Renderable*>::iterator itr;
+	
+	
+	if (!renderQueue.empty())
+	{
+		//remove any renderables that should be destroyed
+		for (itr = renderQueue.begin(); itr != renderQueue.end(); ) {
+
+			if (itr->second->shouldDestroy()) {
+				itr = renderQueue.erase(itr);
+			}
+			else
+			{
+				++itr;
+			}
+
+		}
+	}
+
+	
+
+
+
 	if (!paused) {
 		//this means that the game is not paused, so update all renderables here
 
-		std::multimap<int, Renderable*>::iterator itr;
-
-		for (itr = renderQueue.begin(); itr != renderQueue.end(); ++itr) {
-			itr->second->update(dt);
+		
+		if (!renderQueue.empty())
+		{
+			for (itr = renderQueue.begin(); itr != renderQueue.end(); ++itr) {
+				itr->second->update(dt);
+			}
 		}
+		
 
 	}
 
 
 
-
+	//add any new renderables in the pending add vector
+	while (!pendingAdd.empty())
+	{
+		for (Renderable* r : pendingAdd) {
+			renderQueue.insert(std::pair<int, Renderable*>(r->renderOrder, r));
+		}
+		
+		pendingAdd.clear();
+	}
 
 }
 
@@ -507,6 +703,13 @@ void Game::render() {
 void Game::cleanup() {
 
 }
+
+
+void Game::renderableToPendingAdd(Renderable* r) {
+	pendingAdd.push_back(r);
+}
+
+
 
 //getters and setters
 GLFWwindow* Game::getWindow() { return window; }

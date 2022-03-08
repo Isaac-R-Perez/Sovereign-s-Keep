@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Basic_Attack.h"
 
 Player::Player(Game* game, int rOrder, int w, int h, int c, std::string path)
 	:Character(game, rOrder, w, h, c, path)
@@ -26,6 +27,7 @@ Player::Player(Game* game, int rOrder, int w, int h, int c, std::string path)
 	ATTACK_RIGHT = false;
 
 	CAN_BASIC_ATTACK = true;
+	basicAttackCooldown = 0.0f;
 
 	USING_SPELL = false;
 
@@ -35,7 +37,61 @@ Player::Player(Game* game, int rOrder, int w, int h, int c, std::string path)
 
 void Player::update(double dt) {
 	
-	printf("x = %f,  y = %f\n", getOrigin().x, getOrigin().y);
+	//printf("x = %f,  y = %f\n", getOrigin().x, getOrigin().y);
+
+	Renderable* spawnedBasicAttack = nullptr;
+
+
+	if (basicAttackCooldown > 0.0f && !CAN_BASIC_ATTACK) {
+		basicAttackCooldown -= dt;
+	}
+	else
+	{
+		basicAttackCooldown = 0.0f;
+		CAN_BASIC_ATTACK = true;
+	}
+
+
+	//player can attack so check which direction to fire
+	if (CAN_BASIC_ATTACK) {
+
+		if (ATTACK_UP) {
+
+
+
+			//UPDATE THIS LATER TO ACCOUNT FOR BUFFED BASIC ATTACK COOLDOWN REDUCTION
+			basicAttackCooldown = BASE_BASIC_ATTACK_COOLDOWN;
+			CAN_BASIC_ATTACK = false;
+		}
+		else if (ATTACK_RIGHT) {
+
+			spawnedBasicAttack = new Basic_Attack(getGame(), 3, 22, 14, 3, "images/player/basic_attack.png");
+
+			glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
+
+			spawnedBasicAttack->updatePosition(move);
+
+
+			getGame()->renderableToPendingAdd(spawnedBasicAttack);
+
+			//UPDATE THIS LATER TO ACCOUNT FOR BUFFED BASIC ATTACK COOLDOWN REDUCTION
+			basicAttackCooldown = BASE_BASIC_ATTACK_COOLDOWN;
+			CAN_BASIC_ATTACK = false;
+		}
+		else if (ATTACK_DOWN) {
+
+		}
+		else if (ATTACK_LEFT) {
+
+		}
+
+	}
+
+
+
+
+
+
 
 	//handle all movement, firing, spell casting, dying, and such logic
 	glm::mat4 move = glm::mat4(1.0f);
@@ -63,7 +119,7 @@ void Player::update(double dt) {
 
 	glm::normalize(movementVector);
 
-	move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * BASE_SPEED, movementVector.y * dt * BASE_SPEED, 0.0f));
+	move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * PLAYER_BASE_SPEED, movementVector.y * dt * PLAYER_BASE_SPEED, 0.0f));
 
 	updatePosition(move);
 

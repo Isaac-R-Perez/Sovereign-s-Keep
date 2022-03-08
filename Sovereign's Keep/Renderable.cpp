@@ -49,6 +49,8 @@ Renderable::Renderable(Game* g, int rOrder, int w, int h, int c, std::string pat
 
 	setTexture(w, h, c, path); //generate the texture for this renderable
 
+	destroy = false;
+
 }
 
 

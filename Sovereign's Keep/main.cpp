@@ -3,14 +3,13 @@
 /*
 	Have a TODO list here?
 
-	>NEED A NEW WAY TO ORGANIZE THE RENDER ORDER, a new priority queue implementation?
 
 	> Add status to be applied to objects of the Character class
 	> Define and code each status
 	> Create an enemy class if we need one
 
-	> Create a player class which derives from Character
-	> Add controls for the game, this includes keyboard and mouse
+	> Finish player class by having logic to handle creating basic attacks and spell combo/casting
+	> Finish controls by adding basic attack and spell combination
 	> Add a BasicBullet class which is a renderable that holds all of the logic for the player's basic attack, including being modified by statuses and buffs
 	> Add pause functionality into the code, the game should stop "updating" everything that is not a menu but should still render normally
 	> Create the GUI system

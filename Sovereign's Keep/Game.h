@@ -46,6 +46,8 @@ public:
 	void setupBuffers();
 
 
+	void renderableToPendingAdd(Renderable* r);
+
 
 
 	//getters and setters
@@ -60,7 +62,11 @@ public:
 	bool isPaused() { return paused; }
 	bool setPaused(bool p) { paused = p; }
 
+	bool getSpellComboMode() { return spellComboMode; }
+	void setSpellComboMode(bool b) { spellComboMode = b; }
 	Renderable* getPlayer() { return player; }
+
+
 
 private:
 
@@ -94,6 +100,9 @@ private:
 	*/
 	std::multimap<int, Renderable*> renderQueue;
 
+	std::vector<Renderable*> pendingAdd;
+	std::vector<Renderable*> pendingDestroy;
+
 	//used for default buffer creation
 	
 	std::vector<GLfloat> vertices;
@@ -105,6 +114,7 @@ private:
 	//use this pointer for ease of referencing the player, be sure to also add/change this pointer to/and the renderQueue!
 	Renderable* player;
 
-
+	//true if SHIFT is held
+	bool spellComboMode;
 
 };
