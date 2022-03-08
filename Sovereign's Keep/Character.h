@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-//#include <vector>
+#include <vector>
 using namespace std;
 #include "Renderable.h"
 #include "Status.h"
@@ -19,27 +19,19 @@ private:
 	float maxHealth;
 	float currentHealth;
 	float baseAttack;
-	float currentAttack;
 	float baseDefense;
-	float currentDefense;
-	float baseMoveSpeed = 1.0;
-	float currentMoveSpeed;
+	float moveSpeed = 1.0;
 
 	struct Buff
 	{
 		float amt, time;
-
 		Buff(float amt, float time) : amt(amt), time(time)
 		{
-			
 		}
 	};
 	vector<Buff> atkBuff;
 	vector<Buff> defBuff;
 	vector<Buff> spdBuff;
-	float atkBuffTotal;
-	float defBuffTotal;
-	float spdBuffTotal;
 
 	//Higher number means they take more damage.
 	//Ex. 1.5 means they take 50% more damage for that element.
@@ -57,8 +49,6 @@ public:
 	Character(Game* game, int rOrder, int w, int h, int c, std::string path);
 
 	
-
-
 	Status status;
 	void statusEffect();
 
@@ -68,6 +58,14 @@ public:
 	void restoreHealth(float amt);
 	void removeHealth(float amt);
 	void fullHeal();
+
+	float getAttack(); //Returns the final calculation after buff/debuff
+	float getBaseAttack();
+	void setBaseAttack(float amt);
+	float getDefense();
+	float getBaseDefense();
+	void setBaseDefense(float amt);
+	float getMoveSpeed();
 	
 	void buffAttack(float amt, float time);
 	void clearAttackBuffs();
