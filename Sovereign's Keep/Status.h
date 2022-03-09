@@ -35,18 +35,18 @@ public:
 	void setConductive();
 	void setStunned();
 
-	float getDuration();
-	void setDuration(float amt);
+	float getDuration() { return statusDuration; }
+	void setDuration(float amt) { statusDuration = amt; }
 
-	float getDOT();
+	float getDOT() { return DOT; }
 
-	bool isNormal();
-	bool isBurning();
-	bool isWet();
-	bool isChilled();
-	bool isFrozen();
-	bool isConductive();
-	bool isStunned();
+	bool isNormal() { return Normal; }
+	bool isBurning() { return Burning; }
+	bool isWet() { return Wet; }
+	bool isChilled() { return Chilled; }
+	bool isFrozen() { return Frozen; }
+	bool isConductive() { return Conductive; }
+	bool isStunned() { return Stunned; }
 };
 
 /*

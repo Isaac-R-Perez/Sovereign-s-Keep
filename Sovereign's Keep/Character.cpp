@@ -7,7 +7,7 @@ Character::Character(Game* game, int rOrder, int w, int h, int c, std::string pa
 }
 
 
-void Character::statusEffect()
+void Character::updateEffects()
 {
 	/*
 	* This function should be run every frame of the game.
@@ -15,6 +15,8 @@ void Character::statusEffect()
 	* effect while reducing the timer for that status.
 	* Will also handle buffs/debuffs.
 	*/
+
+	currentMoveSpeed = getMoveSpeed();
 
 	//STATUS DURATION
 	if (status.getDuration() > 0.0)
@@ -118,6 +120,6 @@ float Character::getMoveSpeed()
 		{
 			buffTotal += spdBuff[i].amt;
 		}
-		return moveSpeed + buffTotal;
+		return baseMoveSpeed + buffTotal;
 	}
 }

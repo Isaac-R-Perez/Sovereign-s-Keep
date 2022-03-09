@@ -175,7 +175,8 @@ void Status::setConductive()
 	}
 	if (Wet)
 	{
-		setNormal();
+		Wet = false;
+		setStunned();
 		return;
 	}
 	if (Chilled)
@@ -237,55 +238,4 @@ void Status::setStunned()
 		statusDuration = stunnedDuration;
 		DOT = 0.0f;
 	}
-}
-
-//GETTERS and SETTERS
-float Status::getDuration()
-{
-	return statusDuration;
-}
-
-void Status::setDuration(float amt)
-{
-	statusDuration = amt;
-}
-
-float Status::getDOT()
-{
-	return DOT;
-}
-
-bool Status::isNormal()
-{
-	return Normal;
-}
-
-bool Status::isBurning()
-{
-	return Burning;
-}
-
-bool Status::isWet()
-{
-	return Wet;
-}
-
-bool Status::isChilled()
-{
-	return Chilled;
-}
-
-bool Status::isFrozen()
-{
-	return Frozen;
-}
-
-bool Status::isConductive()
-{
-	return Conductive;
-}
-
-bool Status::isStunned()
-{
-	return Stunned;
 }

@@ -20,7 +20,8 @@ private:
 	float currentHealth;
 	float baseAttack;
 	float baseDefense;
-	float moveSpeed = 1.0;
+	float baseMoveSpeed = 1.0;
+	float currentMoveSpeed = 1.0;
 
 	float fireDMG = 1.0;
 	float waterDMG = 1.0;
@@ -70,9 +71,10 @@ public:
 
 	
 	Status status;
-	void statusEffect();
+	void updateEffects();
 	void updateBuff(vector<Buff>& buff);
 
+	//HEALTH
 	float getCurrentHealth() { return currentHealth; }
 	float getMaxHealth() { return maxHealth; }
 	void setMaxHealth(float amt) { maxHealth = amt; }
@@ -80,14 +82,22 @@ public:
 	void removeHealth(float amt);
 	void fullHeal() { currentHealth = maxHealth; }
 
+	//ATTACK
 	float getAttack(); //Returns the final calculation after buff/debuff
 	float getBaseAttack() { return baseAttack; }
 	void setBaseAttack(float amt) { baseAttack = amt; }
+
+	//DEFENSE
 	float getDefense();
 	float getBaseDefense() { return baseDefense; }
 	void setBaseDefense(float amt) { baseDefense = amt; }
-	float getMoveSpeed();
 
+	//MOVE SPEED
+	float getMoveSpeed();
+	float getBaseMoveSpeed() { return baseMoveSpeed; }
+	void setBaseMoveSpeed(float amt) { baseMoveSpeed = amt; }
+
+	//RESISTANCE
 	void setFireRES(float amt) { fireRES = amt; }
 	void setWaterRES(float amt) { waterRES = amt; }
 	void setEarthRES(float amt) { earthRES = amt; }
