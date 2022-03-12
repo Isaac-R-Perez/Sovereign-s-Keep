@@ -6,7 +6,7 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 {
 	glm::mat4 resize = glm::mat4(1.0f);
 
-	resize = glm::scale(glm::mat4(1.0f), glm::vec3(0.0425f, 0.0825f, 0.0f));
+	resize = glm::scale(glm::mat4(1.0f), glm::vec3(0.0275f, 0.0725f, 0.0f));
 	this->setO2W(resize);
 
 
