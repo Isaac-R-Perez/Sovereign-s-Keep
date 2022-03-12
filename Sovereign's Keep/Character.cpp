@@ -1,7 +1,7 @@
 #include "Character.h"
 
-Character::Character(Game* game, int rOrder, int w, int h, int c, std::string path)
-	:Renderable(game, rOrder, w, h, c, path)
+Character::Character(Game* g, int rOrder, int defaultSpriteSheet)
+	:Renderable(g, rOrder, defaultSpriteSheet)
 {
 	
 }

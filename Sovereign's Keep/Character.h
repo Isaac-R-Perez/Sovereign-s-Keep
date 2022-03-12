@@ -67,7 +67,7 @@ private:
 
 public:
 
-	Character(Game* game, int rOrder, int w, int h, int c, std::string path);
+	Character(Game* g, int rOrder, int defaultSpriteSheet);
 
 	
 	Status status;

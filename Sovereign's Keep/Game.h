@@ -22,11 +22,19 @@ This class holds all references to all entities in the game. The main class. Wil
 
 const float SCREEN_Y_MOVE_MODIFIER = 1.7777f;
 
+enum class SPRITE_SHEETS
+{
+	player_default, player_idle, player_walking, player_attacking, player_casting, background,
+};
 
 
 class Game {
 
 public:
+
+	//this is the int value for the map of all textures, use the names included here to generate new textures in the loadAllTextures function.
+	
+
 
 	Game();
 	
@@ -48,7 +56,16 @@ public:
 
 	void renderableToPendingAdd(Renderable* r);
 
+	//this function will generate every single texture into the map of all textures
+	void loadAllTextures();
 
+	//this function generates one specified texture
+	void generateTexture(GLuint &tex, int w, int h, int nrC, std::string path);
+
+	//input TOP-LEFT xy, TOP_RIGHT xy, BOTTOM_RIGHT xy texture coordinates
+	void setTextureCoordinates(float TRx, float TRy, float BRx, float BRy, float BLx, float BLy, float TLx, float TLy);
+
+	void resetTextureCoordinates();
 
 	//getters and setters
 
@@ -65,6 +82,10 @@ public:
 	bool getSpellComboMode() { return spellComboMode; }
 	void setSpellComboMode(bool b) { spellComboMode = b; }
 	Renderable* getPlayer() { return player; }
+
+	//send in the enum name that corresponds to the spritesheet, should get a reference to that texture in the form of a GLuint
+	GLuint& getTextureFromMap(int a);
+
 
 
 
@@ -99,6 +120,13 @@ private:
 	6 - MENU objects
 	*/
 	std::multimap<int, Renderable*> renderQueue;
+
+	//will hold all sprite sheets for EVERYTHING IN THE GAME, use an ENUM for the int
+	std::map<int, GLuint> allSpriteSheets;
+
+	//used for generating textures
+	unsigned char* data;
+	GLuint generatedTexture;
 
 	std::vector<Renderable*> pendingAdd;
 	std::vector<Renderable*> pendingDestroy;

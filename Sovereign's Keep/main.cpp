@@ -20,9 +20,16 @@
 	> Add file system to store and track all player unlocks
 	> Add monster soul mechanic to unlock new elements and stuff for the player
 	> Implement a randomized wave system in conjunction will a level system that runs on a timer
+	> Audio system
 	> Add final boss??
 
+
+
+	>implement mechanic for "single element spells", basically just element buffs that scale with element level
+
 */
+
+
 
 int main() {
 	//game class

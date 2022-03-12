@@ -11,7 +11,7 @@ class Background : public Renderable {
 
 public:
 
-	Background(Game* game, int rOrder, int w, int h, int c, std::string path);
+	Background(Game* g, int rOrder, int defaultSpriteSheet);
 
 	void render() ;
 

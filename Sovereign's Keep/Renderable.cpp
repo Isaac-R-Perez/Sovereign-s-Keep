@@ -10,44 +10,20 @@
 	This function takes in the width, height, color channels, and the path of the image to generate and bind a texture to this renderable.
 	These must be given every time a new renderable is created!
 */
-void Renderable::setTexture(int w, int h, int nrC, std::string path) {
-	textureWidth = w;
-	textureHeight = h;
-	nrChannels = nrC;
 
-	stbi_set_flip_vertically_on_load(true);
-
-	data = stbi_load(path.c_str(), &textureWidth, &textureHeight, &nrChannels, 0);
-
-	if (!data) {
-		printf("Failed to load texture!\n");
-	}
-
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	//generate the texture
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	stbi_image_free(data);
-
+void Renderable::setTexture(int spriteSheet) {
+	texture = game->getTextureFromMap(spriteSheet);
 }
 
 
-Renderable::Renderable(Game* g, int rOrder, int w, int h, int c, std::string path) {
+Renderable::Renderable(Game* g, int rOrder, int defaultSpriteSheet) {
 	game = g;
 	renderOrder = rOrder;
 
 	objectToWorld = glm::mat4(1.0f);
 	origin = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	setTexture(w, h, c, path); //generate the texture for this renderable
+	setTexture(defaultSpriteSheet); //generate the texture for this renderable
 
 	destroy = false;
 

@@ -134,6 +134,36 @@ Game::Game() {
 
 
 
+
+
+
+void Game::loadAllTextures() {
+
+	//background
+	generateTexture(generatedTexture, 1920, 1080, 3, "images/background/demo_background.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::background), generatedTexture));
+	
+	//player default
+	generateTexture(generatedTexture, 17, 29, 3, "images/player/player_default.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_default), generatedTexture));
+
+
+	//player idle
+	generateTexture(generatedTexture, 68, 30, 3, "images/player/player_idle_animation.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_idle), generatedTexture));
+
+
+
+
+
+}
+
+
+
+
+
+
+
 /*
 	GAME CONTROLS and CONTROLS LOGIC
 */
@@ -186,6 +216,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	if (key == GLFW_KEY_W && action == GLFW_PRESS) {
 
 		//printf("w key pressed\n");
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(true);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingUp(true);
 
 	}
@@ -195,13 +226,14 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 	if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
 
-		
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(false);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingUp(false);
 	}
 
 
 	//move down
 	if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(true);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingDown(true);
 	}
 	if (key == GLFW_KEY_S && action == GLFW_REPEAT) {
@@ -209,13 +241,14 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	}
 	//move backward
 	if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(false);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingDown(false);
 	}
 
 
 	//move left
 	if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(true);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
@@ -227,7 +260,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	}
 	//move left
 	if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
-
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(false);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(false);
 
 
@@ -235,7 +268,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 	//move right
 	if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(true);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
@@ -245,6 +278,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	}
 	//move right
 	if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(false);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(false);
 	}
 
@@ -288,6 +322,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		else
 		{
 			//SHIFT IS NOT HELD, so fire a basic attack in the left direction
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttacking(true);
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(true);
 			//printf("basic attack left\n");
 		}
@@ -306,6 +341,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		else
 		{
 			//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttacking(false);
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(false);
 		}
 	}
@@ -319,11 +355,6 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 			//this means that the player is trying to input their element 2.
 
 		}
-		else
-		{
-			//SHIFT IS NOT HELD, so fire a basic attack in the left direction
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackUp(true);
-		}
 
 	}
 	if (key == GLFW_KEY_UP && action == GLFW_REPEAT) {
@@ -335,11 +366,6 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		if (gameREFERENCE->getSpellComboMode() == true) {
 			//DO NOTHING, the element was already added when it was initally pressed
 
-		}
-		else
-		{
-			//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackUp(false);
 		}
 	}
 
@@ -354,6 +380,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		else
 		{
 			//SHIFT IS NOT HELD, so fire a basic attack in the left direction
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttacking(true);
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(true);
 		}
 
@@ -371,6 +398,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		else
 		{
 			//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttacking(false);
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(false);
 		}
 	}
@@ -385,11 +413,6 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 			//this means that the player is trying to input their element 3.
 
 		}
-		else
-		{
-			//SHIFT IS NOT HELD, so fire a basic attack in the left direction
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackDown(true);
-		}
 
 	}
 	if (key == GLFW_KEY_DOWN && action == GLFW_REPEAT) {
@@ -401,11 +424,6 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		if (gameREFERENCE->getSpellComboMode() == true) {
 			//DO NOTHING, the element was already added when it was initally pressed
 
-		}
-		else
-		{
-			//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackDown(false);
 		}
 	}
 
@@ -522,20 +540,22 @@ bool Game::initialize() {
 
 	setupBuffers();
 
-
+	loadAllTextures();
 
 
 	
 	
 
-
-	Renderable* b = new Background(this, 1, 1920, 1080, 3, "images/background/demo_background.png");
+	//update
+	//Renderable* b = new Background(this, 1, 1920, 1080, 3, "images/background/demo_background.png");
 	
+	//renderQueue.insert(pair<int, Renderable*>(b->renderOrder, b));
+	
+	Renderable* b = new Background(this, 1, static_cast<int>(SPRITE_SHEETS::background));
 	renderQueue.insert(pair<int, Renderable*>(b->renderOrder, b));
 	
-	
 
-	player = new Player(this, 2, 19, 29, 3, "images/player/player_idle.png");
+	player = new Player(this, 2, static_cast<int>(SPRITE_SHEETS::player_default));
 	
 	renderQueue.insert(pair<int, Renderable*>(player->renderOrder, player));
 
@@ -548,7 +568,7 @@ bool Game::initialize() {
 
 void Game::setupBuffers() {
 	
-	
+	//top right
 	vertices.emplace_back(1.0f);
 	vertices.emplace_back(1.0f); //positions
 	vertices.emplace_back(0.0f);
@@ -561,6 +581,7 @@ void Game::setupBuffers() {
 	vertices.emplace_back(1.0f); //texture coords
 
 
+	//bottom right
 	vertices.emplace_back(1.0f);
 	vertices.emplace_back(-1.0f); //positions
 	vertices.emplace_back(0.0f);
@@ -572,7 +593,7 @@ void Game::setupBuffers() {
 	vertices.emplace_back(1.0f);
 	vertices.emplace_back(0.0f); //texture coords
 
-
+	//bottom left
 	vertices.emplace_back(-1.0f);
 	vertices.emplace_back(-1.0f); //positions
 	vertices.emplace_back(0.0f);
@@ -584,6 +605,7 @@ void Game::setupBuffers() {
 	vertices.emplace_back(0.0f);
 	vertices.emplace_back(0.0f); //texture coords
 
+	//top left
 	vertices.emplace_back(-1.0f);
 	vertices.emplace_back(1.0f); //positions
 	vertices.emplace_back(0.0f);
@@ -709,7 +731,86 @@ void Game::renderableToPendingAdd(Renderable* r) {
 	pendingAdd.push_back(r);
 }
 
+void Game::generateTexture(GLuint &tex, int w, int h, int nrC, std::string path) {
+	
 
+	stbi_set_flip_vertically_on_load(true);
+
+	data = stbi_load(path.c_str(), &w, &h, &nrC, 0);
+
+	if (!data) {
+		printf("Failed to load texture!\n");
+	}
+
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	//generate the texture
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	stbi_image_free(data);
+
+}
+
+
+void Game::resetTextureCoordinates() {
+	
+
+	//top right
+	vertices.at(6) = 1.0f;
+	vertices.at(7) = 1.0f;
+
+	//bottom right
+	vertices.at(14) = 1.0f;
+	vertices.at(15) = 0.0f;
+
+	//bottom left
+	vertices.at(22) = 0.0f;
+	vertices.at(23) = 0.0f;
+
+	//top left
+	vertices.at(30) = 0.0f;
+	vertices.at(31) = 1.0f;
+
+	glBufferData(GL_ARRAY_BUFFER, 32 * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
+}
+
+void Game::setTextureCoordinates(float TRx, float TRy, float BRx, float BRy, float BLx, float BLy, float TLx, float TLy)
+{
+	//top right
+	vertices.at(6) = TRx;
+	vertices.at(7) = TRy;
+
+	//bottom right
+	vertices.at(14) = BRx;
+	vertices.at(15) = BRy;
+
+	//bottom left
+	vertices.at(22) = BLx;
+	vertices.at(23) = BLy;
+
+	//top left
+	vertices.at(30) = TLx;
+	vertices.at(31) = TLy;
+
+	
+
+	
+
+	glBufferData(GL_ARRAY_BUFFER, 32 * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
+}
+
+
+GLuint& Game::getTextureFromMap(int a)
+{
+	return allSpriteSheets.find(a)->second;
+}
 
 //getters and setters
 GLFWwindow* Game::getWindow() { return window; }

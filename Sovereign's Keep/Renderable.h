@@ -14,7 +14,7 @@ class Renderable {
 public:
 
 
-	Renderable(Game* g, int rOrder, int w, int h, int c, std::string path);
+	Renderable(Game* g, int rOrder, int defaultSpriteSheet);
 	~Renderable() {}
 
 	//these are overriden!
@@ -44,8 +44,6 @@ public:
 	
 
 
-	void setTexture(int w, int h, int nrC, std::string path);
-
 
 	//this function adds this renderable to the pendingDestroy vector
 	void kill() { destroy = true; }
@@ -67,6 +65,8 @@ public:
 
 	GLuint getTexture() { return texture; }
 
+	void setTexture(int spriteSheet);
+
 	//Send this a transformation matrix to move both the renderable and its origin.
 	void updatePosition(glm::mat4 transform);
 
@@ -82,6 +82,8 @@ private:
 	//origin?
 	glm::vec3 origin;
 
+
+	//REMOVE THESE EVENTUALLY
 	//texture for the renderable, need width, height, color channels, and the unsigned char* for the actual image
 	int textureWidth;
 	int textureHeight;

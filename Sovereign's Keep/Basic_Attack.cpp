@@ -1,7 +1,7 @@
 #include "Basic_Attack.h"
 
-Basic_Attack::Basic_Attack(Game* game, int rOrder, int w, int h, int c, std::string path)
-	:Renderable(game, rOrder, w, h, c, path) {
+Basic_Attack::Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet)
+	:Renderable(g, rOrder, defaultSpriteSheet) {
 
 	glm::mat4 resize = glm::mat4(1.0f);
 

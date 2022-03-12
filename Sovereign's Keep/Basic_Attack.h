@@ -12,7 +12,7 @@ class Basic_Attack : public Renderable {
 
 public:
 
-	Basic_Attack(Game* game, int rOrder, int w, int h, int c, std::string path);
+	Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet);
 
 	void render();
 	void update(double dt);
