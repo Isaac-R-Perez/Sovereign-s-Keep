@@ -361,12 +361,14 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 			if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingRight()) {
 
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setStartAttacking(true);
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(true);
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
 			}
 			else
 			{
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setStartAttacking(true);
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(true);
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
@@ -430,12 +432,14 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 			if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingLeft()) {
 
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setStartAttacking(true);
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(true);
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
 			}
 			else
 			{
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setStartAttacking(true);
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(true);
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);

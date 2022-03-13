@@ -17,7 +17,7 @@ const float BASE_BASIC_ATTACK_COOLDOWN = 0.3f; //this is unused as the FRAME TIM
 
 const float PLAYER_IDLE_FRAME_TIME = 0.55f;
 const float PLAYER_WALKING_FRAME_TIME = 0.1f;
-const float PLAYER_ATTACKING_FRAME_TIME = 0.08f;
+const float PLAYER_ATTACKING_FRAME_TIME = 0.09f;
 const float PLAYER_CASTING_FRAME_TIME = 0.15f;
 
 
@@ -30,10 +30,10 @@ const int CASTING_FRAMES = 7;
 const float ATTACK_SCALE_START_X = 1.2f;
 const float ATTACK_SCALE_START_Y = 1.0f;
 
-const float ATTACK_SCALE_END_X = 1.75;
-const float ATTACK_SCALE_END_Y = 1.35f;
+const float ATTACK_SCALE_END_X = 1.5;
+const float ATTACK_SCALE_END_Y = 1.25f;
 
-class Player: public Character
+class Player : public Character
 {
 private:
 	int monsterSouls; //Stores the monster souls collected during the run.
@@ -48,10 +48,10 @@ private:
 	bool MOVING_RIGHT;
 	bool MOVING_LEFT;
 
-	
+
 
 	//these are for the arrow key basic attack directions
-	
+
 	bool ATTACK_RIGHT;
 	bool ATTACK_LEFT;
 
@@ -65,15 +65,15 @@ private:
 
 	//true if the basic attack cooldown is 0.0f
 	bool CAN_BASIC_ATTACK;
-
-	
+	bool START_ATTACKING;
+	bool LOOP_FORWARD;
 
 	//time until the player can use another basic attack
 	float basicAttackCooldown;
 
 
 	int current_frame;
-	
+
 	float animationTimer;
 	float idleTimer;
 	float walkingTimer;
@@ -116,11 +116,12 @@ public:
 	void setMovingLeft(bool b) { MOVING_LEFT = b; }
 	void setMovingRight(bool b) { MOVING_RIGHT = b; }
 
-	
+
 	void setAttackLeft(bool b) { ATTACK_LEFT = b; }
 	void setAttackRight(bool b) { ATTACK_RIGHT = b; }
 
 	void setAttacking(bool b) { ATTACKING = b; }
+	void setStartAttacking(bool b) { START_ATTACKING = b; }
 	void setMoving(bool b) { MOVING = b; }
 	void setCasting(bool b) { CASTING = b; }
 

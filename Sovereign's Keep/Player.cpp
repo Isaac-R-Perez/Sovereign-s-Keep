@@ -33,6 +33,8 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	CAN_BASIC_ATTACK = false;
 	basicAttackCooldown = 0.0f;
 
+	START_ATTACKING = true;
+	LOOP_FORWARD = true;
 
 	animationTimer = 0.0f;
 	idleTimer = PLAYER_IDLE_FRAME_TIME;
@@ -122,23 +124,38 @@ void Player::update(double dt) {
 			basicAttackCooldown = 0.0f;
 		}
 
-		//play attack animation
-		if (current_frame > ATTACK_FRAMES) {
+
+
+		if (START_ATTACKING) {
 			current_frame = 0;
+			LOOP_FORWARD = true;
+			START_ATTACKING = false;
 		}
 
-		if (attackingTimer > 0.0f) {
-			attackingTimer -= dt;
-		}
-		else
-		{
-			attackingTimer = PLAYER_ATTACKING_FRAME_TIME;
-			current_frame++;
+		
 
-			if (current_frame > ATTACK_FRAMES) {
-				current_frame = 0;
+
+		if (LOOP_FORWARD) {
+
+			if (attackingTimer > 0.0f) {
+				attackingTimer -= dt;
 			}
+			else
+			{
+				current_frame++;
+
+				if (current_frame > 9)
+				{
+					current_frame = 3;
+				}
+				attackingTimer = PLAYER_ATTACKING_FRAME_TIME;
+			}
+
+			
+
 		}
+
+		
 
 		if (basicAttackCooldown == 0.0f) {
 			if (current_frame == 3)
