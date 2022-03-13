@@ -67,17 +67,20 @@ void Player::update(double dt) {
 
 	
 
-	if (MOVING || MOVING && ATTACKING) {
+	if (MOVING && ATTACKING) {
 		//player is current moving with WASD, so set animation to walking
 		//even if the player is attacking, the walking animation overrides this, but player will attack slower
 
-		animationState = states::walking;
+		animationState = states::attacking;
 
 	}
 	else if (ATTACKING) {
 		//if the player is just attacking and standing still
 		animationState = states::attacking;
 		
+	}
+	else if (MOVING) {
+		animationState = states::walking;
 	}
 	else if (CASTING) {
 		//player is just initiated a spell, so STOP MOVEMENT AND DO NOT LET PLAYER ATTACK
@@ -190,7 +193,13 @@ void Player::update(double dt) {
 				
 
 				//UPDATE THIS LATER TO ACCOUNT FOR BUFFED BASIC ATTACK COOLDOWN REDUCTION
-				basicAttackCooldown = PLAYER_ATTACKING_FRAME_TIME;
+
+				if (MOVING) {
+					basicAttackCooldown = PLAYER_ATTACKING_FRAME_TIME;
+				}
+				else {
+					basicAttackCooldown = PLAYER_ATTACKING_FRAME_TIME * 0.52f;
+				}
 
 
 				CAN_BASIC_ATTACK = false;
@@ -204,7 +213,7 @@ void Player::update(double dt) {
 
 
 	}
-	else if (animationState == states::walking && !ATTACKING)
+	else if (animationState == states::walking)
 	{
 		//play walking animation based on the direction the player is facing
 		if (current_frame > WALKING_FRAMES) {
@@ -224,29 +233,6 @@ void Player::update(double dt) {
 			}
 		}
 
-
-
-	}
-	else if (animationState == states::walking && ATTACKING) {
-		//play walking animation based on the direction the player is facing
-		if (current_frame > WALKING_FRAMES) {
-			current_frame = 0;
-		}
-
-		if (walkingTimer > 0.0f) {
-			walkingTimer -= dt;
-		}
-		else
-		{
-			walkingTimer = PLAYER_WALKING_FRAME_TIME;
-			current_frame++;
-
-			if (current_frame > WALKING_FRAMES) {
-				current_frame = 0;
-			}
-		}
-
-		//create attacks here based on basic_attack cooldown and in direction faced
 
 
 	}

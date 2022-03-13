@@ -263,13 +263,16 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	if (key == GLFW_KEY_A && action == GLFW_PRESS) {
 
 
-		if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingRight()) {
+		if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingRight() && !dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getAttackingRight()) {
 
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
 
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+		}
+		else if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getAttackingRight()) {
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
 		}
 		else {
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
@@ -293,13 +296,16 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	if (key == GLFW_KEY_D && action == GLFW_PRESS) {
 		
 
-		if(dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingLeft()){
+		if(dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingLeft() && !dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getAttackingLeft()){
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
 
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
 
+		}
+		else if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getAttackingLeft()) {
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
 		}
 		else {
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
@@ -378,6 +384,8 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 	}
 	if (key == GLFW_KEY_LEFT && action == GLFW_REPEAT) {
+		
+
 
 	}
 	

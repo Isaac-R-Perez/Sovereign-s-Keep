@@ -127,6 +127,8 @@ public:
 
 	bool getFacingRight() { return FACING_RIGHT; }
 	bool getFacingLeft() { return FACING_LEFT; }
+	bool getAttackingLeft() { return ATTACK_LEFT; }
+	bool getAttackingRight() { return ATTACK_RIGHT; }
 
 	void render();
 	void update(double dt);
