@@ -156,11 +156,21 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 312, 56, 3, "images/player/player_walking_animation_X2.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_walking), generatedTexture));
 
+	//player attacking
+	generateTexture(generatedTexture, 450, 35, 3, "images/player/player_attack_animation.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_attacking), generatedTexture));
+
+
+	
 	//player casting
 	generateTexture(generatedTexture, 224, 29, 3, "images/player/player_casting_animation.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_casting), generatedTexture));
 
 
+
+	//basic attack
+	generateTexture(generatedTexture, 224, 29, 3, "images/player/basic_attack.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::basic_attack), generatedTexture));
 
 
 }
@@ -347,8 +357,21 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		else
 		{
 			//SHIFT IS NOT HELD, so fire a basic attack in the left direction
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(true);
 			//printf("basic attack left\n");
+			if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingRight()) {
+
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(true);
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+			}
+			else
+			{
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(true);
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+			}
+
 		}
 
 	}
@@ -403,7 +426,21 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		else
 		{
 			//SHIFT IS NOT HELD, so fire a basic attack in the left direction
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(true);
+
+			if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingLeft()) {
+
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(true);
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
+			}
+			else
+			{
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(true);
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
+			}
+
 		}
 
 	}

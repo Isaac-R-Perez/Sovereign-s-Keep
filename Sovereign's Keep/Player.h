@@ -13,11 +13,11 @@ const int MAX_MONSTER_SOULS = 999;
 const int INITIAL_MAX_MANA = 100;
 
 const float PLAYER_BASE_SPEED = 0.3f;
-const float BASE_BASIC_ATTACK_COOLDOWN = 0.2f;
+const float BASE_BASIC_ATTACK_COOLDOWN = 0.3f; //this is unused as the FRAME TIME determines attack speed
 
 const float PLAYER_IDLE_FRAME_TIME = 0.55f;
 const float PLAYER_WALKING_FRAME_TIME = 0.1f;
-const float PLAYER_ATTACKING_FRAME_TIME = 0.25f;
+const float PLAYER_ATTACKING_FRAME_TIME = 0.08f;
 const float PLAYER_CASTING_FRAME_TIME = 0.15f;
 
 
@@ -25,6 +25,13 @@ const int IDLE_FRAMES = 3;
 const int ATTACK_FRAMES = 9;
 const int WALKING_FRAMES = 5;
 const int CASTING_FRAMES = 7;
+
+
+const float ATTACK_SCALE_START_X = 1.2f;
+const float ATTACK_SCALE_START_Y = 1.0f;
+
+const float ATTACK_SCALE_END_X = 1.75;
+const float ATTACK_SCALE_END_Y = 1.35f;
 
 class Player: public Character
 {

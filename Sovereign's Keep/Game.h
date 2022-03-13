@@ -24,7 +24,7 @@ const float SCREEN_Y_MOVE_MODIFIER = 1.7777f;
 
 enum class SPRITE_SHEETS
 {
-	player_default, player_idle, player_walking, player_attacking, player_casting, background,
+	player_default, player_idle, player_walking, player_attacking, player_casting, background, basic_attack
 };
 
 

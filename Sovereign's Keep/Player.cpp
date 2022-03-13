@@ -30,7 +30,7 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	ATTACK_LEFT = false;
 	ATTACK_RIGHT = false;
 
-	CAN_BASIC_ATTACK = true;
+	CAN_BASIC_ATTACK = false;
 	basicAttackCooldown = 0.0f;
 
 
@@ -62,6 +62,8 @@ void Player::update(double dt) {
 	//true if ONE OF THESE IS TRUE
 	MOVING = (MOVING_UP || MOVING_RIGHT || MOVING_DOWN || MOVING_LEFT);
 	ATTACKING = (ATTACK_LEFT || ATTACK_RIGHT);
+
+	
 
 	if (MOVING || MOVING && ATTACKING) {
 		//player is current moving with WASD, so set animation to walking
@@ -118,7 +120,34 @@ void Player::update(double dt) {
 		else
 		{
 			basicAttackCooldown = 0.0f;
-			CAN_BASIC_ATTACK = true;
+		}
+
+		//play attack animation
+		if (current_frame > ATTACK_FRAMES) {
+			current_frame = 0;
+		}
+
+		if (attackingTimer > 0.0f) {
+			attackingTimer -= dt;
+		}
+		else
+		{
+			attackingTimer = PLAYER_ATTACKING_FRAME_TIME;
+			current_frame++;
+
+			if (current_frame > ATTACK_FRAMES) {
+				current_frame = 0;
+			}
+		}
+
+		if (basicAttackCooldown == 0.0f) {
+			if (current_frame == 3)
+			{
+				CAN_BASIC_ATTACK = true;
+			}
+			if (current_frame == 7) {
+				CAN_BASIC_ATTACK = true;
+			}
 		}
 
 
@@ -129,9 +158,8 @@ void Player::update(double dt) {
 			if (ATTACK_RIGHT) {
 
 
-				//update this
-				/*
-				spawnedBasicAttack = new Basic_Attack(getGame(), 3, 22, 14, 3, "images/player/basic_attack.png");
+				
+				spawnedBasicAttack = new Basic_Attack(getGame(), 3, static_cast<int>(SPRITE_SHEETS::basic_attack));
 
 				glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
 
@@ -140,12 +168,14 @@ void Player::update(double dt) {
 
 				getGame()->renderableToPendingAdd(spawnedBasicAttack);
 				
-				*/
+				
 
 				
 
 				//UPDATE THIS LATER TO ACCOUNT FOR BUFFED BASIC ATTACK COOLDOWN REDUCTION
-				basicAttackCooldown = BASE_BASIC_ATTACK_COOLDOWN;
+				basicAttackCooldown = PLAYER_ATTACKING_FRAME_TIME;
+
+
 				CAN_BASIC_ATTACK = false;
 			}
 			else if (ATTACK_LEFT) {
@@ -157,7 +187,7 @@ void Player::update(double dt) {
 
 
 	}
-	else if (animationState == states::walking)
+	else if (animationState == states::walking && !ATTACKING)
 	{
 		//play walking animation based on the direction the player is facing
 		if (current_frame > WALKING_FRAMES) {
@@ -177,6 +207,29 @@ void Player::update(double dt) {
 			}
 		}
 
+
+
+	}
+	else if (animationState == states::walking && ATTACKING) {
+		//play walking animation based on the direction the player is facing
+		if (current_frame > WALKING_FRAMES) {
+			current_frame = 0;
+		}
+
+		if (walkingTimer > 0.0f) {
+			walkingTimer -= dt;
+		}
+		else
+		{
+			walkingTimer = PLAYER_WALKING_FRAME_TIME;
+			current_frame++;
+
+			if (current_frame > WALKING_FRAMES) {
+				current_frame = 0;
+			}
+		}
+
+		//create attacks here based on basic_attack cooldown and in direction faced
 
 
 	}
@@ -219,8 +272,9 @@ void Player::update(double dt) {
 void Player::render() {
 
 	float idle_stride = 0.0f;
-	float left = 0.0f;
-	float right = 0.0f;
+	float left = 0.0f; //x value
+	float right = 0.0f; //x value
+	float up = 0.0f;
 	
 	
 	if (animationState == states::idling) {
@@ -270,7 +324,134 @@ void Player::render() {
 
 	}
 	else if (animationState == states::attacking) {
+		idle_stride = 0.1f; // (1/10)  450x35
 
+
+		//scale the player so that they are the same size as the idle animation!!!
+		
+
+		//put this code in render function???
+		setTexture(static_cast<int>(SPRITE_SHEETS::player_attacking));
+
+
+		if (current_frame == 0) {
+			left = static_cast<float>((current_frame*idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.055555f;
+			right -= 0.002f;
+
+			up = 0.742857f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+		}
+
+		if (current_frame == 1) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.055555f;
+			right -= 0.002f;
+
+			up = 0.771428f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+		}
+
+		if (current_frame == 2) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.048888f;
+			right -= 0.002f;
+
+			up = 0.942857f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+		}
+
+		if (current_frame == 3) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.011111f;
+			right -= 0.002f;
+
+			up = 0.82857f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+		}
+
+		if (current_frame == 4) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.017777f;
+			right -= 0.002f;
+
+			up = 0.6f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+		}
+
+		if (current_frame == 5) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.031111f;
+			right -= 0.002f;
+
+			up = 0.62857f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+		}
+
+		if (current_frame == 6) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.026666f;
+			right -= 0.002f;
+
+			up = 0.65714f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+
+		}
+
+		if (current_frame == 7) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.0f;
+			right -= 0.002f;
+
+			up = 1.0f;
+			scale(ATTACK_SCALE_END_X, ATTACK_SCALE_END_Y);
+		}
+
+		if (current_frame == 8) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.022222f;
+			right -= 0.002f;
+
+			up = 0.971428f;
+			scale(ATTACK_SCALE_END_X, ATTACK_SCALE_END_Y);
+
+		}
+
+		if (current_frame == 9) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.028888f;
+			right -= 0.002f;
+
+			up = 0.971428f;
+			scale(ATTACK_SCALE_END_X, ATTACK_SCALE_END_Y);
+
+		}
+
+
+		getGame()->setTextureCoordinates(right, up,
+			right, 0.0f,
+			left, 0.0f,
+			left, up);
 	}
 	else if (animationState == states::casting) {
 
@@ -301,6 +482,22 @@ void Player::render() {
 		//undo the scale
 		scale(static_cast<float>(1.0f/1.45f), 1.0f);
 		//floating point drift??????
+	}
+	else if (animationState == states::attacking) {
+		
+
+		if (current_frame == 7 || current_frame == 8 || current_frame == 9)
+		{
+			scale(static_cast<float>(1.0f / ATTACK_SCALE_END_X), static_cast<float>(1.0f / ATTACK_SCALE_END_Y));
+		}
+		else
+		{
+			//undo the scale
+			scale(static_cast<float>(1.0f / ATTACK_SCALE_START_X), static_cast<float>(1.0f / ATTACK_SCALE_START_Y));
+			//floating point drift??????
+		}
+
+
 	}
 
 }
