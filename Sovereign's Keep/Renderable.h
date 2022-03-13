@@ -61,6 +61,7 @@ public:
 	glm::mat4& getO2W() { return objectToWorld; }
 
 	glm::vec3& getOrigin() { return origin; }
+	void setOrigin(glm::vec3 o) { origin = o; }
 
 
 	GLuint getTexture() { return texture; }

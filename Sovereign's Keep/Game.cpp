@@ -152,6 +152,13 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 68, 30, 3, "images/player/player_idle_animation.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_idle), generatedTexture));
 
+	//player walking
+	generateTexture(generatedTexture, 312, 56, 3, "images/player/player_walking_animation_X2.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_walking), generatedTexture));
+
+	//player casting
+	generateTexture(generatedTexture, 224, 29, 3, "images/player/player_casting_animation.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_casting), generatedTexture));
 
 
 
@@ -186,16 +193,16 @@ void mouse_position_callback(GLFWwindow* window, double x, double y)
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
 
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		
-		//need to check where mouse is, and what clicking will do
+if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+
+	//need to check where mouse is, and what clicking will do
 
 
-	}
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_REPEAT) {
-		//do nothing
-	}
-	
+}
+if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_REPEAT) {
+	//do nothing
+}
+
 
 }
 
@@ -216,7 +223,6 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	if (key == GLFW_KEY_W && action == GLFW_PRESS) {
 
 		//printf("w key pressed\n");
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(true);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingUp(true);
 
 	}
@@ -226,14 +232,12 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 	if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
 
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(false);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingUp(false);
 	}
 
 
 	//move down
 	if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(true);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingDown(true);
 	}
 	if (key == GLFW_KEY_S && action == GLFW_REPEAT) {
@@ -241,17 +245,27 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	}
 	//move backward
 	if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(false);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingDown(false);
 	}
 
 
 	//move left
 	if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(true);
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+
+
+		if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingRight()) {
+
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+		}
+		else {
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+		}
 
 
 	}
@@ -260,7 +274,6 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	}
 	//move left
 	if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(false);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(false);
 
 
@@ -268,17 +281,29 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 	//move right
 	if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(true);
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
+		
+
+		if(dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingLeft()){
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
+
+		}
+		else {
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
+		}
+
+
 	}
 	if (key == GLFW_KEY_D && action == GLFW_REPEAT) {
 
 	}
 	//move right
 	if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
-		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMoving(false);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(false);
 	}
 
@@ -322,7 +347,6 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		else
 		{
 			//SHIFT IS NOT HELD, so fire a basic attack in the left direction
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttacking(true);
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(true);
 			//printf("basic attack left\n");
 		}
@@ -341,7 +365,6 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		else
 		{
 			//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttacking(false);
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(false);
 		}
 	}
@@ -380,7 +403,6 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		else
 		{
 			//SHIFT IS NOT HELD, so fire a basic attack in the left direction
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttacking(true);
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(true);
 		}
 
@@ -398,7 +420,6 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		else
 		{
 			//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttacking(false);
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(false);
 		}
 	}

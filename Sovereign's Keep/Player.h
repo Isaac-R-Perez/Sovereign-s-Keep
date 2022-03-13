@@ -15,7 +15,16 @@ const int INITIAL_MAX_MANA = 100;
 const float PLAYER_BASE_SPEED = 0.3f;
 const float BASE_BASIC_ATTACK_COOLDOWN = 0.2f;
 
-const float PLAYER_IDLE_FRAME_TIME = 0.2f;
+const float PLAYER_IDLE_FRAME_TIME = 0.55f;
+const float PLAYER_WALKING_FRAME_TIME = 0.1f;
+const float PLAYER_ATTACKING_FRAME_TIME = 0.25f;
+const float PLAYER_CASTING_FRAME_TIME = 0.15f;
+
+
+const int IDLE_FRAMES = 3;
+const int ATTACK_FRAMES = 9;
+const int WALKING_FRAMES = 5;
+const int CASTING_FRAMES = 7;
 
 class Player: public Character
 {
@@ -55,17 +64,25 @@ private:
 	//time until the player can use another basic attack
 	float basicAttackCooldown;
 
-	int idle_frames;
-	int attack_frames;
-	int walking_frames;
-	int casting_frames;
 
 	int current_frame;
 	
 	float animationTimer;
+	float idleTimer;
+	float walkingTimer;
+	float attackingTimer;
+	float castingTimer;
+
+
+	//use the enum to track this
+	int animationState;
 
 
 public:
+
+	enum states {
+		idling, walking, attacking, casting
+	};
 
 	Player(Game* g, int rOrder, int defaultSpriteSheet);
 
@@ -100,8 +117,15 @@ public:
 	void setMoving(bool b) { MOVING = b; }
 	void setCasting(bool b) { CASTING = b; }
 
+	bool getFacingRight() { return FACING_RIGHT; }
+	bool getFacingLeft() { return FACING_LEFT; }
 
 	void render();
 	void update(double dt);
+
+	//this function flips the player horizontally
+	void flip();
+
+	void scale(float xScale, float yScale);
 
 };

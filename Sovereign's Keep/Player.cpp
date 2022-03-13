@@ -10,7 +10,6 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	this->setO2W(resize);
 
 
-	idle_frames = 4;
 
 	IDLE = true;
 	MOVING = false;
@@ -36,8 +35,14 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 
 
 	animationTimer = 0.0f;
+	idleTimer = PLAYER_IDLE_FRAME_TIME;
+	walkingTimer = PLAYER_WALKING_FRAME_TIME;
+	attackingTimer = PLAYER_ATTACKING_FRAME_TIME;
+	castingTimer = PLAYER_CASTING_FRAME_TIME;
 
 	current_frame = 0;
+
+	animationState = states::idling;
 
 }
 
@@ -54,24 +59,47 @@ void Player::update(double dt) {
 	//camera should be centered on origin of player, unless the player is next to the world border
 	glm::vec3 cam;
 
+	//true if ONE OF THESE IS TRUE
+	MOVING = (MOVING_UP || MOVING_RIGHT || MOVING_DOWN || MOVING_LEFT);
+	ATTACKING = (ATTACK_LEFT || ATTACK_RIGHT);
 
+	if (MOVING || MOVING && ATTACKING) {
+		//player is current moving with WASD, so set animation to walking
+		//even if the player is attacking, the walking animation overrides this, but player will attack slower
+
+		animationState = states::walking;
+
+	}
+	else if (ATTACKING) {
+		//if the player is just attacking and standing still
+		animationState = states::attacking;
+		
+	}
+	else if (CASTING) {
+		//player is just initiated a spell, so STOP MOVEMENT AND DO NOT LET PLAYER ATTACK
+		animationState = states::casting;
+	}
+	else {
+		animationState = states::idling;
+	}
 	
 
-
-	if (IDLE)
+	if (animationState == states::idling)
 	{
 		//play idle animation
+		if (current_frame > IDLE_FRAMES) {
+			current_frame = 0;
+		}
 
-
-		if (animationTimer > 0.0f) {
-			animationTimer -= dt;
+		if (idleTimer > 0.0f) {
+			idleTimer -= dt;
 		}
 		else
 		{
-			animationTimer = PLAYER_IDLE_FRAME_TIME;
+			idleTimer = PLAYER_IDLE_FRAME_TIME;
 			current_frame++;
 
-			if (current_frame > 3) {
+			if (current_frame > IDLE_FRAMES) {
 				current_frame = 0;
 			}
 		}
@@ -80,9 +108,9 @@ void Player::update(double dt) {
 
 
 	}
-	else if (ATTACKING)
+	else if (animationState == states::attacking)
 	{
-		//play attack animation, loop until a new action is performed
+		//play attack animation, loop until a new action is performed, ONLY SPAWN BULLETS WHEN A "SPAWN FRAME" is reached for the first time in a loop
 
 		if (basicAttackCooldown > 0.0f && !CAN_BASIC_ATTACK) {
 			basicAttackCooldown -= dt;
@@ -129,15 +157,30 @@ void Player::update(double dt) {
 
 
 	}
-	else if (MOVING)
+	else if (animationState == states::walking)
 	{
 		//play walking animation based on the direction the player is facing
+		if (current_frame > WALKING_FRAMES) {
+			current_frame = 0;
+		}
 
+		if (walkingTimer > 0.0f) {
+			walkingTimer -= dt;
+		}
+		else
+		{
+			walkingTimer = PLAYER_WALKING_FRAME_TIME;
+			current_frame++;
+
+			if (current_frame > WALKING_FRAMES) {
+				current_frame = 0;
+			}
+		}
 
 
 
 	}
-	else if (CASTING) {
+	else if (animationState == states::casting) {
 
 		//play the casting animation and cast the current spell
 
@@ -175,12 +218,14 @@ void Player::update(double dt) {
 
 void Player::render() {
 
-	const float idle_stride = 0.25f;
+	float idle_stride = 0.0f;
 	float left = 0.0f;
 	float right = 0.0f;
 	
 	
-	if (IDLE) {
+	if (animationState == states::idling) {
+
+		idle_stride = 0.25f;
 
 		//put this code in render function???
 		setTexture(static_cast<int>(SPRITE_SHEETS::player_idle));
@@ -198,12 +243,42 @@ void Player::render() {
 										 left, 0.0f,
 										 left, 1.0f);
 	}
-	else
+	else if (animationState == states::walking)
 	{
+		
+		//scale the player so that they are the same size as the idle animation!!!
+		scale(1.45f, 1.0f);
+
+		idle_stride = 0.166666f; // (1/6)
 
 		//put this code in render function???
-		setTexture(static_cast<int>(SPRITE_SHEETS::player_default));
+		setTexture(static_cast<int>(SPRITE_SHEETS::player_walking));
 
+
+		left = static_cast<float>((current_frame)*idle_stride);
+		left += 0.002f;
+		//0.002 is a constant here? without it there is clipping issues...
+
+		right = static_cast<float>((current_frame + 1) * idle_stride);
+		right -= 0.002f;
+
+		getGame()->setTextureCoordinates(right, 1.0f,
+			right, 0.0f,
+			left, 0.0f,
+			left, 1.0f);
+		
+
+	}
+	else if (animationState == states::attacking) {
+
+	}
+	else if (animationState == states::casting) {
+
+	}
+	else
+	{
+		//put this code in render function???
+		setTexture(static_cast<int>(SPRITE_SHEETS::player_default));
 	}
 	
 
@@ -220,6 +295,14 @@ void Player::render() {
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	getGame()->resetTextureCoordinates();
+
+	if (animationState == states::walking) {
+
+		//undo the scale
+		scale(static_cast<float>(1.0f/1.45f), 1.0f);
+		//floating point drift??????
+	}
+
 }
 
 
@@ -284,4 +367,16 @@ bool Player::spendMana(float amt)
 		//Returns false if the player can not cast the spell
 		return false;
 	}
+}
+
+void Player::scale(float xScale, float yScale) {
+	glm::mat4 scale = getO2W() * glm::scale(glm::mat4(1.0f), glm::vec3(xScale, yScale, 0.0f));
+	setO2W(scale);
+}
+
+void Player::flip() {
+
+	//apply a negative scale to the player's matrix as well as the 4 points of their hit box
+	glm::mat4 inverted = getO2W() * glm::scale(glm::mat4(1.0f), glm::vec3(-1.0f, 1.0f, 0.0f));
+	setO2W(inverted);
 }
