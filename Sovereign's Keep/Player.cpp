@@ -4,12 +4,7 @@
 Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	:Character(g, rOrder, defaultSpriteSheet)
 {
-	glm::mat4 resize = glm::mat4(1.0f);
-
-	resize = glm::scale(glm::mat4(1.0f), glm::vec3(0.0275f, 0.0725f, 0.0f));
-	this->setO2W(resize);
-
-
+	resize(PLAYER_WIDTH, PLAYER_HEIGHT);
 
 	IDLE = true;
 	MOVING = false;
@@ -597,33 +592,16 @@ void Player::render() {
 
 	getGame()->resetTextureCoordinates();
 
-	if (animationState == states::walking) {
-
-		//undo the scale
-		scale(static_cast<float>(1.0f/1.45f), 1.0f);
-		//floating point drift??????
-	}
-	else if (animationState == states::attacking) {
-		
-
-		if (current_frame == 7 || current_frame == 8 || current_frame == 9)
-		{
-			scale(static_cast<float>(1.0f / ATTACK_SCALE_END_X), static_cast<float>(1.0f / ATTACK_SCALE_END_Y));
+	//reset the character size SAFELY!!!
+	if (animationState == states::walking || animationState == states::attacking || animationState  == states::casting) {
+		if (FACING_LEFT) {
+			resize(PLAYER_WIDTH, PLAYER_HEIGHT);
+			flip();
 		}
 		else
 		{
-			//undo the scale
-			scale(static_cast<float>(1.0f / ATTACK_SCALE_START_X), static_cast<float>(1.0f / ATTACK_SCALE_START_Y));
-			//floating point drift??????
+			resize(PLAYER_WIDTH, PLAYER_HEIGHT);
 		}
-
-
-	}
-	else if (animationState == states::casting) {
-		
-		scale(static_cast<float>(1.0f / CAST_SCALE), 1.0f);
-
-
 	}
 
 }

@@ -3,10 +3,7 @@
 Basic_Attack::Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet)
 	:Renderable(g, rOrder, defaultSpriteSheet) {
 
-	glm::mat4 resize = glm::mat4(1.0f);
-
-	resize = glm::scale(glm::mat4(1.0f), glm::vec3(0.025f, 0.02f, 0.0f));
-	this->setO2W(resize);
+	resize(BULLET_WIDTH, BULLET_HEIGHT);
 
 
 	damage = BASE_DAMAGE;

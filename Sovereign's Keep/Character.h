@@ -71,7 +71,7 @@ public:
 
 	
 	Status status;
-	void updateEffects();
+	void updateEffects(float dt);
 	void updateBuff(vector<Buff>& buff);
 
 	//HEALTH

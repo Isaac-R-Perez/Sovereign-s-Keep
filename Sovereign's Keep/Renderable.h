@@ -71,10 +71,13 @@ public:
 	//Send this a transformation matrix to move both the renderable and its origin.
 	void updatePosition(glm::mat4 transform);
 
-	//std::vector<GLfloat>& getPosition() { return position; }
-	//std::vector<GLfloat>& getColor() { return colors; }
-	//std::vector<GLfloat>& getTexCoord() { return textureCoordinates; }
+	void setWidth(float w) {	width = w;}
+	void setHeight(float h) { height = h; }
 
+	float getWidth() { return width; }
+	float getHeight() { return height; }
+
+	void resize(float w, float h);
 
 private:
 
@@ -84,12 +87,9 @@ private:
 	glm::vec3 origin;
 
 
-	//REMOVE THESE EVENTUALLY
-	//texture for the renderable, need width, height, color channels, and the unsigned char* for the actual image
-	int textureWidth;
-	int textureHeight;
-	int nrChannels;
-	unsigned char* data;
+	//These will store the floats that modify the intial vertices.
+	float width;
+	float height;
 	GLuint texture;
 
 

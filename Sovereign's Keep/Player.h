@@ -35,6 +35,9 @@ const float ATTACK_SCALE_END_Y = 1.25f;
 
 const float CAST_SCALE = 1.15f;
 
+const float PLAYER_HEIGHT = 0.0725f;
+const float PLAYER_WIDTH = 0.0275f;
+
 class Player : public Character
 {
 private:

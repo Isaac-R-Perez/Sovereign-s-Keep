@@ -7,7 +7,7 @@ Character::Character(Game* g, int rOrder, int defaultSpriteSheet)
 }
 
 
-void Character::updateEffects()
+void Character::updateEffects(float dt)
 {
 	/*
 	* This function should be run every frame of the game.
