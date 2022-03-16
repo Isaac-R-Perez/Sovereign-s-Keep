@@ -40,7 +40,10 @@ void Status::setBurning()
 	}
 	if (Burning)
 	{
-		statusDuration += 2.0f;
+		if (statusDuration < burningDuration * 3)
+		{
+			statusDuration += 2.0f;
+		}
 	}
 	else
 	{
@@ -80,7 +83,10 @@ void Status::setWet()
 	}
 	if (Wet)
 	{
-		statusDuration += 2.0f;
+		if (statusDuration < wetDuration * 3)
+		{
+			statusDuration += 2.0f;
+		}
 	}
 	else
 	{
@@ -119,8 +125,10 @@ void Status::setChilled()
 	}
 	if (Chilled)
 	{
-		Chilled = true;
-		statusDuration += 2.0f;
+		if (statusDuration < chilledDuration * 3)
+		{
+			statusDuration += 2.0f;
+		}
 	}
 	else
 	{
@@ -155,7 +163,10 @@ void Status::setFrozen()
 	}
 	if (Frozen)
 	{
-		statusDuration += 2.0f;
+		if (statusDuration < frozenDuration * 3)
+		{
+			statusDuration += 2.0f;
+		}
 	}
 	else
 	{
@@ -194,7 +205,10 @@ void Status::setConductive()
 	}
 	if (Conductive)
 	{
-		statusDuration += 2.0f;
+		if (statusDuration < conductiveDuration * 3)
+		{
+			statusDuration += 2.0f;
+		}
 	}
 	else
 	{
@@ -229,7 +243,10 @@ void Status::setStunned()
 	}
 	if (Stunned)
 	{
-		statusDuration += 2.0f;
+		if (statusDuration < stunnedDuration * 3)
+		{
+			statusDuration += 2.0f;
+		}
 	}
 	else
 	{
