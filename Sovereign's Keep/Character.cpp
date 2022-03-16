@@ -21,7 +21,7 @@ void Character::updateEffects(float dt)
 	//STATUS DURATION
 	if (status.getDuration() > 0.0)
 	{
-		//REDUCE DURATION HERE
+		status.setDuration(status.getDuration() - dt);
 	}
 	else
 	{
@@ -33,36 +33,37 @@ void Character::updateEffects(float dt)
 	* and remove them from the vector when their timer has run out.
 	*/
 
-	updateBuff(atkBuff);
-	updateBuff(defBuff);
-	updateBuff(spdBuff);
+	updateBuff(atkBuff, dt);
+	updateBuff(defBuff, dt);
+	updateBuff(spdBuff, dt);
 
-	updateBuff(fireDMGBuff);
-	updateBuff(waterDMGBuff);
-	updateBuff(earthDMGBuff);
-	updateBuff(airDMGBuff);
-	updateBuff(electricityDMGBuff);
-	updateBuff(iceDMGBuff);
+	updateBuff(fireDMGBuff, dt);
+	updateBuff(waterDMGBuff, dt);
+	updateBuff(earthDMGBuff, dt);
+	updateBuff(airDMGBuff, dt);
+	updateBuff(electricityDMGBuff, dt);
+	updateBuff(iceDMGBuff, dt);
 
-	updateBuff(fireRESBuff);
-	updateBuff(waterRESBuff);
-	updateBuff(earthRESBuff);
-	updateBuff(airRESBuff);
-	updateBuff(electricityRESBuff);
-	updateBuff(iceRESBuff);
+	updateBuff(fireRESBuff, dt);
+	updateBuff(waterRESBuff, dt);
+	updateBuff(earthRESBuff, dt);
+	updateBuff(airRESBuff, dt);
+	updateBuff(electricityRESBuff, dt);
+	updateBuff(iceRESBuff, dt);
 }
 
-void Character::updateBuff(vector<Buff>& buff)
+void Character::updateBuff(vector<Buff>& buff,float dt)
 {
 	for (int i = 0; i < buff.size(); i++) 
 	{
 		if (buff[i].time > 0.0f)
 		{
-			//REDUCE TIME HERE
-			//buff[i].time -= TIME;
+			//REDUCE TIME
+			buff[i].time -= dt;
 		}
 		else
 		{
+			//Remove buff from array
 			buff.erase(buff.begin() + i);
 			i--;
 		}

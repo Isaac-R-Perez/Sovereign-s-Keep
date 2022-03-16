@@ -16,13 +16,14 @@ private:
 	string name;
 
 	//Character stats
-	float maxHealth;
-	float currentHealth;
-	float baseAttack;
-	float baseDefense;
+	float maxHealth = 100.0f;
+	float currentHealth = maxHealth;
+	float baseAttack = 20.0f;
+	float baseDefense = 10.0f;
 	float baseMoveSpeed = 1.0;
 	float currentMoveSpeed = 1.0;
 
+	//Element Damage Multipliers
 	float fireDMG = 1.0;
 	float waterDMG = 1.0;
 	float earthDMG = 1.0;
@@ -42,9 +43,7 @@ private:
 	struct Buff
 	{
 		float amt, time;
-		Buff(float amt, float time) : amt(amt), time(time)
-		{
-		}
+		Buff(float amt, float time) : amt(amt), time(time) {}
 	};
 
 	vector<Buff> atkBuff;
@@ -72,7 +71,7 @@ public:
 	
 	Status status;
 	void updateEffects(float dt);
-	void updateBuff(vector<Buff>& buff);
+	void updateBuff(vector<Buff>& buff,float dt);
 
 	//HEALTH
 	float getCurrentHealth() { return currentHealth; }
