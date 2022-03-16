@@ -86,7 +86,7 @@ public:
 	//send in the enum name that corresponds to the spritesheet, should get a reference to that texture in the form of a GLuint
 	GLuint& getTextureFromMap(int a);
 
-
+	void updateCamera(glm::vec3& playerOrigin);
 
 
 private:
@@ -95,7 +95,7 @@ private:
 	GLFWwindow* window;
 
 	glm::vec3 cameraPosition; //will start at (0.0, 0.0, 1.0), which is pointing down the z axis
-
+	glm::mat4 View; //this is the view matrix, send to vertex shader
 
 	//holds the program for the vertex and fragment shaders
 	GLuint renderables_programID;
@@ -105,10 +105,10 @@ private:
 
 	//Vertex Array Object for the game
 	GLuint VAO;
-
 	GLuint VBO;
-
 	GLuint EBO;
+
+
 
 	//holds ALL renderables and in the correct render order
 	/*

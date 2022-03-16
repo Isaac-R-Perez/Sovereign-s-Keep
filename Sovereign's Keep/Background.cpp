@@ -3,7 +3,7 @@
 Background::Background(Game* g, int rOrder, int defaultSpriteSheet)
 	:Renderable(g, rOrder, defaultSpriteSheet) //the constructor of renderable class will be called with these arguements!
 {
-	//setO2W(glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 10.0f, 0.0f)));
+	setO2W(glm::scale(glm::mat4(1.0f), glm::vec3(2.0f, 2.0f, 0.0f)));
 }
 
 

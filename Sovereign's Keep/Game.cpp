@@ -130,6 +130,7 @@ Game::Game() {
 	spellComboMode = false;
 	pendingAdd = std::vector<Renderable*>();
 	pendingDestroy = std::vector<Renderable*>();
+	View = glm::mat4(1.0f);
 }
 
 
@@ -147,7 +148,6 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 17, 29, 3, "images/player/player_default.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_default), generatedTexture));
 
-
 	//player idle
 	generateTexture(generatedTexture, 68, 30, 3, "images/player/player_idle_animation.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_idle), generatedTexture));
@@ -160,13 +160,9 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 450, 35, 3, "images/player/player_attack_animation.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_attacking), generatedTexture));
 
-
-	
 	//player casting
 	generateTexture(generatedTexture, 224, 29, 3, "images/player/player_casting_animation.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_casting), generatedTexture));
-
-
 
 	//basic attack
 	generateTexture(generatedTexture, 224, 29, 3, "images/player/basic_attack.png");
@@ -225,6 +221,36 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
 	}
+
+
+	//casting logic should be checked first?
+
+	//move up
+	if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+
+		/*
+			Check if the player can cast current spell
+			If they cant, ignore this.
+			If they can, start casting animation, and make the casting time specific to the spell being cast.
+		*/
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setCasting(true);
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->resetCastingVariables();
+
+	}
+	if (key == GLFW_KEY_Q && action == GLFW_REPEAT) {
+
+	}
+
+	if (key == GLFW_KEY_Q && action == GLFW_RELEASE) {
+
+	}
+
+
+
+
+
+
+
 
 	//player's movement states are dependent on if a key is currently held down
 	//if w is held, they will move up until it is released.
@@ -399,6 +425,13 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		{
 			//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(false);
+
+			if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getMovingRight()) {
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
+			}
+
 		}
 	}
 
@@ -470,6 +503,13 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		{
 			//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(false);
+
+			if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getMovingLeft()) {
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+			}
+
 		}
 	}
 
@@ -599,7 +639,7 @@ bool Game::initialize() {
 
 
 	cameraPosition = glm::vec3(0.0f, 0.0f, 1.0f);
-
+	View = glm::lookAt(cameraPosition, glm::vec3(cameraPosition.x, cameraPosition.y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	
 	//load shaders
 	renderables_programID = LoadShaders("vertex_shader.txt", "fragment_shader.txt");
@@ -712,6 +752,10 @@ void Game::setupBuffers() {
 	if (vTexCoord < 0) printf("Couldn't find vTexCoord in shader! SETUP\n");
 	glVertexAttribPointer(vTexCoord, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(vTexCoord);
+
+	GLint viewLoc = glGetUniformLocation(renderables_programID, "view");
+	if (viewLoc < 0) printf("Couldn't find view in shader! SETUP\n");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(View));
 
 
 
@@ -884,3 +928,37 @@ GLuint& Game::getTextureFromMap(int a)
 
 //getters and setters
 GLFWwindow* Game::getWindow() { return window; }
+
+void Game::updateCamera(glm::vec3& playerOrigin) {
+	
+	glm::vec3 cameraCenter = playerOrigin;
+
+
+	const float BACKGROUND_SCALE = 2.0f;
+	const float CAMERA_SIZE = 1.0f; //camera is always a square centered at origin with top right corner being (1.0,1.0)
+
+	if (playerOrigin.x + CAMERA_SIZE > BACKGROUND_SCALE)
+	{
+		cameraCenter.x = BACKGROUND_SCALE - CAMERA_SIZE;
+	}
+	if (playerOrigin.x - CAMERA_SIZE < -BACKGROUND_SCALE)
+	{
+		cameraCenter.x = -BACKGROUND_SCALE + CAMERA_SIZE;
+	}
+	if (playerOrigin.y + CAMERA_SIZE > BACKGROUND_SCALE)
+	{
+		cameraCenter.y = BACKGROUND_SCALE - CAMERA_SIZE;
+	}
+	if (playerOrigin.y - CAMERA_SIZE < -BACKGROUND_SCALE)
+	{
+		cameraCenter.y = -BACKGROUND_SCALE + CAMERA_SIZE;
+	}
+	
+	View = glm::lookAt(glm::vec3(cameraCenter.x, cameraCenter.y,1.0f), glm::vec3(cameraCenter.x, cameraCenter.y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	
+	
+	
+	GLint viewLoc = glGetUniformLocation(renderables_programID, "view");
+	if (viewLoc < 0) printf("Couldn't find view in shader! CAMERA UPDATE\n");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(View));
+}

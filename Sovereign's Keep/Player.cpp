@@ -36,6 +36,8 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	START_ATTACKING = true;
 	LOOP_FORWARD = true;
 
+	CAN_CAST_SPELL = true;
+
 	animationTimer = 0.0f;
 	idleTimer = PLAYER_IDLE_FRAME_TIME;
 	walkingTimer = PLAYER_WALKING_FRAME_TIME;
@@ -58,13 +60,17 @@ void Player::update(double dt) {
 	glm::mat4 move = glm::mat4(1.0f);
 	glm::vec3 movementVector = glm::vec3(0.0f);
 
-	//camera should be centered on origin of player, unless the player is next to the world border
-	glm::vec3 cam;
+
+	getGame()->updateCamera(getOrigin());
 
 	//true if ONE OF THESE IS TRUE
 	MOVING = (MOVING_UP || MOVING_RIGHT || MOVING_DOWN || MOVING_LEFT);
 	ATTACKING = (ATTACK_LEFT || ATTACK_RIGHT);
 
+	if (CASTING) {
+		MOVING = false;
+		ATTACKING = false;
+	}
 	
 
 	if (MOVING && ATTACKING) {
@@ -198,7 +204,7 @@ void Player::update(double dt) {
 					basicAttackCooldown = PLAYER_ATTACKING_FRAME_TIME;
 				}
 				else {
-					basicAttackCooldown = PLAYER_ATTACKING_FRAME_TIME * 0.52f;
+					basicAttackCooldown = PLAYER_ATTACKING_FRAME_TIME * 0.52f; //double shot when not moving
 				}
 
 
@@ -239,34 +245,58 @@ void Player::update(double dt) {
 	else if (animationState == states::casting) {
 
 		//play the casting animation and cast the current spell
+		//play walking animation based on the direction the player is facing
+		
+
+		if (castingTimer > 0.0f) {
+			castingTimer -= dt;
+		}
+		else
+		{
+			castingTimer = PLAYER_CASTING_FRAME_TIME; //needs to be tailored to the current spell
+			current_frame++;
+
+			if (current_frame > CASTING_FRAMES) {
+				CASTING = false; //stop casting
+				current_frame = 0;
+			}
+		}
+
+		if (current_frame == 5 && CAN_CAST_SPELL) {
+			//cast the spell
+			//printf("Spell was cast!\n");
+			CAN_CAST_SPELL = false;
+		}
 
 	}
 
 
 
+	if (MOVING) {
 
+		if (MOVING_UP) {
+			movementVector.y += (1920.0f / 1080.0f);
 
-	if (MOVING_UP) {
-		movementVector.y += (1920.0f / 1080.0f);
+		}
+
+		if (MOVING_DOWN) {
+			movementVector.y -= (1920.0f / 1080.0f);
+		}
+
+		if (MOVING_RIGHT) {
+			movementVector.x += 1.0f;
+		}
+		if (MOVING_LEFT) {
+			movementVector.x -= 1.0f;
+		}
+
+		glm::normalize(movementVector);
+
+		move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * PLAYER_BASE_SPEED, movementVector.y * dt * PLAYER_BASE_SPEED, 0.0f));
+
+		updatePosition(move);
 
 	}
-
-	if (MOVING_DOWN) {
-		movementVector.y -= (1920.0f / 1080.0f);
-	}
-
-	if (MOVING_RIGHT) {
-		movementVector.x += 1.0f;
-	}
-	if (MOVING_LEFT) {
-		movementVector.x -= 1.0f;
-	}
-
-	glm::normalize(movementVector);
-
-	move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * PLAYER_BASE_SPEED, movementVector.y * dt * PLAYER_BASE_SPEED, 0.0f));
-
-	updatePosition(move);
 
 
 
@@ -457,7 +487,94 @@ void Player::render() {
 			left, up);
 	}
 	else if (animationState == states::casting) {
+	//scale the player so that they are the same size as the idle animation!!!
+		scale(CAST_SCALE, 1.0f);
 
+		idle_stride = 0.125f; // (1/8)
+
+		//put this code in render function???
+		setTexture(static_cast<int>(SPRITE_SHEETS::player_casting));
+
+
+		if (current_frame == 0) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.049107f;
+			right -= 0.002f;
+		}
+
+		if (current_frame == 1) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.0446428f;
+			right -= 0.002f;
+
+		}
+
+		if (current_frame == 2) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.0133928f;
+			right -= 0.002f;
+
+		}
+
+		if (current_frame == 3) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.03125f;
+			right -= 0.002f;
+
+		}
+
+		if (current_frame == 4) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.0267857f;
+			right -= 0.002f;
+
+		}
+
+		if (current_frame == 5) {
+
+
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.0133928f;
+			right -= 0.002f;
+
+		}
+
+		if (current_frame == 6) {
+
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.0f;
+			right -= 0.002f;
+
+
+		}
+
+		if (current_frame == 7) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride) - 0.0446428f;
+			right -= 0.002f;
+
+		}
+
+		getGame()->setTextureCoordinates(right, 1.0f,
+			right, 0.0f,
+			left, 0.0f,
+			left, 1.0f);
 	}
 	else
 	{
@@ -499,6 +616,12 @@ void Player::render() {
 			scale(static_cast<float>(1.0f / ATTACK_SCALE_START_X), static_cast<float>(1.0f / ATTACK_SCALE_START_Y));
 			//floating point drift??????
 		}
+
+
+	}
+	else if (animationState == states::casting) {
+		
+		scale(static_cast<float>(1.0f / CAST_SCALE), 1.0f);
 
 
 	}

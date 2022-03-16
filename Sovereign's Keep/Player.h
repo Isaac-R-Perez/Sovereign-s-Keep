@@ -17,8 +17,8 @@ const float BASE_BASIC_ATTACK_COOLDOWN = 0.3f; //this is unused as the FRAME TIM
 
 const float PLAYER_IDLE_FRAME_TIME = 0.55f;
 const float PLAYER_WALKING_FRAME_TIME = 0.1f;
-const float PLAYER_ATTACKING_FRAME_TIME = 0.09f;
-const float PLAYER_CASTING_FRAME_TIME = 0.15f;
+const float PLAYER_ATTACKING_FRAME_TIME = 0.08f; //max attack speed is 0.016, double shot does not work at this speed...
+const float PLAYER_CASTING_FRAME_TIME = 0.125f; //1 full second! 8 * 0.125 = 1
 
 
 const int IDLE_FRAMES = 3;
@@ -32,6 +32,8 @@ const float ATTACK_SCALE_START_Y = 1.0f;
 
 const float ATTACK_SCALE_END_X = 1.5;
 const float ATTACK_SCALE_END_Y = 1.25f;
+
+const float CAST_SCALE = 1.15f;
 
 class Player : public Character
 {
@@ -65,6 +67,7 @@ private:
 
 	//true if the basic attack cooldown is 0.0f
 	bool CAN_BASIC_ATTACK;
+	bool CAN_CAST_SPELL;
 	bool START_ATTACKING;
 	bool LOOP_FORWARD;
 
@@ -125,10 +128,18 @@ public:
 	void setMoving(bool b) { MOVING = b; }
 	void setCasting(bool b) { CASTING = b; }
 
+	//run this function everytime a player presses Q, AND CAN CAST THE SPELL
+	void resetCastingVariables() {
+		current_frame = 0; //make sure the animation start at the beginning
+		CAN_CAST_SPELL = true;
+	}
+
 	bool getFacingRight() { return FACING_RIGHT; }
 	bool getFacingLeft() { return FACING_LEFT; }
 	bool getAttackingLeft() { return ATTACK_LEFT; }
 	bool getAttackingRight() { return ATTACK_RIGHT; }
+	bool getMovingLeft() { return MOVING_LEFT; }
+	bool getMovingRight() { return MOVING_RIGHT; }
 
 	void render();
 	void update(double dt);
@@ -137,5 +148,8 @@ public:
 	void flip();
 
 	void scale(float xScale, float yScale);
+
+	
+
 
 };

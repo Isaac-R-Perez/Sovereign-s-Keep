@@ -5,12 +5,13 @@ in vec3 vColor;
 in vec2 vTexCoord;
 
 uniform mat4 objectToWorld;
+uniform mat4 view;
 
 out vec3 ourColor;
 out vec2 TexCoord;
 
 void main(){
-	gl_Position = objectToWorld * vec4(vPosition,1.0);
+	gl_Position = view * objectToWorld * vec4(vPosition,1.0);
 	ourColor = vColor;
 	TexCoord = vTexCoord;
 }
