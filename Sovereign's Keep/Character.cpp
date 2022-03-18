@@ -16,19 +16,13 @@ void Character::updateEffects(float dt)
 	* Will also handle buffs/debuffs.
 	*/
 
-	if (status.isFrozen() || status.isStunned())
-	{
-		currentMoveSpeed = 0.0f;
-	}
-	else
-	{
-		currentMoveSpeed = getMoveSpeed();
-	}
+	currentMoveSpeed = getMoveSpeed(); //getMoveSpeed() will check if Frozen or Stunned.
 
 	//STATUS DURATION
 	if (status.getDuration() > 0.0)
 	{
 		status.setDuration(status.getDuration() - dt);
+		removeHealth(status.getDOT());
 	}
 	else
 	{
@@ -89,9 +83,9 @@ void Character::restoreHealth(float amt)
 void Character::removeHealth(float amt)
 {
 	currentHealth -= amt;
-	if (currentHealth < 0)
+	if (currentHealth < 0.0f)
 	{
-		currentHealth = 0;
+		currentHealth = 0.0f;
 	}
 }
 
@@ -161,15 +155,15 @@ void Character::inflictBurning()
 		removeStatus();
 		return;
 	}
-	if (status.isConductive())
-	{
-		//Remove Conductive, then continue to apply burning in its place
-		removeStatus();
-	}
 	if (status.isStunned())
 	{
 		//If Stunned, then change nothing.
 		return;
+	}
+	if (status.isConductive())
+	{
+		//Remove Conductive, then continue to apply burning in its place
+		removeStatus();
 	}
 	if (status.isBurning())
 	{
