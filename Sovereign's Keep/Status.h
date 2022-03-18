@@ -27,18 +27,26 @@ private:
 	bool Normal = true;
 
 public:
-	void setNormal();
-	void setBurning();
-	void setWet();
-	void setChilled();
-	void setFrozen();
-	void setConductive();
-	void setStunned();
-
 	float getDuration() { return statusDuration; }
 	void setDuration(float amt) { statusDuration = amt; }
 
 	float getDOT() { return DOT; }
+	void setDOT(float amt) { DOT = amt; }
+
+	void setBurning() { Burning = true; Normal = false; statusDuration = burningDuration; DOT = 0.5f; }
+	void setWet() { Wet = true; Normal = false; statusDuration = wetDuration; DOT = 0.0f; }
+	void setChilled() { Chilled = true; Normal = false; statusDuration = chilledDuration; DOT = 0.0f; }
+	void setFrozen() { Frozen = true; Normal = false; statusDuration = frozenDuration; DOT = 0.0f; }
+	void setConductive() { Conductive = true; Normal = false; statusDuration = conductiveDuration; DOT = 0.0f; }
+	void setStunned() { Stunned = true; Normal = false; statusDuration = stunnedDuration; DOT = 0.0f; }
+	void setNormal() { Normal = true; Burning = false; Wet = false; Chilled = false; Frozen = false; Conductive = false; Stunned = false; statusDuration = 0.0f; DOT = 0.0f; }
+
+	float getBurningDuration() { return burningDuration; }
+	float getWetDuration() { return wetDuration; }
+	float getChilledDuration() { return chilledDuration; }
+	float getFrozenDuration() { return frozenDuration; }
+	float getConductiveDuration() { return conductiveDuration; }
+	float getStunnedDuration() { return stunnedDuration; }
 
 	bool isNormal() { return Normal; }
 	bool isBurning() { return Burning; }

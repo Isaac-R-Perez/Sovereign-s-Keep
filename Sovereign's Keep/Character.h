@@ -109,6 +109,15 @@ public:
 	float getAirRES() { return airRES; }
 	float getElectricityRES() { return electricityRES; }
 	float getIceRES() { return iceRES; }
+
+	//Status Effects
+	void removeStatus();
+	void inflictBurning();
+	void inflictWet();
+	void inflictChilled();
+	void inflictFrozen();
+	void inflictConductive();
+	void inflictStunned();
 	
 	//Stat buffs/debuffs (Just pass in a negative number to debuff)
 	void buffAttack(float amt, float time) { atkBuff.emplace_back(amt, time); }

@@ -16,7 +16,14 @@ void Character::updateEffects(float dt)
 	* Will also handle buffs/debuffs.
 	*/
 
-	currentMoveSpeed = getMoveSpeed();
+	if (status.isFrozen() || status.isStunned())
+	{
+		currentMoveSpeed = 0.0f;
+	}
+	else
+	{
+		currentMoveSpeed = getMoveSpeed();
+	}
 
 	//STATUS DURATION
 	if (status.getDuration() > 0.0)
@@ -25,7 +32,7 @@ void Character::updateEffects(float dt)
 	}
 	else
 	{
-		status.setNormal();
+		removeStatus();
 	}
 
 	/*
@@ -122,5 +129,212 @@ float Character::getMoveSpeed()
 			buffTotal += spdBuff[i].amt;
 		}
 		return baseMoveSpeed + buffTotal;
+	}
+}
+
+void Character::removeStatus()
+{
+	status.setNormal();
+
+	fireRES = 1.0f;
+	waterRES = 1.0f;
+	earthRES = 1.0f;
+	airRES = 1.0f;
+	electricityRES = 1.0f;
+	iceRES = 1.0f;
+}
+
+void Character::inflictBurning()
+{
+	if (status.isWet())
+	{
+		removeStatus();
+		return;
+	}
+	if (status.isChilled())
+	{
+		removeStatus();
+		return;
+	}
+	if (status.isFrozen())
+	{
+		removeStatus();
+		return;
+	}
+	if (status.isConductive())
+	{
+		//Remove Conductive, then continue to apply burning in its place
+		removeStatus();
+	}
+	if (status.isStunned())
+	{
+		//If Stunned, then change nothing.
+		return;
+	}
+	if (status.isBurning())
+	{
+		if (status.getDuration() < status.getBurningDuration() * 3)
+		{
+			status.setDuration(status.getDuration() + 2.0f);
+		}
+	}
+	else
+	{
+		status.setBurning();
+		airRES = 1.5f;
+	}
+}
+
+void Character::inflictWet()
+{
+	if (status.isBurning())
+	{
+		removeStatus();
+		return;
+	}
+	if (status.isChilled())
+	{
+		removeStatus();
+		inflictFrozen();
+		return;
+	}
+	if (status.isFrozen())
+	{
+		return;
+	}
+	if (status.isConductive())
+	{
+		removeStatus();
+		inflictStunned();
+		return;
+	}
+	if (status.isStunned())
+	{
+		return;
+	}
+	if (status.isWet())
+	{
+		if (status.getDuration() < status.getWetDuration() * 3)
+		{
+			status.setDuration(status.getDuration() + 2.0f);
+		}
+	}
+	else
+	{
+		status.setWet();
+		electricityRES = 1.5f;
+	}
+}
+
+void Character::inflictChilled()
+{
+	if (status.isBurning())
+	{
+		removeStatus();
+		return;
+	}
+	if (status.isWet())
+	{
+		removeStatus();
+		inflictFrozen();
+		return;
+	}
+	if (status.isFrozen())
+	{
+		return;
+	}
+	if (status.isConductive())
+	{
+		removeStatus();
+	}
+	if (status.isStunned())
+	{
+		return;
+	}
+	if (status.isChilled())
+	{
+		if (status.getDuration() < status.getChilledDuration() * 3)
+		{
+			status.setDuration(status.getDuration() + 2.0f);
+		}
+	}
+	else
+	{
+		status.setChilled();
+		iceRES = 1.5f;
+	}
+}
+
+void Character::inflictFrozen()
+{
+	if (status.isFrozen())
+	{
+		if (status.getDuration() < status.getFrozenDuration() * 3)
+		{
+			status.setDuration(status.getDuration() + 2.0f);
+		}
+	}
+	else
+	{
+		removeStatus();
+		status.setFrozen();
+		earthRES = 1.5f;
+	}
+}
+
+void Character::inflictConductive()
+{
+	if (status.isBurning())
+	{
+		removeStatus();
+		return;
+	}
+	if (status.isWet())
+	{
+		removeStatus();
+		inflictStunned();
+		return;
+	}
+	if (status.isChilled())
+	{
+		removeStatus();
+		return;
+	}
+	if (status.isFrozen())
+	{
+		return;
+	}
+	if (status.isStunned())
+	{
+		return;
+	}
+	if (status.isConductive())
+	{
+		if (status.getDuration() < status.getConductiveDuration() * 3)
+		{
+			status.setDuration(status.getDuration() + 2.0f);
+		}
+	}
+	else
+	{
+		status.setConductive();
+		electricityRES = 1.5f;
+	}
+}
+
+void Character::inflictStunned()
+{
+	if (status.isStunned())
+	{
+		if (status.getDuration() < status.getStunnedDuration() * 3)
+		{
+			status.setDuration(status.getDuration() + 2.0f);
+		}
+	}
+	else
+	{
+		removeStatus();
+		status.setStunned();
+		electricityRES = 1.5f;
 	}
 }
