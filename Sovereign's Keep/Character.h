@@ -43,7 +43,14 @@ private:
 	struct Buff
 	{
 		float amt, time;
+		bool noTimeLimit = false;
 		Buff(float amt, float time) : amt(amt), time(time) {}
+		Buff(float amt) : amt(amt) 
+		{
+			//Second constructor for buffs with no expire time.
+			time = 0.0f;
+			noTimeLimit = true;
+		}
 	};
 
 	vector<Buff> atkBuff;

@@ -57,18 +57,21 @@ void Character::updateBuff(vector<Buff>& buff,float dt)
 {
 	for (int i = 0; i < buff.size(); i++) 
 	{
-		if (buff[i].time > 0.0f)
+		if (buff[i].noTimeLimit == false)
 		{
-			//REDUCE TIME
-			buff[i].time -= dt;
+			if (buff[i].time > 0.0f)
+			{
+				//REDUCE TIME
+				buff[i].time -= dt;
+			}
+			else
+			{
+				//Remove buff from array
+				buff.erase(buff.begin() + i);
+				i--;
+			}
+			buff.shrink_to_fit();
 		}
-		else
-		{
-			//Remove buff from array
-			buff.erase(buff.begin() + i);
-			i--;
-		}
-		buff.shrink_to_fit();
 	}
 }
 
