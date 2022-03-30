@@ -145,9 +145,11 @@
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="Basic_Attack.cpp" />
     <ClCompile Include="Character.cpp" />
+    <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="image.cpp" />
+    <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderable.cpp" />
@@ -157,8 +159,10 @@
     <ClInclude Include="Background.h" />
     <ClInclude Include="Basic_Attack.h" />
     <ClInclude Include="Character.h" />
+    <ClInclude Include="DataManager.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="LevelManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Renderable.h" />
     <ClInclude Include="Status.h" />
