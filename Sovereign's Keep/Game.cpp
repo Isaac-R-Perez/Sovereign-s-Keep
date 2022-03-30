@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Background.h"
 #include "Player.h"
+#include "DataManager.h"
 
 //globals
 int SCREEN_HEIGHT;
