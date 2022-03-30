@@ -2,6 +2,7 @@
 #include "Player.h"
 #include <fstream>
 #include <string>
+
 class DataManager
 {
 /*
@@ -10,7 +11,6 @@ class DataManager
 private:
 	static fstream playerFile;
 public:
-	static void SavePlayerData(Player player);
+	static void SavePlayerData(Player& player);
 	static void LoadPlayerData(Player& player);
 };
-
