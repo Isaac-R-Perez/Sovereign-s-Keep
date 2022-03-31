@@ -1,9 +1,15 @@
 #include "DataManager.h"
-
+/*
+* Will save a player objects stats in a certain order
+* per line.
+* When loading the player.game file in the data folder,
+* you must read it in the same order as it was saved.
+*/
 void DataManager::SavePlayerData(Player& player)
 {
+	fstream playerFile;
 	// Save player stats to a PlayerData.game
-	playerFile.open("PlayerData.game", ios::out);
+	playerFile.open("data/player.game", ios::out);
 	if (playerFile.is_open())
 	{
 		//Health/Mana/Souls
@@ -31,8 +37,9 @@ void DataManager::SavePlayerData(Player& player)
 
 void DataManager::LoadPlayerData(Player& player)
 {
+	fstream playerFile;
 	// Load player data from PlayerData.game
-	playerFile.open("PlayerData.game", ios::in);
+	playerFile.open("data/player.game", ios::in);
 	if (playerFile.is_open())
 	{
 		string line;
