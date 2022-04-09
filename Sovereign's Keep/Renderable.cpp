@@ -43,6 +43,10 @@ void Renderable::updatePosition(glm::mat4 transform) {
 	origin = transform * glm::vec4(origin,1.0);
 }
 
+
+
+
+
 void Renderable::resize(float w, float h) {
 	glm::mat4 RESIZE = glm::mat4(1.0f);
 	RESIZE = glm::scale(glm::mat4(1.0f), glm::vec3(w, h, 0.0f)) * RESIZE;

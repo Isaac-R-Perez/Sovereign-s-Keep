@@ -43,6 +43,8 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 
 	animationState = states::idling;
 
+
+
 }
 
 
@@ -54,6 +56,11 @@ void Player::update(double dt) {
 
 	glm::mat4 move = glm::mat4(1.0f);
 	glm::vec3 movementVector = glm::vec3(0.0f);
+
+	
+	//update hitbox
+	getHitBox().updateHitBox(getOrigin(), PLAYER_WIDTH, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_HEIGHT);
+
 
 
 	getGame()->updateCamera(getOrigin());

@@ -7,6 +7,33 @@ class Game;
 This class will be the parent of everything in that game that can be rendered, such as the player, enemies, menu system, and GUI entities
 */
 
+struct HitBox {
+	glm::vec4 topLeft;
+	glm::vec4 topRight;
+	glm::vec4 bottomLeft;
+	glm::vec4 bottomRight;
+
+	/*
+	CHANGE THIS TO BE A RECTANGLE, DO NOT FORCE IT TO BE A SQUARE!
+	*/
+
+	HitBox() {
+		topLeft = glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f);
+		topRight = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+		bottomLeft = glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f);
+		topRight = glm::vec4(1.0f, -1.0f, 0.0f, 1.0f);
+	}
+
+	//in every renderable update, send the renderable's origin and hitbox lengths
+	void updateHitBox(glm::vec3 origin, float xL, float xR, float yB, float yT) {
+		topLeft = glm::vec4(origin.x - xL, origin.y + yT, 0.0f, 1.0f);
+		topRight = glm::vec4(origin.x + xR, origin.y + yT, 0.0f, 1.0f);
+		bottomLeft = glm::vec4(origin.x - xL, origin.y - yB, 0.0f, 1.0f);
+		bottomRight = glm::vec4(origin.x + xR, origin.y - yB, 0.0f, 1.0f);
+	}
+
+
+};
 
 
 class Renderable {
@@ -26,23 +53,6 @@ public:
 
 
 	int renderOrder; //from 1 - 6?
-
-	/*
-		
-		bool operator<(const Renderable& r2) {
-		if (this->renderOrder < r2.renderOrder) {
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-
-	*/
-	
-
 
 
 	//this function adds this renderable to the pendingDestroy vector
@@ -68,8 +78,9 @@ public:
 
 	void setTexture(int spriteSheet);
 
-	//Send this a transformation matrix to move both the renderable and its origin.
+	//
 	void updatePosition(glm::mat4 transform);
+
 
 	void setWidth(float w) {	width = w;}
 	void setHeight(float h) { height = h; }
@@ -79,13 +90,14 @@ public:
 
 	void resize(float w, float h);
 
+	HitBox& getHitBox() { return hitbox; }
+
 private:
 
 	
 
 	//origin?
 	glm::vec3 origin;
-
 
 	//These will store the floats that modify the intial vertices.
 	float width;
@@ -103,6 +115,9 @@ private:
 	//if this is true, the game engine will automatically destory in the next update call
 	bool destroy;
 
+	//this is a RECTANGLE, pass an origin to the hitbox, typically the renderable's origin
+	//a hitbox consists of 4 vec3s, UPDATE EACH POINT in the hitbox
+	HitBox hitbox;
 
 };
 
