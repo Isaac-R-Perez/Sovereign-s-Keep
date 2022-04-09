@@ -614,12 +614,7 @@ void Player::render() {
 }
 
 
-void Player::setSouls(int amt)
-{
-	monsterSouls = amt;
-}
-
-void Player::addSouls(int amt)
+void Player::addMonsterSouls(int amt)
 {
 	monsterSouls += amt;
 	if (monsterSouls > MAX_MONSTER_SOULS)
@@ -628,7 +623,7 @@ void Player::addSouls(int amt)
 	}
 }
 
-void Player::spendSouls(int amt)
+void Player::spendMonsterSouls(int amt)
 {
 	monsterSouls -= amt;
 	if (monsterSouls < 0)
@@ -637,37 +632,12 @@ void Player::spendSouls(int amt)
 	}
 }
 
-int Player::getSouls()
-{
-	return monsterSouls;
-}
-
-void Player::setMaxMana(float amt)
-{
-	maxMana = amt;
-}
-
-float Player::getMaxMana()
-{
-	return maxMana;
-}
-
-void Player::setCurrentMana(float amt)
-{
-	currentMana = amt;
-}
-
-float Player::getCurrentMana()
-{
-	return currentMana;
-}
-
 bool Player::spendMana(float amt)
 {
-	if (amt < currentMana)
+	if (amt < Mana)
 	{
 		//Returns true if the player can cast the spell
-		currentMana -= amt;
+		Mana -= amt;
 		return true;
 	}
 	else

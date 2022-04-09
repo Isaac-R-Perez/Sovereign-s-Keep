@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 #include <vector>
-using namespace std;
 #include "Renderable.h"
 #include "Status.h"
+using namespace std;
 /*
 * Parent of the Player and Enemy classes
 * This will have the common methods and attributes
@@ -74,7 +74,6 @@ private:
 public:
 
 	Character(Game* g, int rOrder, int defaultSpriteSheet);
-
 	
 	Status status;
 	void updateEffects(float dt);
@@ -103,6 +102,20 @@ public:
 	float getBaseMoveSpeed() { return baseMoveSpeed; }
 	void setBaseMoveSpeed(float amt) { baseMoveSpeed = amt; }
 
+	//ELEMENT DAMAGE
+	void setFireDMG(float amt) { fireDMG = amt; }
+	void setWaterDMG(float amt) { waterDMG = amt; }
+	void setEarthDMG(float amt) { earthDMG = amt; }
+	void setAirDMG(float amt) { airDMG = amt; }
+	void setElectricityDMG(float amt) { airDMG = amt; }
+	void setIceDMG(float amt) { iceDMG = amt; }
+	float getFireDMG() { return fireDMG; }
+	float getWaterDMG() { return waterDMG; }
+	float getEarthDMG() { return earthDMG; }
+	float getAirDMG() { return airDMG; }
+	float getElectricityDMG() { return electricityDMG; }
+	float getIceDMG() { return iceDMG; }
+
 	//RESISTANCE
 	void setFireRES(float amt) { fireRES = amt; }
 	void setWaterRES(float amt) { waterRES = amt; }
@@ -125,6 +138,10 @@ public:
 	void inflictFrozen();
 	void inflictConductive();
 	void inflictStunned();
+
+	/*
+	* BUFFS AND DEBUFFS
+	*/
 	
 	//Stat buffs/debuffs (Just pass in a negative number to debuff)
 	void buffAttack(float amt, float time) { atkBuff.emplace_back(amt, time); }

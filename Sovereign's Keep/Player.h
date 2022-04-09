@@ -38,13 +38,24 @@ const float CAST_SCALE = 1.15f;
 const float PLAYER_HEIGHT = 0.0725f;
 const float PLAYER_WIDTH = 0.0275f;
 
+const int MAX_ELEMENT_LEVEL = 3; //The max level any element can be.
+
 class Player : public Character
 {
 private:
 	int monsterSouls; //Stores the monster souls collected during the run.
 
 	float maxMana;
-	float currentMana;
+	float Mana;
+
+	//Element Levels
+	int FireLevel = 1;
+	int WaterLevel = 1;
+	int EarthLevel = 1;
+	int AirLevel = 1;
+	int ElectricityLevel = 1;
+	int IceLevel = 1;
+	int GravityLevel = 1;
 
 	bool FACING_RIGHT;
 	bool FACING_LEFT;
@@ -99,20 +110,34 @@ public:
 
 	Player(Game* g, int rOrder, int defaultSpriteSheet);
 
-
-
 	//SOULS
-	void setSouls(int amt);
-	void addSouls(int amt);
-	void spendSouls(int amt);
-	int getSouls();
+	void setMonsterSouls(int amt) { monsterSouls = amt; }
+	void addMonsterSouls(int amt);
+	void spendMonsterSouls(int amt);
+	int getMonsterSouls() { return monsterSouls; }
 
 	//MANA
-	void setMaxMana(float amt);
-	float getMaxMana();
-	void setCurrentMana(float amt);
-	float getCurrentMana();
+	void setMaxMana(float amt) { maxMana = amt; }
+	float getMaxMana() { return maxMana; }
+	void setCurrentMana(float amt) { Mana = amt; }
+	float getCurrentMana() { return Mana; }
 	bool spendMana(float amt);
+
+	//ELEMENT LEVELS
+	void setFireLevel(int level) { FireLevel = level; }
+	void setWaterLevel(int level) { WaterLevel = level; }
+	void setEarthLevel(int level) { EarthLevel = level; }
+	void setAirLevel(int level) { AirLevel = level; }
+	void setElectricityLevel(int level) { ElectricityLevel = level; }
+	void setIceLevel(int level) { IceLevel = level; }
+	void setGravityLevel(int level) { GravityLevel = level; }
+	int getFireLevel() { return FireLevel; }
+	int getWaterLevel() { return WaterLevel; }
+	int getEarthLevel() { return EarthLevel; }
+	int getAirLevel() { return AirLevel; }
+	int getElectricityLevel() { return ElectricityLevel; }
+	int getIceLevel() { return IceLevel; }
+	int getGravityLevel() { return GravityLevel; }
 
 
 	void setFacingRight(bool b) { FACING_RIGHT = b; }
