@@ -2,6 +2,7 @@
 #include "Background.h"
 #include "Player.h"
 #include "DataManager.h"
+#include "Enemy.h"
 
 //globals
 int SCREEN_HEIGHT;
@@ -132,6 +133,7 @@ Game::Game() {
 	pendingAdd = std::vector<Renderable*>();
 	pendingDestroy = std::vector<Renderable*>();
 	View = glm::mat4(1.0f);
+	ShowHitBoxes = false;
 }
 
 
@@ -168,6 +170,10 @@ void Game::loadAllTextures() {
 	//basic attack
 	generateTexture(generatedTexture, 224, 29, 3, "images/player/basic_attack.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::basic_attack), generatedTexture));
+
+	// slime enemy
+	generateTexture(generatedTexture, 96, 20, 3, "images/enemy/slime/Slime_Run.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::slime), generatedTexture));
 
 
 }
@@ -539,6 +545,18 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	}
 
 
+	if (key == GLFW_KEY_H && action == GLFW_PRESS) {
+
+		if (gameREFERENCE->getShowHitBoxes()) {
+			gameREFERENCE->setShowHitBoxes(false);
+		}
+		else
+		{
+			gameREFERENCE->setShowHitBoxes(true);
+		}
+
+	}
+
 
 
 	/*
@@ -605,6 +623,17 @@ bool Game::initialize() {
 		return false;
 	}
 
+	//create hitbox render variables
+	glGenVertexArrays(1, &HITBOX_VAO);
+	glBindVertexArray(HITBOX_VAO);
+
+	glGenBuffers(1, &HITBOX_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, HITBOX_VBO);
+
+	hitbox_programID = LoadShaders("HITBOX_vshader.txt", "HITBOX_fshader.txt");
+
+	setupHitBoxBuffers();
+
 
 	//create VAO and VBO
 	glGenVertexArrays(1, &VAO);
@@ -670,12 +699,32 @@ bool Game::initialize() {
 	
 	renderQueue.insert(pair<int, Renderable*>(player->renderOrder, player));
 
+	b = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime);
+	renderQueue.insert(pair<int, Renderable*>(b->renderOrder, b));
+
 
 	return true;
 
 }
 
+void Game::setupHitBoxBuffers() {
+	hitboxVertices.clear();
 
+
+	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(GLfloat), NULL, GL_STATIC_DRAW);
+
+
+
+	GLint vPosition = glGetAttribLocation(hitbox_programID, "vPosition");
+	if (vPosition < 0) printf("Couldn't find vPosition in hitbox shader! SETUP\n");
+	glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glEnableVertexAttribArray(vPosition);
+
+	GLint viewLoc = glGetUniformLocation(hitbox_programID, "view");
+	if (viewLoc < 0) printf("Couldn't find view in hitbox shader! SETUP\n");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(View));
+
+}
 
 void Game::setupBuffers() {
 	
@@ -962,4 +1011,35 @@ void Game::updateCamera(glm::vec3& playerOrigin) {
 	GLint viewLoc = glGetUniformLocation(renderables_programID, "view");
 	if (viewLoc < 0) printf("Couldn't find view in shader! CAMERA UPDATE\n");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(View));
+}
+
+
+//change the vertices in the hitbox vector to be able to render the hitbox correctly. CALL bindHitBoxVariables FIRST
+void Game::changeHitBoxVertices(HitBox box) {
+	hitboxVertices.clear();
+	
+	hitboxVertices.emplace_back(glm::vec3(box.topRight));
+	hitboxVertices.emplace_back(glm::vec3(box.topLeft));
+	hitboxVertices.emplace_back(glm::vec3(box.bottomRight));
+
+	hitboxVertices.emplace_back(glm::vec3(box.topRight));
+	hitboxVertices.emplace_back(glm::vec3(box.bottomLeft));
+	hitboxVertices.emplace_back(glm::vec3(box.bottomRight));
+
+	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(GLfloat), hitboxVertices.data(), GL_STATIC_DRAW);
+}
+
+void Game::bindHitBoxVariables() {
+	glBindVertexArray(HITBOX_VAO);
+	glBindVertexArray(HITBOX_VBO);
+
+	glUseProgram(hitbox_programID);
+
+}
+
+void Game::bindNormalRenderVariables() {
+	glBindVertexArray(VAO);
+	glBindVertexArray(VBO);
+
+	glUseProgram(renderables_programID);
 }

@@ -56,11 +56,14 @@ void Player::update(double dt) {
 
 	glm::mat4 move = glm::mat4(1.0f);
 	glm::vec3 movementVector = glm::vec3(0.0f);
-
+	
+	std::multimap<int, Renderable*>::iterator itr;
+	std::multimap<int, Renderable*> queue = getGame()->getRenderQueue();
 	
 	//update hitbox
-	getHitBox().updateHitBox(getOrigin(), PLAYER_WIDTH, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_HEIGHT);
+	getHitBox().updateHitBox(getOrigin(), PLAYER_WIDTH / 1.5f, PLAYER_WIDTH / 1.5f, PLAYER_HEIGHT / 1.5f, PLAYER_HEIGHT / 1.5f);
 
+	//printf("TR: %f %f \n", getHitBox().topRight.x, getHitBox().topRight.y);
 
 
 	getGame()->updateCamera(getOrigin());
@@ -300,6 +303,30 @@ void Player::update(double dt) {
 
 	}
 
+
+	
+	//COLLISION CHECK
+	if (!queue.empty())
+	{
+		for (itr = queue.begin(); itr != queue.end(); ) {
+
+			//checks collision with EVERY renderable in the queue
+			if (checkCollision(itr->second)) {
+				switch (itr->second->renderOrder) {
+				
+
+					case 3: {//enemy
+						printf("PLAYER IS COLLIDING WITH ENEMY\n");
+						break;
+					}
+
+				}
+			}
+
+			++itr;
+
+		}
+	}
 
 
 }
@@ -599,6 +626,26 @@ void Player::render() {
 
 	getGame()->resetTextureCoordinates();
 
+
+
+	if (getGame()->getShowHitBoxes()) {
+		//bind everything to render hitboxes THEN REBIND TO RENDER RENDERABLES AGAIN
+		getGame()->bindHitBoxVariables();
+		getGame()->changeHitBoxVertices(getHitBox());
+
+		GLint objectToWorld = glGetUniformLocation(getGame()->getHitBoxProgID(), "objectToWorld");
+		if (objectToWorld < 0) printf("couldn't find objectToWorld in hitbox shader\n");
+		glUniformMatrix4fv(objectToWorld, 1, GL_FALSE, glm::value_ptr(getO2W()));
+
+		glDrawArrays(GL_TRIANGLES, 0, 2);
+
+		getGame()->bindNormalRenderVariables();
+	}
+
+
+
+
+
 	//reset the character size SAFELY!!!
 	if (animationState == states::walking || animationState == states::attacking || animationState  == states::casting) {
 		if (FACING_LEFT) {
@@ -652,9 +699,4 @@ void Player::scale(float xScale, float yScale) {
 	setO2W(scale);
 }
 
-void Player::flip() {
 
-	//apply a negative scale to the player's matrix as well as the 4 points of their hit box
-	glm::mat4 inverted = getO2W() * glm::scale(glm::mat4(1.0f), glm::vec3(-1.0f, 1.0f, 0.0f));
-	setO2W(inverted);
-}

@@ -15,8 +15,11 @@ Basic_Attack::Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet)
 
 void Basic_Attack::update(double dt) {
 
-	glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * dt * BULLET_BASE_SPEED, direction.y * dt * BULLET_BASE_SPEED, 0.0f));
+	getHitBox().updateHitBox(getOrigin(), 0.0f, 0.01f, 0.005f, 0.05f);
 
+	
+	glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * dt * BULLET_BASE_SPEED, direction.y * dt * BULLET_BASE_SPEED, 0.0f));
+	
 	updatePosition(move);
 
 }

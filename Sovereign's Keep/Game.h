@@ -14,7 +14,7 @@
 #include "stb_image.h"
 
 class Renderable;
-
+struct HitBox;
 
 /*
 This class holds all references to all entities in the game. The main class. Will hold all functions for the game as well
@@ -24,7 +24,8 @@ const float SCREEN_Y_MOVE_MODIFIER = 1.7777f;
 
 enum class SPRITE_SHEETS
 {
-	player_default, player_idle, player_walking, player_attacking, player_casting, background, basic_attack
+	player_default, player_idle, player_walking, player_attacking, player_casting, background, basic_attack,
+	slime,
 };
 
 
@@ -53,6 +54,12 @@ public:
 
 	void setupBuffers();
 
+	void setupHitBoxBuffers();
+	void changeHitBoxVertices(HitBox box);
+
+
+	void bindNormalRenderVariables();
+	void bindHitBoxVariables();
 
 	void renderableToPendingAdd(Renderable* r);
 
@@ -75,9 +82,14 @@ public:
 	GLuint getVAO() { return VAO; }
 
 	GLuint getRenderablesProgID() { return renderables_programID; }
+	GLuint getHitBoxProgID() { return hitbox_programID; }
 
 	bool isPaused() { return paused; }
-	bool setPaused(bool p) { paused = p; }
+	void setPaused(bool p) { paused = p; }
+
+	bool getShowHitBoxes() { return ShowHitBoxes; }
+	void setShowHitBoxes(bool b) { ShowHitBoxes = b; }
+
 
 	bool getSpellComboMode() { return spellComboMode; }
 	void setSpellComboMode(bool b) { spellComboMode = b; }
@@ -88,6 +100,7 @@ public:
 
 	void updateCamera(glm::vec3& playerOrigin);
 
+	std::multimap<int, Renderable*>& getRenderQueue() { return renderQueue; }
 
 private:
 
@@ -103,11 +116,19 @@ private:
 	//holds the program for the GUI vertex and fragment shaders
 	GLuint gui_programID;
 
+	//holds the program the hitbox shaders
+	GLuint hitbox_programID;
+
+	std::vector<glm::vec3> hitboxVertices;
+
 	//Vertex Array Object for the game
 	GLuint VAO;
 	GLuint VBO;
 	GLuint EBO;
 
+
+	GLuint HITBOX_VAO;
+	GLuint HITBOX_VBO;
 
 
 	//holds ALL renderables and in the correct render order
@@ -144,5 +165,8 @@ private:
 
 	//true if SHIFT is held
 	bool spellComboMode;
+
+	//if true, all renderables
+	bool ShowHitBoxes;
 
 };

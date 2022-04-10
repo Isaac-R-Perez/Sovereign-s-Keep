@@ -54,3 +54,48 @@ void Renderable::resize(float w, float h) {
 	
 	objectToWorld = RESIZE;
 }
+
+
+
+void Renderable::flip() {
+
+	//apply a negative scale to the matrix
+	glm::mat4 inverted = getO2W() * glm::scale(glm::mat4(1.0f), glm::vec3(-1.0f, 1.0f, 0.0f));
+	setO2W(inverted);
+}
+
+
+bool Renderable::checkCollision(Renderable* b) {
+
+	//check if b's hitbox's TOP LEFT is inside of the hitbox
+	if (b->getHitBox().topLeft.x > hitbox.topLeft.x && b->getHitBox().topLeft.x < hitbox.topRight.x) {
+		if (b->getHitBox().topLeft.y < hitbox.topLeft.y && b->getHitBox().topLeft.y > hitbox.bottomLeft.y) {
+			return true;
+		}
+	}
+
+	//check if b's hitbox's TOP RIGHT is inside of the hitbox
+	if (b->getHitBox().topRight.x > hitbox.topLeft.x && b->getHitBox().topRight.x < hitbox.topRight.x) {
+		if (b->getHitBox().topRight.y < hitbox.topLeft.y && b->getHitBox().topRight.y > hitbox.bottomLeft.y) {
+			return true;
+		}
+	}
+
+	//check if b's hitbox's BOTTOM LEFT is inside of the hitbox
+	if (b->getHitBox().bottomLeft.x > hitbox.topLeft.x && b->getHitBox().bottomLeft.x < hitbox.topRight.x) {
+		if (b->getHitBox().bottomLeft.y < hitbox.topLeft.y && b->getHitBox().bottomLeft.y > hitbox.bottomLeft.y) {
+			return true;
+		}
+	}
+
+	//check if b's hitbox's BOTTOM RIGHT is inside of the hitbox
+	if (b->getHitBox().bottomRight.x > hitbox.topLeft.x && b->getHitBox().bottomRight.x < hitbox.topRight.x) {
+		if (b->getHitBox().bottomRight.y < hitbox.topLeft.y && b->getHitBox().bottomRight.y > hitbox.bottomLeft.y) {
+			return true;
+		}
+	}
+
+
+
+	return false;
+}

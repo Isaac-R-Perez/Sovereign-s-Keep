@@ -172,8 +172,7 @@ public:
 	void render();
 	void update(double dt);
 
-	//this function flips the player horizontally
-	void flip();
+	
 
 	void scale(float xScale, float yScale);
 

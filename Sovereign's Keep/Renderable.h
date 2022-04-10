@@ -12,20 +12,23 @@ struct HitBox {
 	glm::vec4 topRight;
 	glm::vec4 bottomLeft;
 	glm::vec4 bottomRight;
+	glm::vec3 origin;
 
 	/*
 	CHANGE THIS TO BE A RECTANGLE, DO NOT FORCE IT TO BE A SQUARE!
 	*/
 
 	HitBox() {
-		topLeft = glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f);
-		topRight = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
-		bottomLeft = glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f);
-		topRight = glm::vec4(1.0f, -1.0f, 0.0f, 1.0f);
+		topLeft = glm::vec4(1000.0f, 0.0f, 0.0f, 1.0f);
+		topRight = glm::vec4(1000.0f, 0.0f, 0.0f, 1.0f);
+		bottomLeft = glm::vec4(1000.0f, 0.0f, 0.0f, 1.0f);
+		topRight = glm::vec4(1000.0f, 0.0f, 0.0f, 1.0f);
+		origin = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
 	//in every renderable update, send the renderable's origin and hitbox lengths
-	void updateHitBox(glm::vec3 origin, float xL, float xR, float yB, float yT) {
+	void updateHitBox(glm::vec3 og, float xL, float xR, float yB, float yT) {
+		origin = og;
 		topLeft = glm::vec4(origin.x - xL, origin.y + yT, 0.0f, 1.0f);
 		topRight = glm::vec4(origin.x + xR, origin.y + yT, 0.0f, 1.0f);
 		bottomLeft = glm::vec4(origin.x - xL, origin.y - yB, 0.0f, 1.0f);
@@ -59,6 +62,12 @@ public:
 	void kill() { destroy = true; }
 
 	bool shouldDestroy() { return destroy; }
+
+	//flips renderable horizontally
+	void flip();
+
+	//this function will return TRUE, if a given renderable's hitbox is WITHIN the caller's hitbox
+	bool checkCollision(Renderable* b);
 
 
 	/*
@@ -96,7 +105,7 @@ private:
 
 	
 
-	//origin?
+	//origin
 	glm::vec3 origin;
 
 	//These will store the floats that modify the intial vertices.

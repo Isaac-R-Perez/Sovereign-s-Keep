@@ -1,0 +1,13 @@
+#version 330 core
+
+in vec3 vPosition;
+
+uniform mat4 objectToWorld;
+uniform mat4 view;
+
+out vec3 ourColor;
+
+void main(){
+	gl_Position = view * objectToWorld * vec4(vPosition,1.0);
+	ourColor = vec3(1.0,1.0,1.0); //all hitboxes are the same color
+}
