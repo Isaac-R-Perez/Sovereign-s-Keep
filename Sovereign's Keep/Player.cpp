@@ -634,25 +634,6 @@ void Player::render() {
 	getGame()->resetTextureCoordinates();
 
 
-
-	if (getGame()->getShowHitBoxes()) {
-		//bind everything to render hitboxes THEN REBIND TO RENDER RENDERABLES AGAIN
-		getGame()->bindHitBoxVariables();
-		getGame()->changeHitBoxVertices(getHitBox());
-
-		GLint objectToWorld = glGetUniformLocation(getGame()->getHitBoxProgID(), "objectToWorld");
-		if (objectToWorld < 0) printf("couldn't find objectToWorld in hitbox shader\n");
-		glUniformMatrix4fv(objectToWorld, 1, GL_FALSE, glm::value_ptr(getO2W()));
-
-		glDrawArrays(GL_TRIANGLES, 0, 2);
-
-		getGame()->bindNormalRenderVariables();
-	}
-
-
-
-
-
 	//reset the character size SAFELY!!!
 	if (animationState == states::walking || animationState == states::attacking || animationState  == states::casting) {
 		if (FACING_LEFT) {

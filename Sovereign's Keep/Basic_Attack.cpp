@@ -17,12 +17,11 @@ void Basic_Attack::update(double dt) {
 	if (!getCanCollide()) {
 		setCanCollide(true);
 	}
-	glm::vec4 shiftedOrigin = glm::translate(glm::mat4(1.0f), glm::vec3(BULLET_WIDTH / 2.0f, 0.0f, 0.0f)) * glm::vec4(getOrigin(), 1.0f);
-
+	
 	std::multimap<int, Renderable*>::iterator itr;
 	std::multimap<int, Renderable*> queue = getGame()->getRenderQueue();
 
-	getHitBox().updateHitBox(shiftedOrigin, BULLET_HEIGHT / 1.6f, BULLET_HEIGHT / 1.6f, BULLET_HEIGHT / 1.6f, BULLET_HEIGHT / 1.6f);
+	getHitBox().updateHitBox(getOrigin(), BULLET_HEIGHT / 1.6f, BULLET_HEIGHT / 1.6f, BULLET_HEIGHT / 1.6f, BULLET_HEIGHT / 1.6f);
 
 	
 	glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * dt * BULLET_BASE_SPEED, direction.y * dt * BULLET_BASE_SPEED, 0.0f));
@@ -43,7 +42,8 @@ void Basic_Attack::update(double dt) {
 
 				case 3: {//enemy
 
-
+					//need to process the hit here and calculate bullet damage done to the enemy
+					kill();
 
 					printf("Bullet IS COLLIDING WITH Enemy\n");
 					break;

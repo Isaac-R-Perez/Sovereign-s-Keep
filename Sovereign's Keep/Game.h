@@ -54,12 +54,6 @@ public:
 
 	void setupBuffers();
 
-	void setupHitBoxBuffers();
-	void changeHitBoxVertices(HitBox box);
-
-
-	void bindNormalRenderVariables();
-	void bindHitBoxVariables();
 
 	void renderableToPendingAdd(Renderable* r);
 
@@ -82,13 +76,10 @@ public:
 	GLuint getVAO() { return VAO; }
 
 	GLuint getRenderablesProgID() { return renderables_programID; }
-	GLuint getHitBoxProgID() { return hitbox_programID; }
 
 	bool isPaused() { return paused; }
 	void setPaused(bool p) { paused = p; }
 
-	bool getShowHitBoxes() { return ShowHitBoxes; }
-	void setShowHitBoxes(bool b) { ShowHitBoxes = b; }
 
 
 	bool getSpellComboMode() { return spellComboMode; }
@@ -116,19 +107,11 @@ private:
 	//holds the program for the GUI vertex and fragment shaders
 	GLuint gui_programID;
 
-	//holds the program the hitbox shaders
-	GLuint hitbox_programID;
-
-	std::vector<glm::vec3> hitboxVertices;
 
 	//Vertex Array Object for the game
 	GLuint VAO;
 	GLuint VBO;
 	GLuint EBO;
-
-
-	GLuint HITBOX_VAO;
-	GLuint HITBOX_VBO;
 
 
 	//holds ALL renderables and in the correct render order
@@ -166,7 +149,5 @@ private:
 	//true if SHIFT is held
 	bool spellComboMode;
 
-	//if true, all renderables
-	bool ShowHitBoxes;
 
 };
