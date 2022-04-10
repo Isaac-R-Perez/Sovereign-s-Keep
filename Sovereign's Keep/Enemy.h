@@ -44,5 +44,7 @@ public:
 
 	void setSoulDrop(int amt);
 	int getSoulDrop();
+
+	
 };
 

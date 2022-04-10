@@ -4,6 +4,7 @@
 Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	:Character(g, rOrder, defaultSpriteSheet)
 {
+	
 	resize(PLAYER_WIDTH, PLAYER_HEIGHT);
 
 	IDLE = true;
@@ -311,11 +312,14 @@ void Player::update(double dt) {
 		for (itr = queue.begin(); itr != queue.end(); ) {
 
 			//checks collision with EVERY renderable in the queue
-			if (checkCollision(itr->second)) {
+			if (itr->second->getCanCollide() && checkCollision(itr->second)) {
 				switch (itr->second->renderOrder) {
 				
 
 					case 3: {//enemy
+						
+
+						
 						printf("PLAYER IS COLLIDING WITH ENEMY\n");
 						break;
 					}

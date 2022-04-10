@@ -700,8 +700,7 @@ bool Game::initialize() {
 	renderQueue.insert(pair<int, Renderable*>(player->renderOrder, player));
 
 	b = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime);
-	renderQueue.insert(pair<int, Renderable*>(b->renderOrder, b));
-
+	renderableToPendingAdd(b);
 
 	return true;
 

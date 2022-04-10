@@ -33,6 +33,10 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 */
 void Enemy::update(double dt) {
 
+	if (!getCanCollide()) {
+		setCanCollide(true);
+	}
+
 	//Renderable* spawnedBasicAttack = nullptr;
 
 	glm::mat4 move = glm::mat4(1.0f);

@@ -27,6 +27,8 @@ Renderable::Renderable(Game* g, int rOrder, int defaultSpriteSheet) {
 
 	destroy = false;
 
+	canCollide = false;
+
 }
 
 

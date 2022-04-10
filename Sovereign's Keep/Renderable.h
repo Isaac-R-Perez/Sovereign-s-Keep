@@ -19,11 +19,11 @@ struct HitBox {
 	*/
 
 	HitBox() {
-		topLeft = glm::vec4(1000.0f, 0.0f, 0.0f, 1.0f);
-		topRight = glm::vec4(1000.0f, 0.0f, 0.0f, 1.0f);
-		bottomLeft = glm::vec4(1000.0f, 0.0f, 0.0f, 1.0f);
-		topRight = glm::vec4(1000.0f, 0.0f, 0.0f, 1.0f);
-		origin = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		topLeft = glm::vec4(1000.0f, 1000.0f, 0.0f, 1.0f);
+		topRight = glm::vec4(1000.0f, 1000.0f, 0.0f, 1.0f);
+		bottomLeft = glm::vec4(1000.0f, 1000.0f, 0.0f, 1.0f);
+		topRight = glm::vec4(1000.0f, 1000.0f, 0.0f, 1.0f);
+		origin = glm::vec4(1000.0f, 1000.0f, 0.0f, 1.0f);
 	}
 
 	//in every renderable update, send the renderable's origin and hitbox lengths
@@ -101,6 +101,8 @@ public:
 
 	HitBox& getHitBox() { return hitbox; }
 
+	bool getCanCollide() { return canCollide; }
+	void setCanCollide(bool b) { canCollide = b; }
 private:
 
 	
@@ -128,6 +130,8 @@ private:
 	//a hitbox consists of 4 vec3s, UPDATE EACH POINT in the hitbox
 	HitBox hitbox;
 
+	//false if newly created
+	bool canCollide;
 };
 
 
