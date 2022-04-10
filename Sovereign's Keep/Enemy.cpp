@@ -37,6 +37,8 @@ void Enemy::update(double dt) {
 		setCanCollide(true);
 	}
 
+	std::multimap<int, Renderable*>::iterator itr;
+	std::multimap<int, Renderable*> queue = getGame()->getRenderQueue();
 	//Renderable* spawnedBasicAttack = nullptr;
 
 	glm::mat4 move = glm::mat4(1.0f);
@@ -93,7 +95,7 @@ void Enemy::update(double dt) {
 		//create a vector TOWARDS the player's origin
 		movementVector = dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin() - getOrigin();
 
-		glm::normalize(movementVector);
+		movementVector = glm::normalize(movementVector);
 
 		move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * ENEMY_BASE_SPEED, movementVector.y * dt * ENEMY_BASE_SPEED, 0.0f));
 

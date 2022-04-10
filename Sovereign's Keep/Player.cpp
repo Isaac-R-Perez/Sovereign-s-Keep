@@ -51,6 +51,9 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 
 void Player::update(double dt) {
 	
+	if (!getCanCollide()) {
+		setCanCollide(true);
+	}
 	//printf("x = %f,  y = %f\n", getOrigin().x, getOrigin().y);
 
 	Renderable* spawnedBasicAttack = nullptr;
@@ -191,7 +194,7 @@ void Player::update(double dt) {
 
 
 				
-				spawnedBasicAttack = new Basic_Attack(getGame(), 3, static_cast<int>(SPRITE_SHEETS::basic_attack));
+				spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack));
 
 				glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
 
