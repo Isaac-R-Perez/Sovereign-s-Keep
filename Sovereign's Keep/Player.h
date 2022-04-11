@@ -1,5 +1,7 @@
 #pragma once
 #include "Character.h"
+#include "Game.h"
+#include "Spell.h"
 /*
 * Child of the Character class.
 * This class is for any specific methods that only apply
@@ -10,7 +12,8 @@
 	CONSTANTS
 */
 const int MAX_MONSTER_SOULS = 999;
-const int INITIAL_MAX_MANA = 100;
+const float INITIAL_MAX_MANA = 100.0f;
+const float INITIAL_MAX_HEALTH = 100.0f;
 
 const float PLAYER_BASE_SPEED = 0.3f;
 const float BASE_BASIC_ATTACK_COOLDOWN = 0.3f; //this is unused as the FRAME TIME determines attack speed
@@ -101,6 +104,17 @@ private:
 	//use the enum to track this
 	int animationState;
 
+	ELEMENTS slottedElements[4];
+
+	std::vector<ELEMENTS> elementsInput;
+	int inputIterator;
+
+
+	SpellID currentSpellID;
+
+	//use this to get the info about the currentSpell the player has
+	Spell* referenceSpell;
+
 
 public:
 
@@ -176,6 +190,14 @@ public:
 
 	void scale(float xScale, float yScale);
 
+	ELEMENTS getElementFromSlot(int i) { return slottedElements[i]; }
+	
+	void addElementToInputVector(ELEMENTS e);
+	
+	void resetElementsVector();
+	SpellID combineElements();
+
+	void setPlayerCurrentSpellID(SpellID i);
 	
 
 

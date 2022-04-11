@@ -18,6 +18,10 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 	
 	}
 
+	//this sets the size of the enemy to the size of the renderable's width and height
+	
+
+	
 	facingRight = true;
 	facingLeft = false;
 	current_frame = 0;
@@ -99,7 +103,9 @@ void Enemy::update(double dt) {
 
 		move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * ENEMY_BASE_SPEED, movementVector.y * dt * ENEMY_BASE_SPEED, 0.0f));
 
-		updatePosition(move);
+		//ADD this back when testing is done
+
+		//updatePosition(move);
 
 
 

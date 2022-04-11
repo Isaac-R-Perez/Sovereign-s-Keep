@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "DataManager.h"
 #include "Enemy.h"
+#include "Spell.h"
 
 //globals
 int SCREEN_HEIGHT;
@@ -141,6 +142,10 @@ Game::Game() {
 
 
 void Game::loadAllTextures() {
+
+	//empty texture, for spells or obstacles
+	generateTexture(generatedTexture, 50, 50, 3, "images/NO_TEXTURE.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::no_texture), generatedTexture));
 
 	//background
 	generateTexture(generatedTexture, 1920, 1080, 3, "images/background/demo_background.png");
@@ -362,6 +367,8 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 	if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS) {
 		gameREFERENCE->setSpellComboMode(true);
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(false);
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(false);
 	}
 	if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_REPEAT) {
 		
@@ -370,6 +377,11 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		gameREFERENCE->setSpellComboMode(false);
 
 		//this is where you tell the player to combine their current elements into a spell
+		SpellID createdSpellID = dynamic_cast<Player*>(gameREFERENCE->getPlayer())->combineElements();
+
+		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setPlayerCurrentSpellID(createdSpellID);
+		
+
 	}
 
 
@@ -389,7 +401,8 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 			//this means that the player is trying to input their element 1.
 			//printf("input element 1\n");
 
-
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->addElementToInputVector(
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getElementFromSlot(0) );
 
 		}
 		else
@@ -448,7 +461,8 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 		if (gameREFERENCE->getSpellComboMode() == true) {
 			//this means that the player is trying to input their element 2.
-
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->addElementToInputVector(
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getElementFromSlot(1));
 		}
 
 	}
@@ -458,10 +472,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 	if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
 
-		if (gameREFERENCE->getSpellComboMode() == true) {
-			//DO NOTHING, the element was already added when it was initally pressed
-
-		}
+		
 	}
 
 
@@ -470,7 +481,8 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 		if (gameREFERENCE->getSpellComboMode() == true) {
 			//this means that the player is trying to input their element 3.
-
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->addElementToInputVector(
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getElementFromSlot(2));
 		}
 		else
 		{
@@ -526,8 +538,9 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
 
 		if (gameREFERENCE->getSpellComboMode() == true) {
-			//this means that the player is trying to input their element 3.
-
+			//this means that the player is trying to input their element 4.
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->addElementToInputVector(
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getElementFromSlot(3));
 		}
 
 	}
@@ -537,10 +550,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 	if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
 
-		if (gameREFERENCE->getSpellComboMode() == true) {
-			//DO NOTHING, the element was already added when it was initally pressed
-
-		}
+		
 	}
 
 	//halt the enemies movement for testing???

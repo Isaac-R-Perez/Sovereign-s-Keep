@@ -1,6 +1,6 @@
 #include "Basic_Attack.h"
 
-Basic_Attack::Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet)
+Basic_Attack::Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet, float ang)
 	:Renderable(g, rOrder, defaultSpriteSheet) {
 
 	resize(BULLET_WIDTH, BULLET_HEIGHT);
@@ -8,8 +8,24 @@ Basic_Attack::Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet)
 
 	damage = BASE_DAMAGE;
 	speed = BULLET_BASE_SPEED;
-	angle = 0.0f;
-	direction = glm::vec3(1.0f, 0.0f, 0.0f); //points down x axis
+	angle = ang;
+	direction = glm::vec3(1.0f, 0.0f, 0.0f); //points down x axis initially
+
+	if (angle != 0.0f) {
+		
+		//rotate the texture to render at the correct angle
+		glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		updatePosition(rotation);
+
+		//rotate direction to match given angle
+		direction =  rotation * glm::vec4(direction, 0.0f);
+
+		//normalize new direction
+		direction = glm::normalize(direction);
+	}
+	
+
+
 }
 
 

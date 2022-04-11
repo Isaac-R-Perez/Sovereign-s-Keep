@@ -24,8 +24,13 @@ const float SCREEN_Y_MOVE_MODIFIER = 1.7777f;
 
 enum class SPRITE_SHEETS
 {
+	no_texture,
 	player_default, player_idle, player_walking, player_attacking, player_casting, background, basic_attack,
 	slime,
+};
+
+enum class ELEMENTS {
+	NONE, FIRE, WATER, EARTH, AIR, ELEC, ICE, GRAV
 };
 
 
@@ -148,6 +153,7 @@ private:
 
 	//true if SHIFT is held
 	bool spellComboMode;
+
 
 
 };

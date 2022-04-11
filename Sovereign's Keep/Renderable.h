@@ -99,6 +99,8 @@ public:
 
 	void resize(float w, float h);
 
+	void resetSize();
+
 	HitBox& getHitBox() { return hitbox; }
 
 	bool getCanCollide() { return canCollide; }

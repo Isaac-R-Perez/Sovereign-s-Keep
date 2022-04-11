@@ -14,7 +14,7 @@ class Basic_Attack : public Renderable {
 
 public:
 
-	Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet);
+	Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet, float ang);
 
 	void render();
 	void update(double dt);
@@ -22,7 +22,7 @@ public:
 
 private:
 
-	//holds the angle that the basic attack flys
+	//holds the angle that the basic attack flys, in RADIANS
 	float angle;
 
 	float damage;

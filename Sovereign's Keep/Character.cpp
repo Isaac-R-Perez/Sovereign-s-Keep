@@ -3,7 +3,7 @@
 Character::Character(Game* g, int rOrder, int defaultSpriteSheet)
 	:Renderable(g, rOrder, defaultSpriteSheet)
 {
-	
+	//set all initial base stats
 }
 
 

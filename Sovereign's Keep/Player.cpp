@@ -44,12 +44,26 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 
 	animationState = states::idling;
 
+	//tempory elements in slots
+	slottedElements[0] = ELEMENTS::FIRE;
+	slottedElements[1] = ELEMENTS::WATER;
+	slottedElements[2] = ELEMENTS::EARTH;
+	slottedElements[3] = ELEMENTS::AIR;
 
+	resetElementsVector();
+	
+	currentSpellID = SpellID::None;
+	referenceSpell = nullptr;
+
+	setMaxHealth(INITIAL_MAX_HEALTH);
+	setMaxMana(INITIAL_MAX_MANA);
+	setCurrentMana(INITIAL_MAX_MANA);
 
 }
 
 
 void Player::update(double dt) {
+	
 	
 	if (!getCanCollide()) {
 		setCanCollide(true);
@@ -81,6 +95,9 @@ void Player::update(double dt) {
 		ATTACKING = false;
 	}
 	
+	if (currentSpellID == SpellID::None) {
+		CASTING = false;
+	}
 
 	if (MOVING && ATTACKING) {
 		//player is current moving with WASD, so set animation to walking
@@ -194,7 +211,7 @@ void Player::update(double dt) {
 
 
 				
-				spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack));
+				spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack), 0.0f);
 
 				glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
 
@@ -220,7 +237,31 @@ void Player::update(double dt) {
 				CAN_BASIC_ATTACK = false;
 			}
 			else if (ATTACK_LEFT) {
+				
+				spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack), glm::pi<float>());
 
+				glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
+
+				spawnedBasicAttack->updatePosition(move);
+
+
+				getGame()->renderableToPendingAdd(spawnedBasicAttack);
+
+
+
+
+
+				//UPDATE THIS LATER TO ACCOUNT FOR BUFFED BASIC ATTACK COOLDOWN REDUCTION
+
+				if (MOVING) {
+					basicAttackCooldown = PLAYER_ATTACKING_FRAME_TIME;
+				}
+				else {
+					basicAttackCooldown = PLAYER_ATTACKING_FRAME_TIME * 0.52f; //double shot when not moving
+				}
+
+
+				CAN_BASIC_ATTACK = false;
 			}
 
 		}
@@ -262,7 +303,12 @@ void Player::update(double dt) {
 		}
 		else
 		{
-			castingTimer = PLAYER_CASTING_FRAME_TIME; //needs to be tailored to the current spell
+			
+			castingTimer = referenceSpell->getCastTime() / 8.0f; //needs to be tailored to the current spell
+			
+			
+			
+			
 			current_frame++;
 
 			if (current_frame > CASTING_FRAMES) {
@@ -274,6 +320,25 @@ void Player::update(double dt) {
 		if (current_frame == 5 && CAN_CAST_SPELL) {
 			//cast the spell
 			//printf("Spell was cast!\n");
+
+			//check if the player has enough mana to cast the spell, then cast
+
+			if (currentSpellID != SpellID::None) {
+				
+				if (getCurrentMana() > referenceSpell->getManaCost()) {
+					
+					//create a spell to add to the game
+					Renderable* castedSpell = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::no_texture), currentSpellID);
+					
+					getGame()->renderableToPendingAdd(castedSpell);
+
+					spendMana(referenceSpell->getManaCost());
+				}
+
+			}
+
+			
+
 			CAN_CAST_SPELL = false;
 		}
 
@@ -687,4 +752,116 @@ void Player::scale(float xScale, float yScale) {
 	setO2W(scale);
 }
 
+
+void Player::resetElementsVector() {
+	elementsInput.clear();
+	elementsInput.emplace_back(ELEMENTS::NONE);
+	elementsInput.emplace_back(ELEMENTS::NONE);
+	elementsInput.emplace_back(ELEMENTS::NONE);
+	inputIterator = 0;
+}
+
+void Player::addElementToInputVector(ELEMENTS e) {
+	inputIterator = inputIterator % 3;
+	elementsInput.at(inputIterator) = e;
+	inputIterator++;
+}
+
+SpellID Player::combineElements() {
+
+	ELEMENTS tempElements[3];
+	tempElements[0] = elementsInput.at(0);
+	tempElements[1] = elementsInput.at(1);
+	tempElements[2] = elementsInput.at(2);
+	resetElementsVector();
+	
+	/*
+		Remove this later, its just for testing
+	*/
+	for (int i = 0; i < 3; i++) {
+		printf("Element %d is %d\n", i + 1, tempElements[i]);
+	}
+	
+
+	/*
+		put a bunch of switch statements to determine which spellID to return, which spell needs to be created
+	*/
+
+	if (tempElements[0] == ELEMENTS::NONE && tempElements[1] == ELEMENTS::NONE && tempElements[2] == ELEMENTS::NONE)
+	{
+		return SpellID::None;
+	}
+
+	switch (tempElements[0]) {
+	//first element is fire	
+		case ELEMENTS::FIRE:
+		{
+			//check if only fire was input
+			if (tempElements[1] == ELEMENTS::NONE && tempElements[2] == ELEMENTS::NONE) {
+				return SpellID::Fire;
+			}
+
+			//only two elements were input
+			if (tempElements[2] == ELEMENTS::NONE) {
+
+				switch (tempElements[1]) {
+					case ELEMENTS::FIRE: {
+						return SpellID::FireFire;
+						break;
+					}
+					
+					case ELEMENTS::WATER: {
+						return SpellID::FireWater;
+						break;
+					}
+									   
+				}
+
+
+			}
+
+			//check for the triple element combos for fire
+
+
+			break;
+		}
+
+	}
+	
+
+	//IF A SPELL IS NOT IMPLEMENTED YET, the current spell will be kept
+	//also if an empty combo is input, the current spell is kept
+	return SpellID::None;
+}
+
+
+//this function creates the spell renderable for the player
+void Player::setPlayerCurrentSpellID(SpellID i) {
+	
+	if (i == SpellID::None) {
+		// dont change the current spell
+		
+	}
+	else
+	{
+		if (referenceSpell == nullptr) {
+			referenceSpell = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::no_texture), i);
+		}
+
+		if (currentSpellID != i) {
+			//clear memeory first
+			delete referenceSpell;
+
+			//assign new reference spell
+			referenceSpell = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::no_texture), i);
+
+			currentSpellID = i;
+		}
+
+
+	}
+
+	
+	
+}
 

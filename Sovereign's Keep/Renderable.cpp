@@ -46,15 +46,20 @@ void Renderable::updatePosition(glm::mat4 transform) {
 }
 
 
-
-
-
-void Renderable::resize(float w, float h) {
+//changes this renderables size to its current WIDTH and HEIGHT
+void Renderable::resetSize() {
 	glm::mat4 RESIZE = glm::mat4(1.0f);
-	RESIZE = glm::scale(glm::mat4(1.0f), glm::vec3(w, h, 0.0f)) * RESIZE;
+	RESIZE = glm::scale(glm::mat4(1.0f), glm::vec3(width, height, 0.0f)) * RESIZE;
 	RESIZE = glm::translate(glm::mat4(1.0f), glm::vec3(origin.x, origin.y, 0.0f)) * RESIZE;
-	
+
 	objectToWorld = RESIZE;
+}
+
+//changes this renderables size to the given width and height, CHANGES RENDERABLES WIDTH AND HEIGHT
+void Renderable::resize(float w, float h) {
+	width = w;
+	height = h;
+	resetSize();
 }
 
 

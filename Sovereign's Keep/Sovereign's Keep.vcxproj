@@ -153,6 +153,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderable.cpp" />
+    <ClCompile Include="Spell.cpp" />
     <ClCompile Include="Status.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +166,7 @@
     <ClInclude Include="LevelManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Renderable.h" />
+    <ClInclude Include="Spell.h" />
     <ClInclude Include="Status.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
