@@ -64,8 +64,6 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 
 
 void Player::update(double dt) {
-	
-	
 	if (!getCanCollide()) {
 		setCanCollide(true);
 	}
@@ -84,6 +82,9 @@ void Player::update(double dt) {
 
 	//printf("TR: %f %f \n", getHitBox().topRight.x, getHitBox().topRight.y);
 	updateEffects(dt);
+
+	//update player's mana
+
 
 	getGame()->updateCamera(getOrigin());
 

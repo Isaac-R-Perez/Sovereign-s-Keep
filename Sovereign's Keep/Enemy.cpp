@@ -15,6 +15,9 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 			setMaxHealth(40.0f);
 			setBaseAttack(20.0f);
 			setBaseDefense(0.0f);
+
+
+			setBaseMoveSpeed(0.05f);
 			break;
 		}
 
@@ -50,6 +53,9 @@ void Enemy::update(double dt) {
 
 	glm::mat4 move = glm::mat4(1.0f);
 	glm::vec3 movementVector = glm::vec3(0.0f);
+
+
+	updateEffects(dt);
 
 
 	if (dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x > getOrigin().x)
@@ -103,7 +109,7 @@ void Enemy::update(double dt) {
 
 		movementVector = glm::normalize(movementVector);
 
-		move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * ENEMY_BASE_SPEED, movementVector.y * dt * ENEMY_BASE_SPEED, 0.0f));
+		move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getMoveSpeed(), movementVector.y * dt * getMoveSpeed(), 0.0f));
 
 		//ADD this back when testing is done
 

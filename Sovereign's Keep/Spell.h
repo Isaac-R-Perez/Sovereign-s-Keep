@@ -6,6 +6,8 @@
 	the spells that the player can cast. Some spells will be rendered as objects, while some will have no rendering, such as passive buffs.
 */
 
+static uint32_t spellCounter = 0;
+
 enum class SpellID {
 	
 	//NO (NEW) SPELL CREATED
@@ -80,6 +82,8 @@ public:
 	float getManaCost() { return manaCost; }
 	float getCastTime() { return castTime; }
 
+	uint32_t getIdentifier() { return identifier; }
+
 
 private:
 
@@ -91,6 +95,8 @@ private:
 
 	//use this to identify which spell this is
 	SpellID ID;
+
+	uint32_t identifier;
 
 
 };

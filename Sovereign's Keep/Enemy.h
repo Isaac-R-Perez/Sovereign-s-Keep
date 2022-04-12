@@ -9,7 +9,6 @@ enum class EnemyType {
 	slime,
 };
 
-const float ENEMY_BASE_SPEED = 0.05f;
 const float ENEMY_WALKING_BASE_TIME = 0.1f;
 
 const float SLIME_WIDTH = 0.04f;

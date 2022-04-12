@@ -3,9 +3,13 @@
 Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id) 
 	:Renderable(g, rOrder, defaultSpriteSheet) 
 {
+	
+	
 	//this determines which spell was created/cast
 	ID = id;
 
+	spellCounter++;
+	identifier = spellCounter;
 	//add each string name and all info needed for each spell, ALL OF EM
 	switch (ID) {
 		case SpellID::None: {
@@ -51,7 +55,8 @@ void Spell::update(double dt) {
 		case SpellID::Fire: {
 			//apply fire element buff
 		
-			printf("\nCasted Fired Up!!!\n");
+			printf("\nCasted Fired Up!!! %d\n");
+
 		
 			kill();
 			break;
