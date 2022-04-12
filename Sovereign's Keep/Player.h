@@ -50,6 +50,7 @@ private:
 
 	float maxMana;
 	float Mana;
+	float manaRegenRate = 0.1f;
 
 	//Element Levels
 	int FireLevel = 1;
@@ -136,6 +137,8 @@ public:
 	void setCurrentMana(float amt) { Mana = amt; }
 	float getCurrentMana() { return Mana; }
 	bool spendMana(float amt);
+	void setManaRegenRate(float amt) { manaRegenRate = amt; }
+	float getManaRegenRate() { return manaRegenRate; }
 
 	//ELEMENT LEVELS
 	void setFireLevel(int level) { FireLevel = level; }

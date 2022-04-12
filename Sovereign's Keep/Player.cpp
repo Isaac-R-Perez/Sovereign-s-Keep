@@ -84,7 +84,7 @@ void Player::update(double dt) {
 	updateEffects(dt);
 
 	//update player's mana
-
+	setCurrentMana(manaRegenRate * dt);
 
 	getGame()->updateCamera(getOrigin());
 
