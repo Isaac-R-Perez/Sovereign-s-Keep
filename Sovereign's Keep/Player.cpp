@@ -405,6 +405,82 @@ void Player::update(double dt) {
 
 }
 
+
+void Player::SavePlayerData()
+{
+	fstream playerFile;
+	// Save player stats to a PlayerData.game
+	playerFile.open("PlayerGameData.game", ios::out);
+	if (playerFile.is_open())
+	{
+		//Health/Mana/Souls
+		playerFile << getMaxHealth() << endl;
+		playerFile << getMaxMana() << endl;
+		playerFile << getMonsterSouls() << endl;
+
+		//Base Stats
+		playerFile << getBaseAttack() << endl;
+		playerFile << getBaseDefense() << endl;
+		playerFile << getBaseMoveSpeed() << endl;
+
+		//Element Levels
+		playerFile << getFireLevel() << endl;
+		playerFile << getWaterLevel() << endl;
+		playerFile << getEarthLevel() << endl;
+		playerFile << getAirLevel() << endl;
+		playerFile << getElectricityLevel() << endl;
+		playerFile << getIceLevel() << endl;
+		playerFile << getGravityLevel() << endl;
+
+		playerFile.close();
+	}
+}
+
+void Player::LoadPlayerData()
+{
+	fstream playerFile;
+	// Load player data from PlayerData.game
+	playerFile.open("PlayerGameData.game", ios::in);
+	if (playerFile.is_open())
+	{
+		string line;
+
+		//Health/Mana/Souls
+		getline(playerFile, line);
+		setMaxHealth(stof(line));
+		getline(playerFile, line);
+		setMaxMana(stof(line));
+		getline(playerFile, line);
+		setMonsterSouls(stoi(line));
+
+		//Base Stats
+		getline(playerFile, line);
+		setBaseAttack(stof(line));
+		getline(playerFile, line);
+		setBaseDefense(stof(line));
+		getline(playerFile, line);
+		setBaseMoveSpeed(stof(line));
+
+		//Element Levels
+		getline(playerFile, line);
+		setFireLevel(stoi(line));
+		getline(playerFile, line);
+		setWaterLevel(stoi(line));
+		getline(playerFile, line);
+		setEarthLevel(stoi(line));
+		getline(playerFile, line);
+		setAirLevel(stoi(line));
+		getline(playerFile, line);
+		setElectricityLevel(stoi(line));
+		getline(playerFile, line);
+		setIceLevel(stoi(line));
+		getline(playerFile, line);
+		setGravityLevel(stoi(line));
+
+		playerFile.close();
+	}
+}
+
 void Player::render() {
 
 	float idle_stride = 0.0f;

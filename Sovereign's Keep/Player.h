@@ -2,6 +2,7 @@
 #include "Character.h"
 #include "Game.h"
 #include "Spell.h"
+#include <fstream>
 /*
 * Child of the Character class.
 * This class is for any specific methods that only apply
@@ -172,6 +173,10 @@ public:
 	void setStartAttacking(bool b) { START_ATTACKING = b; }
 	void setMoving(bool b) { MOVING = b; }
 	void setCasting(bool b) { CASTING = b; }
+
+	//Player Data
+	void SavePlayerData();
+	void LoadPlayerData();
 
 	//run this function everytime a player presses Q, AND CAN CAST THE SPELL
 	void resetCastingVariables() {
