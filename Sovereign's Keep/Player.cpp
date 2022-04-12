@@ -59,6 +59,7 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	setMaxMana(INITIAL_MAX_MANA);
 	setCurrentMana(INITIAL_MAX_MANA);
 	setBaseAttack(10.0f);
+	setBaseMoveSpeed(PLAYER_BASE_SPEED);
 
 }
 
@@ -368,7 +369,7 @@ void Player::update(double dt) {
 
 		glm::normalize(movementVector);
 
-		move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * PLAYER_BASE_SPEED, movementVector.y * dt * PLAYER_BASE_SPEED, 0.0f));
+		move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getMoveSpeed(), movementVector.y * dt * getMoveSpeed(), 0.0f));
 
 		updatePosition(move);
 
