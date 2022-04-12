@@ -12,6 +12,9 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 		case EnemyType::slime:
 		{
 			resize(SLIME_WIDTH, SLIME_HEIGHT);
+			setMaxHealth(40.0f);
+			setBaseAttack(20.0f);
+			setBaseDefense(0.0f);
 			break;
 		}
 
@@ -80,7 +83,6 @@ void Enemy::update(double dt) {
 		break;
 	}
 
-
 	}
 
 	//printf("TR: %f %f \n", getHitBox().topRight.x, getHitBox().topRight.y);
@@ -107,7 +109,10 @@ void Enemy::update(double dt) {
 
 		//updatePosition(move);
 
-
+		if (getCurrentHealth() <= 0.0f)
+		{
+			kill();
+		}
 
 }
 

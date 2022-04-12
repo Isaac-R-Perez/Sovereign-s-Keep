@@ -1,5 +1,7 @@
 #pragma once
 #include "Renderable.h"
+#include "Player.h"
+#include "Enemy.h"
 /*
 	This class will handle all logic related to the player's basic attack, including bullet spawnpoints and modifiers
 */

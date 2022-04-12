@@ -59,6 +59,9 @@ void Basic_Attack::update(double dt) {
 				case 3: {//enemy
 
 					//need to process the hit here and calculate bullet damage done to the enemy
+					float playerAttack = dynamic_cast<Player*>(getGame()->getPlayer())->getAttack();
+					float enemyDefense = dynamic_cast<Enemy*>(itr->second)->getDefense();
+					dynamic_cast<Enemy*>(itr->second)->removeHealth(playerAttack - enemyDefense);
 					kill();
 
 					printf("Bullet IS COLLIDING WITH Enemy\n");

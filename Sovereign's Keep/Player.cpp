@@ -58,6 +58,7 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	setMaxHealth(INITIAL_MAX_HEALTH);
 	setMaxMana(INITIAL_MAX_MANA);
 	setCurrentMana(INITIAL_MAX_MANA);
+	setBaseAttack(10.0f);
 
 }
 
@@ -82,7 +83,7 @@ void Player::update(double dt) {
 	getHitBox().updateHitBox(getOrigin(), PLAYER_WIDTH / 1.5f, PLAYER_WIDTH / 1.5f, PLAYER_HEIGHT / 1.5f, PLAYER_HEIGHT / 1.5f);
 
 	//printf("TR: %f %f \n", getHitBox().topRight.x, getHitBox().topRight.y);
-
+	updateEffects(dt);
 
 	getGame()->updateCamera(getOrigin());
 

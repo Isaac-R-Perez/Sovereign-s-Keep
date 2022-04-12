@@ -16,12 +16,12 @@ private:
 	string name;
 
 	//Character stats
-	float maxHealth = 100.0f;
-	float currentHealth = maxHealth;
-	float baseAttack = 20.0f;
-	float baseDefense = 10.0f;
-	float baseMoveSpeed = 1.0;
-	float currentMoveSpeed = 1.0;
+	float maxHealth;
+	float currentHealth;
+	float baseAttack;
+	float baseDefense;
+	float baseMoveSpeed;
+	float currentMoveSpeed;
 
 	//Element Damage Multipliers
 	float fireDMG = 1.0;
@@ -82,7 +82,7 @@ public:
 	//HEALTH
 	float getCurrentHealth() { return currentHealth; }
 	float getMaxHealth() { return maxHealth; }
-	void setMaxHealth(float amt) { maxHealth = amt; }
+	void setMaxHealth(float amt) { maxHealth = amt; currentHealth = amt; }
 	void restoreHealth(float amt);
 	void removeHealth(float amt);
 	void fullHeal() { currentHealth = maxHealth; }
