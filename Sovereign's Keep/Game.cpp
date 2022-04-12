@@ -244,12 +244,18 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 			If they cant, ignore this.
 			If they can, start casting animation, and make the casting time specific to the spell being cast.
 		*/
+		
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setCasting(true);
 		dynamic_cast<Player*>(gameREFERENCE->getPlayer())->resetCastingVariables();
+		
 
 	}
 	if (key == GLFW_KEY_Q && action == GLFW_REPEAT) {
+		if (!dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getCasting()) {
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setCasting(true);
 
+			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->resetCastingVariables();
+		}
 	}
 
 	if (key == GLFW_KEY_Q && action == GLFW_RELEASE) {

@@ -314,8 +314,8 @@ void Player::update(double dt) {
 			current_frame++;
 
 			if (current_frame > CASTING_FRAMES) {
-				CASTING = false; //stop casting
 				current_frame = 0;
+				CASTING = false;
 			}
 		}
 

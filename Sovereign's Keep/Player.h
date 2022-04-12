@@ -183,6 +183,9 @@ public:
 	bool getMovingLeft() { return MOVING_LEFT; }
 	bool getMovingRight() { return MOVING_RIGHT; }
 
+	bool getCasting() { return CASTING; }
+	bool getCanCastSpell() { return CAN_CAST_SPELL; }
+
 	void render();
 	void update(double dt);
 

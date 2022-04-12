@@ -55,7 +55,7 @@ void Spell::update(double dt) {
 		case SpellID::Fire: {
 			//apply fire element buff
 		
-			printf("\nCasted Fired Up!!! %d\n");
+			printf("\nCasted Fired Up!!!\n");
 
 		
 			kill();
