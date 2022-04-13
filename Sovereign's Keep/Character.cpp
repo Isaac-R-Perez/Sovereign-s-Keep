@@ -53,6 +53,10 @@ void Character::updateEffects(float dt)
 	updateBuff(iceRESBuff, dt);
 }
 
+/*
+* updateBuff only looks to see if the time for that buff has run out.
+* Once it sees that the time is under 0, it will remove that buff from its vector.
+*/
 void Character::updateBuff(vector<Buff>& buff,float dt)
 {
 	for (int i = 0; i < buff.size(); i++) 
@@ -61,7 +65,7 @@ void Character::updateBuff(vector<Buff>& buff,float dt)
 		{
 			if (buff[i].time > 0.0f)
 			{
-				//REDUCE TIME
+				//Reduce Time by dt
 				buff[i].time -= dt;
 			}
 			else
