@@ -3,12 +3,47 @@
 #include <vector>
 #include "Renderable.h"
 #include "Status.h"
+#include "Spell.h"
 using namespace std;
 /*
 * Parent of the Player and Enemy classes
 * This will have the common methods and attributes
 * between the player and enemy.
 */
+
+
+
+struct spellBuff {
+	//how the long the buff will last on the character
+	float duration;
+
+	//which spell applied the buff
+	SpellID spellID;
+
+	//true if buff should be removed
+	bool done;
+
+	spellBuff(float d, SpellID s) {
+		duration = d;
+		spellID = s;
+		done = false;
+
+	}
+
+	//on update, reduce the duration timer based on frameTime
+	void update(double dt) {
+		duration -= dt;
+
+		if (duration <= 0.0f) {
+			done = true;
+		}
+
+	}
+
+
+};
+
+
 class Character : public Renderable
 {
 private:
@@ -52,6 +87,14 @@ private:
 			noTimeLimit = true;
 		}
 	};
+
+
+
+	//holds all of the buffs that the character currently has
+	vector<spellBuff> buffs;
+
+
+
 
 	vector<Buff> atkBuff;
 	vector<Buff> defBuff;
@@ -104,6 +147,11 @@ public:
 	float getMoveSpeed();
 	float getBaseMoveSpeed() { return baseMoveSpeed; }
 	void setBaseMoveSpeed(float amt) { baseMoveSpeed = amt; }
+
+	//sets the current movespeed for the character (needed to apply buffs/debuffs to the character directly)
+	void setCurrentMoveSpeed(float s) { currentMoveSpeed = s; }
+	float getCurrentMoveSpeed() { return currentMoveSpeed; }
+
 
 	//ELEMENT DAMAGE
 	void setFireDMG(float amt) { fireDMG = amt; }
@@ -181,4 +229,32 @@ public:
 	void clearAirResistanceBuffs() { airRESBuff.clear(); }
 	void clearElectricityResistanceBuffs() { electricityRESBuff.clear(); }
 	void clearIceResistanceBuffs() { iceRESBuff.clear(); }
+
+
+
+
+	void addBuff(spellBuff b) { buffs.emplace_back(b); }
+
+	//returns the buffs vector (use for searching the vector for buffs)
+	vector<spellBuff>& getBuffs() { return buffs; }
+
+	//searches the buff vector at certain index, returns true if found
+	bool hasBuff(SpellID s, int i);
+
+
+	//searches the vector and returns how many of that spell's buff is in it
+	int buffAmount(SpellID spell);
+
+
+	void updateSpellBuffs(double dt);
+
+
+	//search the buffs vector and return true at the first instance of the spellID
+	bool searchSpellBuff(SpellID s);
+
+	//removes the FIRST INSTANCE of the buff, only removes one of the given buff
+	void removeSpellBuff(SpellID s);
+
+
+
 };

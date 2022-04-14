@@ -12,6 +12,8 @@ const float BULLET_HEIGHT = 0.02f;
 const float BULLET_BASE_SPEED = 0.6f;
 const float BASE_DAMAGE = 20.0f;
 
+const float BULLET_LIFETIME = 1.75f;
+
 class Basic_Attack : public Renderable {
 
 public:
@@ -32,6 +34,9 @@ private:
 	float speed;
 
 	glm::vec3 direction;
+
+	//when this reaches zero, kill the bullet
+	float lifeTimer;
 
 
 };

@@ -1,4 +1,5 @@
 #include "Spell.h"
+#include "Player.h"
 #include <cstdio>
 
 Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id) 
@@ -70,6 +71,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Fanned Flames I";
 			manaCost = 25.0f;
 			castTime = 0.25f;
+			duration = 55.0f;
 			break;
 		}
 
@@ -335,6 +337,17 @@ void Spell::update(double dt) {
 		}
 		case SpellID::Air: {
 			//apply Air buff, the buff should cancel any other single element buff
+			
+
+			//check if any other basic buff is applied, if it is, remove it then apply new buff
+
+			
+			if (!dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(ID)) {
+				//player does NOT have the buff already
+				dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(1000.0f, ID));
+			}
+
+			
 
 			kill();
 			break;
@@ -398,6 +411,8 @@ void Spell::update(double dt) {
 			apply the stacking attack speed buff to the player
 
 			*/
+
+			dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(duration, ID));
 
 			//remove later
 			kill();

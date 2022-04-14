@@ -24,7 +24,7 @@ Basic_Attack::Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet, float an
 		direction = glm::normalize(direction);
 	}
 	
-
+	lifeTimer = BULLET_LIFETIME;
 
 }
 
@@ -74,6 +74,14 @@ void Basic_Attack::update(double dt) {
 			++itr;
 
 		}
+	}
+
+
+
+	lifeTimer -= dt;
+
+	if (lifeTimer < 0.0f) {
+		kill();
 	}
 
 

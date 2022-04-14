@@ -72,12 +72,23 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 
 
 	LeftElement = nullptr;
+	MiddleElement = nullptr;
+	RightElement = nullptr;
+
+	spellTopElement = nullptr;
+	spellLeftElement = nullptr;
+	spellRightElement = nullptr;
+
+	attackSpeed = PLAYER_ATTACKING_FRAME_TIME;
+
+
 }
 
 Player::~Player()
 {
 	HealthBar->kill();
 	ManaBar->kill();
+
 }
 
 
@@ -112,6 +123,8 @@ void Player::update(double dt) {
 	displayCurrentSpell();
 
 
+	//apply all spellBuffs
+	applySpellBuffs();
 
 
 
@@ -220,7 +233,7 @@ void Player::update(double dt) {
 				{
 					current_frame = 3;
 				}
-				attackingTimer = PLAYER_ATTACKING_FRAME_TIME;
+				attackingTimer = attackSpeed;
 			}
 
 			
@@ -264,10 +277,10 @@ void Player::update(double dt) {
 				//UPDATE THIS LATER TO ACCOUNT FOR BUFFED BASIC ATTACK COOLDOWN REDUCTION
 
 				if (MOVING) {
-					basicAttackCooldown = PLAYER_ATTACKING_FRAME_TIME;
+					basicAttackCooldown = attackSpeed;
 				}
 				else {
-					basicAttackCooldown = PLAYER_ATTACKING_FRAME_TIME * 0.52f; //double shot when not moving
+					basicAttackCooldown = attackSpeed * 0.52f; //double shot when not moving
 				}
 
 
@@ -291,10 +304,10 @@ void Player::update(double dt) {
 				//UPDATE THIS LATER TO ACCOUNT FOR BUFFED BASIC ATTACK COOLDOWN REDUCTION
 
 				if (MOVING) {
-					basicAttackCooldown = PLAYER_ATTACKING_FRAME_TIME;
+					basicAttackCooldown = attackSpeed;
 				}
 				else {
-					basicAttackCooldown = PLAYER_ATTACKING_FRAME_TIME * 0.52f; //double shot when not moving
+					basicAttackCooldown = attackSpeed * 0.52f; //double shot when not moving
 				}
 
 
@@ -405,7 +418,7 @@ void Player::update(double dt) {
 
 		glm::normalize(movementVector);
 
-		move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getMoveSpeed(), movementVector.y * dt * getMoveSpeed(), 0.0f));
+		move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed(), movementVector.y * dt * getCurrentMoveSpeed(), 0.0f));
 
 		updatePosition(move);
 
@@ -1780,8 +1793,38 @@ void Player::displayCurrentSpell() {
 	}
 
 
+}
 
-	
+
+
+const float AIR_MOVESPEED_BUFF = 1.2f; //20 percent buff
+const float FIRE_AIR_ATTACK_SPEED_BUFF = 0.75f; //reduces timer by 25% making it faster
+
+void Player::applySpellBuffs() {
+	int amt = 0; //holds the number of a certain buff
+
+	//set ALL stats to their base value
+	setCurrentMoveSpeed(PLAYER_BASE_SPEED);
+	attackSpeed = PLAYER_ATTACKING_FRAME_TIME;
+
+
+	//search for all buffs and apply them now, stacking stats where applicable
+
+
+	//movespeed buffs
+	if (searchSpellBuff(SpellID::Air)) {
+		setCurrentMoveSpeed(getCurrentMoveSpeed() * AIR_MOVESPEED_BUFF);
+	}
+
+
+	//attack speed buffs
+
+	amt = buffAmount(SpellID::FireAir);
+	if (amt > 0) {
+		for (int i = 0; i < amt; i++) {
+			attackSpeed = attackSpeed * FIRE_AIR_ATTACK_SPEED_BUFF;
+		}
+	}
 
 
 

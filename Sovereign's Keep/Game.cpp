@@ -868,6 +868,7 @@ void Game::update(double dt) {
 		}
 	}
 
+	//printf("%d\n", renderQueue.size());
 	
 
 
@@ -1029,7 +1030,7 @@ void Game::updateCamera(glm::vec3& playerOrigin) {
 	glm::vec3 cameraCenter = playerOrigin;
 
 
-	const float BACKGROUND_SCALE = 2.0f;
+	const float BACKGROUND_SCALE = BACKGROUND_WIDTH;
 	const float CAMERA_SIZE = 1.0f; //camera is always a square centered at origin with top right corner being (1.0,1.0)
 
 	if (playerOrigin.x + CAMERA_SIZE > BACKGROUND_SCALE)

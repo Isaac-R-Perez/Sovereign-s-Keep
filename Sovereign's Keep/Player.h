@@ -18,7 +18,6 @@ const float INITIAL_MAX_MANA = 100.0f;
 const float INITIAL_MAX_HEALTH = 100.0f;
 
 const float PLAYER_BASE_SPEED = 0.3f;
-const float BASE_BASIC_ATTACK_COOLDOWN = 0.3f; //this is unused as the FRAME TIME determines attack speed
 
 const float PLAYER_IDLE_FRAME_TIME = 0.55f;
 const float PLAYER_WALKING_FRAME_TIME = 0.1f;
@@ -53,6 +52,9 @@ private:
 	float maxMana;
 	float Mana;
 	float manaRegenRate = 2.0f;
+
+	float attackSpeed;
+
 
 	//Element Levels
 	int FireLevel = 1;
@@ -244,5 +246,9 @@ public:
 	void setSpellTopElement(DisplayElementData d);
 	void setSpellLeftElement(DisplayElementData d);
 	void setSpellRightElement(DisplayElementData d);
+
+
+	//all buffs are searched and all stats are calculated for this frame
+	void applySpellBuffs();
 
 };

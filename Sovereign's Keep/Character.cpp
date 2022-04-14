@@ -51,6 +51,12 @@ void Character::updateEffects(float dt)
 	updateBuff(airRESBuff, dt);
 	updateBuff(electricityRESBuff, dt);
 	updateBuff(iceRESBuff, dt);
+
+	//spellBuffs
+	updateSpellBuffs(dt);
+
+	//printf("%d\n", buffs.size());
+
 }
 
 /*
@@ -331,3 +337,106 @@ void Character::inflictStunned()
 		electricityRES = 1.5f;
 	}
 }
+
+
+//searches the buff vector at certain index, returns true if buff is found
+bool Character::hasBuff(SpellID s, int i) {
+	return (buffs.at(i).spellID == s);
+}
+
+
+//searches the vector and returns how many of that spell's buff is in it
+int Character::buffAmount(SpellID spell) {
+	int count = 0;
+
+	if (buffs.empty()) {
+		return count;
+	}
+	else
+	{
+		for (int i = 0; i < buffs.size(); i++) {
+			if (hasBuff(spell, i))
+			{
+				count++;
+			}
+		}
+
+		return count;
+	}
+}
+
+
+void Character::updateSpellBuffs(double dt) {
+
+	if (!buffs.empty()) {
+		
+		for (spellBuff& b : buffs) {
+			b.update(dt);
+		}
+
+
+
+
+		vector<spellBuff>::iterator itr;
+
+
+			//remove 
+			for (itr = buffs.begin(); itr != buffs.end(); ) {
+
+				if (itr->done) {
+					itr = buffs.erase(itr);
+				}
+				else
+				{
+					++itr;
+				}
+
+			}
+		
+
+
+
+	}
+
+}
+
+
+bool Character::searchSpellBuff(SpellID s) {
+	if (!buffs.empty()) {
+
+		for (spellBuff b : buffs) {
+			if (b.spellID == s) {
+				return true;
+			}
+		}
+
+	}
+	else
+	{
+		return false;
+	}
+	return false;
+}
+
+
+void Character::removeSpellBuff(SpellID s) {
+	if (!buffs.empty()) {
+
+		vector<spellBuff>::iterator itr;
+		//remove 
+		for (itr = buffs.begin(); itr != buffs.end(); ) {
+
+			if (itr->spellID == s) {
+				itr = buffs.erase(itr);
+				break;
+			}
+			else
+			{
+				++itr;
+			}
+
+		}
+
+	}
+}
+
