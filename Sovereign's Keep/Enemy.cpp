@@ -13,6 +13,7 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 		{
 			resize(SLIME_WIDTH, SLIME_HEIGHT);
 			setMaxHealth(40.0f);
+			setCurrentHealth(40.0f);
 			setBaseAttack(20.0f);
 			setBaseDefense(0.0f);
 
@@ -113,7 +114,7 @@ void Enemy::update(double dt) {
 
 		//ADD this back when testing is done
 
-		//updatePosition(move);
+		updatePosition(move);
 
 		if (getCurrentHealth() <= 0.0f)
 		{
