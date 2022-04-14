@@ -67,7 +67,36 @@ enum class SpellID {
 	//tiple gravity
 	GravGravGrav,
 
+	Meteor, //for the meteor barrage spell
+	
+	Explosion1,//for fireball explosion, meteor impact
+	
+	WaterBolt, //for the Water Blast spell
+	
+	SustainedExplosion,//for the Barrage spell
+	
+	ElementalFireball,//attack for fire elemental
+	
+	ElementalWaterball,//attack for water elemental
+	
+	ElementalAirBall, //attack for air elemental
+	
+	WaterBallExplosion,//explosion of the Exploding WaterBall spell
+	
+	FirePillar, //spawned by the FireStorm spell
 
+	SmallEarthSpike, //created by Earth Wave
+
+	BigEarthSpike, //created by Fissure
+
+	SaturnRock, //rock created by Saturn's storm
+
+};
+
+
+// This enum determines how much explosion damage to apply
+enum class ExplosionType {
+	Fireball, Meteor, Firecracker, FieryEarthMine,
 };
 
 class Spell : public Renderable {
@@ -84,6 +113,8 @@ public:
 
 	uint32_t getIdentifier() { return identifier; }
 
+	void setExplosionType(ExplosionType t) { eType = t; }
+
 
 private:
 
@@ -98,5 +129,33 @@ private:
 
 	uint32_t identifier;
 
+
+	//when this timer reaches 0, the spell is over
+	float duration;
+
+
+	//is this spell newly created?
+	bool firstUpdate;
+
+	//holds the timer for the animation frames switching
+	float animationTimer;
+
+	//holds the number of frames of animation - 1
+	int animationFrames;
+
+	//holds the current animation frame of this spell
+	int currentAnimationFrame;
+
+	//use this for spells that travel along a path
+	glm::vec3 direction;
+
+	//use this for spells that travel along a path
+	float moveSpeed;
+
+	//this is false intially, set this true whenever you set firstUpdate false
+	bool startLoop;
+
+	//determines how much explosion damage this spell does
+	ExplosionType eType;
 
 };

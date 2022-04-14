@@ -85,7 +85,7 @@ void Player::update(double dt) {
 	updateEffects(dt);
 
 	//update player's mana
-	setCurrentMana(manaRegenRate * dt);
+	changeCurrentMana(manaRegenRate * dt);
 
 	getGame()->updateCamera(getOrigin());
 
@@ -100,6 +100,14 @@ void Player::update(double dt) {
 	
 	if (currentSpellID == SpellID::None) {
 		CASTING = false;
+	}
+	else {
+		
+			//dont let the player cast if they dont have enough mana
+			if (getCurrentMana() < referenceSpell->getManaCost()) {
+				//printf("%f\n", getCurrentMana());
+				CASTING = false;
+			}
 	}
 
 	if (MOVING && ATTACKING) {
@@ -322,7 +330,7 @@ void Player::update(double dt) {
 
 		if (current_frame == 5 && CAN_CAST_SPELL) {
 			//cast the spell
-			//printf("Spell was cast!\n");
+			//printf("Spell id = %d\n", currentSpellID);
 
 			//check if the player has enough mana to cast the spell, then cast
 
@@ -330,6 +338,8 @@ void Player::update(double dt) {
 				
 				if (getCurrentMana() > referenceSpell->getManaCost()) {
 					
+					
+
 					//create a spell to add to the game
 					Renderable* castedSpell = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::no_texture), currentSpellID);
 					
@@ -856,10 +866,11 @@ SpellID Player::combineElements() {
 	
 	/*
 		Remove this later, its just for testing
-	*/
-	for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 		printf("Element %d is %d\n", i + 1, tempElements[i]);
 	}
+	*/
+	
 	
 
 	/*
@@ -893,17 +904,531 @@ SpellID Player::combineElements() {
 						return SpellID::FireWater;
 						break;
 					}
+					case ELEMENTS::EARTH: {
+						return SpellID::FireEarth;
+						break;
+					}
+					case ELEMENTS::AIR: {
+						return SpellID::FireAir;
+						break;
+					}
 									   
 				}
 
 
 			}
+			else
+			{
+				//fire fire ----
+				switch (tempElements[1]) {
+				case ELEMENTS::FIRE:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireFireFire;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::FireFireWater;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::FireFireEarth;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::FireFireAir;
+					}
+
+
+					break;
+				}
+				case ELEMENTS::WATER:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireFireWater;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::FireWaterWater;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::FireWaterEarth;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::FireWaterAir;
+					}
+
+
+					break;
+				}
+
+				case ELEMENTS::EARTH:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireFireEarth;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::FireWaterEarth;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::FireEarthEarth;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::FireEarthAir;
+					}
+
+
+					break;
+				}
+
+				case ELEMENTS::AIR:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireFireAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::FireWaterAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::FireEarthAir;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::FireAirAir;
+					}
+
+
+					break;
+				}
+				}
+			}
+
+			
 
 			//check for the triple element combos for fire
 
 
 			break;
 		}
+
+
+
+
+		//first element is water
+		case ELEMENTS::WATER:
+		{
+			//check if only fire was input
+			if (tempElements[1] == ELEMENTS::NONE && tempElements[2] == ELEMENTS::NONE) {
+				return SpellID::Water;
+			}
+
+			//only two elements were input
+			if (tempElements[2] == ELEMENTS::NONE) {
+
+				switch (tempElements[1]) {
+				case ELEMENTS::FIRE: {
+					return SpellID::FireWater;
+					break;
+				}
+
+				case ELEMENTS::WATER: {
+					return SpellID::WaterWater;
+					break;
+				}
+				case ELEMENTS::EARTH: {
+					return SpellID::WaterEarth;
+					break;
+				}
+				case ELEMENTS::AIR: {
+					return SpellID::WaterAir;
+					break;
+				}
+
+				}
+
+
+			}
+			else
+			{
+				// ----  ----  ----
+				switch (tempElements[1]) {
+				case ELEMENTS::FIRE:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireFireWater;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::FireWaterWater;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::FireWaterEarth;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::FireWaterAir;
+					}
+
+
+					break;
+				}
+				case ELEMENTS::WATER:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireWaterWater;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::WaterWaterWater;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::WaterWaterEarth;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::WaterWaterAir;
+					}
+
+
+					break;
+				}
+
+				case ELEMENTS::EARTH:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireWaterEarth;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::WaterWaterEarth;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::WaterEarthEarth;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::WaterEarthAir;
+					}
+
+
+					break;
+				}
+
+				case ELEMENTS::AIR:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireWaterAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::WaterWaterAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::WaterEarthAir;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::WaterAirAir;
+					}
+
+
+					break;
+				}
+				}
+			}
+
+
+
+			//check for the triple element combos for fire
+
+
+			break;
+		}
+
+
+
+		//first element is Earth	
+		case ELEMENTS::EARTH:
+		{
+			//check if only fire was input
+			if (tempElements[1] == ELEMENTS::NONE && tempElements[2] == ELEMENTS::NONE) {
+				return SpellID::Earth;
+			}
+
+			//only two elements were input
+			if (tempElements[2] == ELEMENTS::NONE) {
+
+				switch (tempElements[1]) {
+				case ELEMENTS::FIRE: {
+					return SpellID::FireEarth;
+					break;
+				}
+
+				case ELEMENTS::WATER: {
+					return SpellID::WaterEarth;
+					break;
+				}
+				case ELEMENTS::EARTH: {
+					return SpellID::EarthEarth;
+					break;
+				}
+				case ELEMENTS::AIR: {
+					return SpellID::EarthAir;
+					break;
+				}
+
+				}
+
+
+			}
+			else
+			{
+				//triple elements
+				switch (tempElements[1]) {
+				case ELEMENTS::FIRE:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireFireEarth;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::FireWaterEarth;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::FireEarthEarth;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::FireEarthAir;
+					}
+
+
+					break;
+				}
+				case ELEMENTS::WATER:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireWaterEarth;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::WaterWaterEarth;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::WaterEarthEarth;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::WaterEarthAir;
+					}
+
+
+					break;
+				}
+
+				case ELEMENTS::EARTH:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireEarthEarth;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::WaterEarthEarth;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::EarthEarthEarth;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::EarthEarthAir;
+					}
+
+
+					break;
+				}
+
+				case ELEMENTS::AIR:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireEarthAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::WaterEarthAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::EarthEarthAir;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::EarthAirAir;
+					}
+
+
+					break;
+				}
+				}
+			}
+
+
+
+			//check for the triple element combos for fire
+
+
+			break;
+		}
+
+
+
+		//first element is Air	
+		case ELEMENTS::AIR:
+		{
+			//check if only fire was input
+			if (tempElements[1] == ELEMENTS::NONE && tempElements[2] == ELEMENTS::NONE) {
+				return SpellID::Air;
+			}
+
+			//only two elements were input
+			if (tempElements[2] == ELEMENTS::NONE) {
+
+				switch (tempElements[1]) {
+				case ELEMENTS::FIRE: {
+					return SpellID::FireAir;
+					break;
+				}
+
+				case ELEMENTS::WATER: {
+					return SpellID::WaterAir;
+					break;
+				}
+				case ELEMENTS::EARTH: {
+					return SpellID::EarthAir;
+					break;
+				}
+				case ELEMENTS::AIR: {
+					return SpellID::AirAir;
+					break;
+				}
+
+				}
+
+
+			}
+			else
+			{
+				//fire fire ----
+				switch (tempElements[1]) {
+				case ELEMENTS::FIRE:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireFireAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::FireWaterAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::FireEarthAir;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::FireAirAir;
+					}
+
+
+					break;
+				}
+				case ELEMENTS::WATER:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireWaterAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::WaterWaterAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::WaterEarthAir;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::WaterAirAir;
+					}
+
+
+					break;
+				}
+
+				case ELEMENTS::EARTH:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireEarthAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::WaterEarthAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::EarthEarthAir;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::EarthAirAir;
+					}
+
+
+					break;
+				}
+
+				case ELEMENTS::AIR:
+				{
+					if (tempElements[2] == ELEMENTS::FIRE) {
+						return SpellID::FireAirAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::WATER) {
+						return SpellID::WaterAirAir;
+					}
+
+					if (tempElements[2] == ELEMENTS::EARTH) {
+						return SpellID::EarthAirAir;
+					}
+					if (tempElements[2] == ELEMENTS::AIR) {
+						return SpellID::AirAirAir;
+					}
+
+
+					break;
+				}
+				}
+			}
+
+
+
+			//check for the triple element combos for fire
+
+
+			break;
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	}
 	
