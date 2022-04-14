@@ -70,6 +70,8 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	ManaBar = new GUI_Element(getGame(), 5, static_cast<int>(SPRITE_SHEETS::mana_bar), GUIType::ManaBar);
 	getGame()->renderableToPendingAdd(ManaBar);
 
+
+	LeftElement = nullptr;
 }
 
 Player::~Player()
@@ -103,6 +105,13 @@ void Player::update(double dt) {
 	applyManaRegen(dt);
 
 	getGame()->updateCamera(getOrigin());
+
+
+
+
+
+
+
 
 	//true if ONE OF THESE IS TRUE
 	MOVING = (MOVING_UP || MOVING_RIGHT || MOVING_DOWN || MOVING_LEFT);
@@ -1493,5 +1502,32 @@ void Player::applyManaRegen(double dt) {
 	if (getCurrentMana() > getMaxMana()) {
 		setCurrentMana(getMaxMana());
 	}
+
+}
+
+
+void Player::setLeftElement(DisplayElementData d) {
+	
+		LeftElement = new GUI_Element(getGame(), 5, static_cast<int>(SPRITE_SHEETS::air_icon), GUIType::AirIcon);
+		dynamic_cast<GUI_Element*>(LeftElement)->addToIconData(d);
+		getGame()->renderableToPendingAdd(LeftElement);
+	
+}
+
+
+void Player::setMiddleElement(DisplayElementData d) {
+
+	MiddleElement = new GUI_Element(getGame(), 5, static_cast<int>(SPRITE_SHEETS::air_icon), GUIType::AirIcon);
+	dynamic_cast<GUI_Element*>(MiddleElement)->addToIconData(d);
+	getGame()->renderableToPendingAdd(MiddleElement);
+
+}
+
+
+void Player::setRightElement(DisplayElementData d) {
+
+	RightElement = new GUI_Element(getGame(), 5, static_cast<int>(SPRITE_SHEETS::air_icon), GUIType::AirIcon);
+	dynamic_cast<GUI_Element*>(RightElement)->addToIconData(d);
+	getGame()->renderableToPendingAdd(RightElement);
 
 }

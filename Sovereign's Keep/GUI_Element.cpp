@@ -10,11 +10,10 @@ GUI_Element::GUI_Element(Game* g, int rOrder, int defaultSpriteSheet, GUIType t)
 	}
 	else
 	{
-		resize(PLAYER_ICON_WIDTH, PLAYER_ICON_WIDTH);
+		resize(SHIFT_ICON_WIDTH, SHIFT_ICOND_HEIGHT);
 	}
 
 	
-	IconData.clear();
 }
 
 
@@ -56,6 +55,10 @@ void GUI_Element::update(double dt) {
 		updatePosition(move);
 
 	}
+	else
+	{
+
+	}
 	
 
 
@@ -65,6 +68,7 @@ void GUI_Element::update(double dt) {
 
 void GUI_Element::render() {
 
+	glm::mat4 move;
 	
 
 
@@ -89,6 +93,7 @@ void GUI_Element::render() {
 	}
 
 
+
 	if (guiType == GUIType::HealthBar || guiType == GUIType::ManaBar) {
 		
 		GLint objectToWorld = glGetUniformLocation(getGame()->getRenderablesProgID(), "objectToWorld");
@@ -105,6 +110,48 @@ void GUI_Element::render() {
 	else
 	{
 		
+			//this tells the shader that the renderable is a GUI element, but has a texture
+			getGame()->setGUIFlag(3);
+			//loop through the vector, change to the appropriate icon texture, and move to the correct position.
+
+			if (IconData.type == GUIType::HealthBar) {
+
+			}
+			else
+			{
+
+				if (IconData.type == GUIType::FireIcon) {
+					setTexture(static_cast<int>(SPRITE_SHEETS::fire_icon));
+				}
+				if (IconData.type == GUIType::WaterIcon) {
+					setTexture(static_cast<int>(SPRITE_SHEETS::water_icon));
+				}
+				if (IconData.type == GUIType::EarthIcon) {
+					setTexture(static_cast<int>(SPRITE_SHEETS::earth_icon));
+				}
+				if (IconData.type == GUIType::AirIcon) {
+					setTexture(static_cast<int>(SPRITE_SHEETS::air_icon));
+				}
+
+
+				setOrigin(glm::vec3(0.0f, 0.0f, 0.0f));
+
+				move = glm::translate(glm::mat4(1.0f), IconData.location);
+
+				updatePosition(move);
+
+				GLint objectToWorld = glGetUniformLocation(getGame()->getRenderablesProgID(), "objectToWorld");
+				if (objectToWorld < 0) printf("couldn't find objectToWorld in shader\n");
+				glUniformMatrix4fv(objectToWorld, 1, GL_FALSE, glm::value_ptr(getO2W()));
+
+				glBindTexture(GL_TEXTURE_2D, getTexture());
+				glBindVertexArray(getGame()->getVAO());
+
+				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			}
+
+
+			kill();
 	}
 
 
@@ -112,5 +159,5 @@ void GUI_Element::render() {
 
 	getGame()->setGUIFlag(0);
 	//this clears the vector so that a fresh set of data can be sent.
-	IconData.clear();
+	
 }

@@ -4,8 +4,9 @@
 	This class will handle all logic related to the GUI elements (HPbar, ManaBar, Element icons)
 */
 
-const float SHIFT_ICON_WIDTH = 0.09f;
-const float PLAYER_ICON_WIDTH = 0.09f;
+const float SHIFT_ICON_WIDTH = 0.075f;
+const float SHIFT_ICOND_HEIGHT = 0.1f;
+const float PLAYER_ICON_WIDTH = 0.0525f;
 
 const float BAR_HEIGHT = 0.025f;
 
@@ -47,7 +48,7 @@ public:
 	void render();
 	void update(double dt);
 
-	void addToIconDataVector(DisplayElementData d) { IconData.emplace_back(d); }
+	void addToIconData(DisplayElementData d) { IconData = d; }
 
 
 private:
@@ -57,7 +58,7 @@ private:
 	
 	//clear this vector each frame, send the icon and location data each frame
 	//render them based on this vector
-	std::vector<DisplayElementData> IconData;
+	DisplayElementData IconData;
 
 
 };

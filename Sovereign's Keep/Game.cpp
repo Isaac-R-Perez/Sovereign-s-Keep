@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Spell.h"
+#include "GUI_Element.h"
 
 //globals
 
@@ -408,7 +409,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(false);
 		}
 		if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_REPEAT) {
-
+			
 		}
 		if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE) {
 			gameREFERENCE->setSpellComboMode(false);
@@ -744,6 +745,7 @@ bool Game::initialize() {
 	b = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime);
 	renderableToPendingAdd(b);
 
+
 	return true;
 
 }
@@ -876,6 +878,12 @@ void Game::update(double dt) {
 		
 		if (!renderQueue.empty())
 		{
+			//update the SHIFT gui first
+
+			if (spellComboMode) {
+				sendElementsData();
+			}
+
 			for (itr = renderQueue.begin(); itr != renderQueue.end(); ++itr) {
 				itr->second->update(dt);
 			}
@@ -905,10 +913,20 @@ void Game::render() {
 	//current solution is to create a total copy of the priority queue, MAY AFFECT PERFORMANCE WITH TONS OF ENTITIES!!!
 
 	std::multimap<int, Renderable*>::iterator itr;
+	
+	
+	if (!renderQueue.empty())
+	{
+		//update the SHIFT gui first
 
-	for (itr = renderQueue.begin(); itr != renderQueue.end(); ++itr) {
-		itr->second->render();
+
+
+		for (itr = renderQueue.begin(); itr != renderQueue.end(); ++itr) {
+			itr->second->render();
+		}
+
 	}
+
 	
 }
 
@@ -1040,3 +1058,62 @@ void Game::updateCamera(glm::vec3& playerOrigin) {
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(View));
 }
 
+
+const float LEFT = 0.625f;
+const float MIDDLE = 0.775f;
+const float RIGHT = 0.925f;
+const float ICON_ELEVATION = -0.9f;
+
+void Game::sendElementsData() {
+
+
+	if (dynamic_cast<Player*>(player)->getElementsFromVector(0) == ELEMENTS::FIRE) {
+		dynamic_cast<Player*>(player)->setLeftElement(DisplayElementData(GUIType::FireIcon, glm::vec3(LEFT, ICON_ELEVATION, 0.0f)));
+	}
+	if (dynamic_cast<Player*>(player)->getElementsFromVector(0) == ELEMENTS::WATER) {
+		dynamic_cast<Player*>(player)->setLeftElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(LEFT, ICON_ELEVATION, 0.0f)));
+	}
+	if (dynamic_cast<Player*>(player)->getElementsFromVector(0) == ELEMENTS::EARTH) {
+		dynamic_cast<Player*>(player)->setLeftElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(LEFT, ICON_ELEVATION, 0.0f)));
+	}
+	if (dynamic_cast<Player*>(player)->getElementsFromVector(0) == ELEMENTS::AIR) {
+		dynamic_cast<Player*>(player)->setLeftElement(DisplayElementData(GUIType::AirIcon, glm::vec3(LEFT, ICON_ELEVATION, 0.0f)));
+	}
+
+
+
+	if (dynamic_cast<Player*>(player)->getElementsFromVector(1) == ELEMENTS::FIRE) {
+		dynamic_cast<Player*>(player)->setMiddleElement(DisplayElementData(GUIType::FireIcon, glm::vec3(MIDDLE, ICON_ELEVATION, 0.0f)));
+	}
+	if (dynamic_cast<Player*>(player)->getElementsFromVector(1) == ELEMENTS::WATER) {
+		dynamic_cast<Player*>(player)->setMiddleElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(MIDDLE, ICON_ELEVATION, 0.0f)));
+	}
+	if (dynamic_cast<Player*>(player)->getElementsFromVector(1) == ELEMENTS::EARTH) {
+		dynamic_cast<Player*>(player)->setMiddleElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(MIDDLE, ICON_ELEVATION, 0.0f)));
+	}
+	if (dynamic_cast<Player*>(player)->getElementsFromVector(1) == ELEMENTS::AIR) {
+		dynamic_cast<Player*>(player)->setMiddleElement(DisplayElementData(GUIType::AirIcon, glm::vec3(MIDDLE, ICON_ELEVATION, 0.0f)));
+	}
+
+	
+
+
+	if (dynamic_cast<Player*>(player)->getElementsFromVector(2) == ELEMENTS::FIRE) {
+		dynamic_cast<Player*>(player)->setRightElement(DisplayElementData(GUIType::FireIcon, glm::vec3(RIGHT, ICON_ELEVATION, 0.0f)));
+	}
+	if (dynamic_cast<Player*>(player)->getElementsFromVector(2) == ELEMENTS::WATER) {
+		dynamic_cast<Player*>(player)->setRightElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(RIGHT, ICON_ELEVATION, 0.0f)));
+
+	}
+	if (dynamic_cast<Player*>(player)->getElementsFromVector(2) == ELEMENTS::EARTH) {
+		dynamic_cast<Player*>(player)->setRightElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(RIGHT, ICON_ELEVATION, 0.0f)));
+
+	}
+	if (dynamic_cast<Player*>(player)->getElementsFromVector(2) == ELEMENTS::AIR) {
+		dynamic_cast<Player*>(player)->setRightElement(DisplayElementData(GUIType::AirIcon, glm::vec3(RIGHT, ICON_ELEVATION, 0.0f)));
+
+	}
+	
+
+
+}

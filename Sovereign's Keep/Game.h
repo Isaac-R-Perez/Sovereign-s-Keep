@@ -110,6 +110,9 @@ public:
 		GLint gui = glGetUniformLocation(renderables_programID, "GUI");
 		glUniform1i(gui, b); }
 
+	//this sends the structs for the elementsGUI
+	void sendElementsData();
+
 private:
 
 	//window that everything is rendered to

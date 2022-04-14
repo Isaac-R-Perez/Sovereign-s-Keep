@@ -122,6 +122,11 @@ private:
 	Renderable* HealthBar;
 	Renderable* ManaBar;
 
+	Renderable* LeftElement;
+	Renderable* MiddleElement;
+	Renderable* RightElement;
+
+
 
 public:
 
@@ -211,6 +216,8 @@ public:
 
 	ELEMENTS getElementFromSlot(int i) { return slottedElements[i]; }
 
+	ELEMENTS getElementsFromVector(int i) { return elementsInput.at(i); }
+
 	void addElementToInputVector(ELEMENTS e);
 
 	void resetElementsVector();
@@ -220,6 +227,10 @@ public:
 
 
 	void applyManaRegen(double dt);
+
+	void setLeftElement(DisplayElementData d);
+	void setMiddleElement(DisplayElementData d);
+	void setRightElement(DisplayElementData d);
 
 
 };
