@@ -108,6 +108,8 @@ void Player::update(double dt) {
 
 
 
+	//display current spell elements if not NONE
+	displayCurrentSpell();
 
 
 
@@ -1529,5 +1531,259 @@ void Player::setRightElement(DisplayElementData d) {
 	RightElement = new GUI_Element(getGame(), 5, static_cast<int>(SPRITE_SHEETS::air_icon), GUIType::AirIcon);
 	dynamic_cast<GUI_Element*>(RightElement)->addToIconData(d);
 	getGame()->renderableToPendingAdd(RightElement);
+
+}
+
+void Player::setSpellTopElement(DisplayElementData d) {
+
+	spellTopElement = new GUI_Element(getGame(), 5, static_cast<int>(SPRITE_SHEETS::air_icon), GUIType::EarthIcon);
+	dynamic_cast<GUI_Element*>(spellTopElement)->addToIconData(d);
+	getGame()->renderableToPendingAdd(spellTopElement);
+
+}
+
+void Player::setSpellLeftElement(DisplayElementData d) {
+
+	spellLeftElement = new GUI_Element(getGame(), 5, static_cast<int>(SPRITE_SHEETS::air_icon), GUIType::EarthIcon);
+	dynamic_cast<GUI_Element*>(spellLeftElement)->addToIconData(d);
+	getGame()->renderableToPendingAdd(spellLeftElement);
+
+}
+
+void Player::setSpellRightElement(DisplayElementData d) {
+
+	spellRightElement = new GUI_Element(getGame(), 5, static_cast<int>(SPRITE_SHEETS::air_icon), GUIType::EarthIcon);
+	dynamic_cast<GUI_Element*>(spellRightElement)->addToIconData(d);
+	getGame()->renderableToPendingAdd(spellRightElement);
+
+}
+
+
+
+const float SPELL_TOP = -0.75f;
+const float SPELL_LEFT = -0.9f;
+const float SPELL_RIGHT = -0.6f;
+
+const float TOP_ELEVATION = -0.65f;
+const float BOTTOM_ELEVATION = -0.85f;
+
+void Player::displayCurrentSpell() {
+
+	
+	switch (currentSpellID) {
+	case SpellID::None: {
+		
+		break;
+	}
+
+					  //single element spells
+	case SpellID::Fire: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::Water: {
+		setSpellTopElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::Earth: {
+		setSpellTopElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::Air: {
+		setSpellTopElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		break;
+	}
+
+
+
+					 //double element spells
+	case SpellID::FireFire: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::FireWater: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::FireEarth: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::FireAir: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+
+	case SpellID::WaterWater: {
+		setSpellTopElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::WaterEarth: {
+		setSpellTopElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::WaterAir: {
+		setSpellTopElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+
+	case SpellID::EarthEarth: {
+		setSpellTopElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::EarthAir: {
+		setSpellTopElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+
+	case SpellID::AirAir: {
+		setSpellTopElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+
+
+
+						//triple element spells
+	case SpellID::FireFireFire: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::FireFireWater: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::FireFireEarth: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::FireFireAir: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::FireWaterWater: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::FireWaterEarth: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::FireWaterAir: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::FireEarthEarth: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::FireEarthAir: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::FireAirAir: {
+		setSpellTopElement(DisplayElementData(GUIType::FireIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::WaterWaterWater: {
+		setSpellTopElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::WaterWaterEarth: {
+		setSpellTopElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::WaterWaterAir: {
+		setSpellTopElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::WaterEarthEarth: {
+		setSpellTopElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::WaterEarthAir: {
+		setSpellTopElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::WaterAirAir: {
+		setSpellTopElement(DisplayElementData(GUIType::WaterIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::EarthEarthEarth: {
+		setSpellTopElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::EarthEarthAir: {
+		setSpellTopElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::EarthAirAir: {
+		setSpellTopElement(DisplayElementData(GUIType::EarthIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+	case SpellID::AirAirAir: {
+		setSpellTopElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_TOP, TOP_ELEVATION, 0.0f)));
+		setSpellLeftElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_LEFT, BOTTOM_ELEVATION, 0.0f)));
+		setSpellRightElement(DisplayElementData(GUIType::AirIcon, glm::vec3(SPELL_RIGHT, BOTTOM_ELEVATION, 0.0f)));
+		break;
+	}
+
+
+
+	}
+
+
+
+	
+
+
+
 
 }

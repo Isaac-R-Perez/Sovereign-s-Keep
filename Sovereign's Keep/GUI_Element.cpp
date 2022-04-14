@@ -8,9 +8,13 @@ GUI_Element::GUI_Element(Game* g, int rOrder, int defaultSpriteSheet, GUIType t)
 	if (guiType == GUIType::HealthBar || guiType == GUIType::ManaBar) {
 		resize(BAR_HEIGHT, BAR_HEIGHT);
 	}
+	else if(guiType == GUIType::AirIcon)
+	{
+		resize(SHIFT_ICON_WIDTH, SHIFT_ICON_HEIGHT);
+	}
 	else
 	{
-		resize(SHIFT_ICON_WIDTH, SHIFT_ICOND_HEIGHT);
+		resize(PLAYER_ICON_WIDTH, PLAYER_ICON_HEIGHT);
 	}
 
 	

@@ -5,8 +5,10 @@
 */
 
 const float SHIFT_ICON_WIDTH = 0.075f;
-const float SHIFT_ICOND_HEIGHT = 0.1f;
-const float PLAYER_ICON_WIDTH = 0.0525f;
+const float SHIFT_ICON_HEIGHT = 0.1f;
+
+const float PLAYER_ICON_WIDTH = 0.09375f;
+const float PLAYER_ICON_HEIGHT = 0.125f;
 
 const float BAR_HEIGHT = 0.025f;
 

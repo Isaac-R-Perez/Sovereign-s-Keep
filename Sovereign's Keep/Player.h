@@ -122,9 +122,16 @@ private:
 	Renderable* HealthBar;
 	Renderable* ManaBar;
 
+	//when holding SHIFT
 	Renderable* LeftElement;
 	Renderable* MiddleElement;
 	Renderable* RightElement;
+
+
+	//displays elements of current spell
+	Renderable* spellTopElement;;
+	Renderable* spellLeftElement;
+	Renderable* spellRightElement;
 
 
 
@@ -232,5 +239,10 @@ public:
 	void setMiddleElement(DisplayElementData d);
 	void setRightElement(DisplayElementData d);
 
+	void displayCurrentSpell();
+
+	void setSpellTopElement(DisplayElementData d);
+	void setSpellLeftElement(DisplayElementData d);
+	void setSpellRightElement(DisplayElementData d);
 
 };
