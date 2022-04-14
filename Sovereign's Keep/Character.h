@@ -82,7 +82,9 @@ public:
 	//HEALTH
 	float getCurrentHealth() { return currentHealth; }
 	float getMaxHealth() { return maxHealth; }
-	void setMaxHealth(float amt) { maxHealth = amt; currentHealth = amt; }
+	void setMaxHealth(float amt) { maxHealth = amt; }
+	void setCurrentHealth(float amt) { currentHealth = amt; }
+
 	void restoreHealth(float amt);
 	void removeHealth(float amt);
 	void fullHeal() { currentHealth = maxHealth; }
