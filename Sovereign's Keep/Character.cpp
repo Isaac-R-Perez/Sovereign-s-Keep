@@ -22,7 +22,7 @@ void Character::updateEffects(float dt)
 	if (status.getDuration() > 0.0)
 	{
 		status.setDuration(status.getDuration() - dt);
-		removeHealth(status.getDOT());
+		alterHealth(-(status.getDOT()));
 	}
 	else
 	{
@@ -79,7 +79,7 @@ void Character::updateBuff(vector<Buff>& buff,float dt)
 	}
 }
 
-void Character::restoreHealth(float amt)
+void Character::alterHealth(float amt)
 {
 	currentHealth += amt;
 	if (currentHealth > maxHealth) {
@@ -87,14 +87,6 @@ void Character::restoreHealth(float amt)
 	}
 }
 
-void Character::removeHealth(float amt)
-{
-	currentHealth -= amt;
-	if (currentHealth < 0.0f)
-	{
-		currentHealth = 0.0f;
-	}
-}
 
 float Character::getAttack()
 {

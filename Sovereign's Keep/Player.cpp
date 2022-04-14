@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Basic_Attack.h"
+#include "GUI_Element.cpp"
 
 Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	:Character(g, rOrder, defaultSpriteSheet)
@@ -57,10 +58,24 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 
 	setMaxHealth(INITIAL_MAX_HEALTH);
 	setMaxMana(INITIAL_MAX_MANA);
+	setCurrentHealth(INITIAL_MAX_HEALTH);
 	setCurrentMana(INITIAL_MAX_MANA);
 	setBaseAttack(10.0f);
 	setBaseMoveSpeed(PLAYER_BASE_SPEED);
 
+
+	HealthBar = new GUI_Element(getGame(), 5, static_cast<int>(SPRITE_SHEETS::health_bar), GUIType::HealthBar);
+	getGame()->renderableToPendingAdd(HealthBar);
+
+	ManaBar = new GUI_Element(getGame(), 5, static_cast<int>(SPRITE_SHEETS::mana_bar), GUIType::ManaBar);
+	getGame()->renderableToPendingAdd(ManaBar);
+
+}
+
+Player::~Player()
+{
+	HealthBar->kill();
+	ManaBar->kill();
 }
 
 
@@ -85,7 +100,7 @@ void Player::update(double dt) {
 	updateEffects(dt);
 
 	//update player's mana
-	changeCurrentMana(manaRegenRate * dt);
+	applyManaRegen(dt);
 
 	getGame()->updateCamera(getOrigin());
 
@@ -1469,3 +1484,14 @@ void Player::setPlayerCurrentSpellID(SpellID i) {
 	
 }
 
+
+
+void Player::applyManaRegen(double dt) {
+
+	changeCurrentMana(manaRegenRate * dt);
+
+	if (getCurrentMana() > getMaxMana()) {
+		setCurrentMana(getMaxMana());
+	}
+
+}

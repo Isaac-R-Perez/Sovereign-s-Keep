@@ -22,11 +22,17 @@ This class holds all references to all entities in the game. The main class. Wil
 
 const float SCREEN_Y_MOVE_MODIFIER = 1.7777f;
 
+const float SCREEN_WIDTH = 1920.0f;
+const float SCREEN_HEIGHT = 1080.0f;
+
 enum class SPRITE_SHEETS
 {
 	no_texture,
 	player_default, player_idle, player_walking, player_attacking, player_casting, background, basic_attack,
 	slime,
+	fire_icon, water_icon, earth_icon, air_icon,
+	health_bar, mana_bar,
+
 };
 
 enum class ELEMENTS {
@@ -97,6 +103,12 @@ public:
 	void updateCamera(glm::vec3& playerOrigin);
 
 	std::multimap<int, Renderable*>& getRenderQueue() { return renderQueue; }
+
+	//true, the following draw will be a GUI element
+	//false, the following draw will be a regular renderable
+	void setGUIFlag(int b){
+		GLint gui = glGetUniformLocation(renderables_programID, "GUI");
+		glUniform1i(gui, b); }
 
 private:
 

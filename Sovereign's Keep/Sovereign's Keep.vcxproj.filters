@@ -86,6 +86,9 @@
     <ClInclude Include="Spell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GUI_Element.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="vertex_shader.txt">
@@ -94,5 +97,10 @@
     <Text Include="fragment_shader.txt">
       <Filter>Source Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GUI_Element.cpp">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

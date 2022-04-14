@@ -161,6 +161,7 @@
     <ClInclude Include="Character.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GUI_Element.h" />
     <ClInclude Include="LevelManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Renderable.h" />
@@ -171,6 +172,9 @@
   <ItemGroup>
     <Text Include="fragment_shader.txt" />
     <Text Include="vertex_shader.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GUI_Element.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

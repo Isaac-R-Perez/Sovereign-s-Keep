@@ -85,8 +85,9 @@ public:
 	void setMaxHealth(float amt) { maxHealth = amt; }
 	void setCurrentHealth(float amt) { currentHealth = amt; }
 
-	void restoreHealth(float amt);
-	void removeHealth(float amt);
+	//send a positive value to heal, send a negative to damage
+	void alterHealth(float amt);
+
 	void fullHeal() { currentHealth = maxHealth; }
 
 	//ATTACK

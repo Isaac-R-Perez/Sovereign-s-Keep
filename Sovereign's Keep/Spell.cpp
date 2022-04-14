@@ -141,9 +141,9 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			break;
 		}
 		case SpellID::FireWaterWater: {
-			spellName = "Exploding Water Ball";
-			manaCost = 10.0f;
-			castTime = 0.6f;
+			spellName = "Soothing Waters";
+			manaCost = 20.0f;
+			castTime = 0.61f;
 			break;
 		}
 		case SpellID::FireWaterEarth: {
@@ -556,12 +556,7 @@ void Spell::update(double dt) {
 		}
 		case SpellID::FireWaterWater: {
 			/*
-			on first update move this spell to be at player's origin with correct direction
-
-			on every other update, move the spell in the direction, update animation?, then check if spell has collided with enemies
-			if collision, deal damage to that enemy and create an WATER explosion at that point
-
-			destroy on collision or out of bounds
+			Add a stackable heal buff to the player
 
 			*/
 

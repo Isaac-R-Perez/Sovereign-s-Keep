@@ -2,6 +2,7 @@
 #include "Character.h"
 #include "Game.h"
 #include "Spell.h"
+#include "GUI_Element.h"
 #include <fstream>
 /*
 * Child of the Character class.
@@ -51,7 +52,7 @@ private:
 
 	float maxMana;
 	float Mana;
-	float manaRegenRate = 1.0f;
+	float manaRegenRate = 2.0f;
 
 	//Element Levels
 	int FireLevel = 1;
@@ -118,6 +119,10 @@ private:
 	Spell* referenceSpell;
 
 
+	Renderable* HealthBar;
+	Renderable* ManaBar;
+
+
 public:
 
 	enum states {
@@ -125,6 +130,8 @@ public:
 	};
 
 	Player(Game* g, int rOrder, int defaultSpriteSheet);
+
+	~Player();
 
 	//SOULS
 	void setMonsterSouls(int amt) { monsterSouls = amt; }
@@ -198,19 +205,21 @@ public:
 	void render();
 	void update(double dt);
 
-	
+
 
 	void scale(float xScale, float yScale);
 
 	ELEMENTS getElementFromSlot(int i) { return slottedElements[i]; }
-	
+
 	void addElementToInputVector(ELEMENTS e);
-	
+
 	void resetElementsVector();
 	SpellID combineElements();
 
 	void setPlayerCurrentSpellID(SpellID i);
-	
+
+
+	void applyManaRegen(double dt);
 
 
 };
