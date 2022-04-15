@@ -18,6 +18,14 @@ const float FIREBALL_WIDTH = 0.04f;
 const float FIREBALL_HEIGHT = 0.035f;
 const float FIREBALL_DAMAGE_MULT = 1.25f; //fireball damage = player_base_damage * 1.25f
 
+
+const float WATERBOLT_ANIMATION_TIMER = 0.033f;
+const int WATERBOLT_AMOUNT = 15;
+const float WATERBOLT_WIDTH = 0.045f;
+const float WATERBOLT_HEIGHT = 0.04f;
+const float WATERBOLT_DAMAGE_MULT = 1.15f;
+
+
 //base width, call resize to alter the explosion size
 const float EXPLOSION1_WIDTH = 0.15f;
 const float EXPLOSION1_ANIMATION_TIMER = 0.021f;
@@ -136,6 +144,8 @@ public:
 	//keeps code cleaner
 	void renderThisSpell(float stride);
 
+	void setDirection(glm::vec3 dir) { direction = dir; }
+
 
 private:
 
@@ -184,5 +194,11 @@ private:
 
 	//is true on the frame that the spell can deal damage
 	bool collisionFrame;
+
+
+
+	//spawnDistribution(numberEngine)
+	std::uniform_real_distribution<float> floatDistribution;
+
 
 };

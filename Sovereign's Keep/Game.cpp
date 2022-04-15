@@ -228,6 +228,10 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 160, 12, 3, "images/spell/fireball.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::fireball), generatedTexture));
 
+	// waterbolt animation
+	generateTexture(generatedTexture, 768, 64, 3, "images/spell/water_blast.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::waterbolt), generatedTexture));
+
 	// explosion animation
 	generateTexture(generatedTexture, 704, 64, 3, "images/spell/explosion1.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::explosion1), generatedTexture));
@@ -754,6 +758,8 @@ bool Game::initialize() {
 	loadAllTextures();
 
 
+
+	numberEngine.seed(time(0));
 	
 	
 

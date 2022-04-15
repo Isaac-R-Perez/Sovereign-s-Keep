@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <random> //for distributions and number engine
+#include <ctime> //for generating seeds for the number engines
 #include "Renderable.h"
 #include "stb_image.h"
 
@@ -35,7 +37,7 @@ enum class SPRITE_SHEETS
 
 	fire_soul_basic_attack,
 	multishot_basic_attack,
-	fireball,
+	fireball, waterbolt,
 	explosion1,
 
 
@@ -119,6 +121,8 @@ public:
 	//this sends the structs for the elementsGUI
 	void sendElementsData();
 
+	std::mt19937& getNumberEngine() { return numberEngine; }
+
 private:
 
 	//window that everything is rendered to
@@ -176,5 +180,7 @@ private:
 	bool spellComboMode;
 
 
+	//number engine
+	std::mt19937 numberEngine;
 
 };

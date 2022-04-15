@@ -19,6 +19,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 	flipped = false;
 	collisionFrame = false;
 	
+	
 	//add each string name and all info needed for each spell, ALL OF EM
 	switch (ID) {
 		case SpellID::None: {
@@ -96,6 +97,9 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Water Blast";
 			manaCost = 18.0f;
 			castTime = 0.5f;
+			// from 
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			floatDistribution = std::uniform_real_distribution<float>(0.0, 2.0f * glm::pi<float>());
 			break;
 		}
 		case SpellID::WaterEarth: {
@@ -276,12 +280,18 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		case SpellID::Explosion1: {
 			spellName = "Explosion1";
 			animationFrames = 10; 
-			setTexture(static_cast<int>(SPRITE_SHEETS::explosion1));
+			//setTexture(static_cast<int>(SPRITE_SHEETS::explosion1));
 			resize(EXPLOSION1_WIDTH, EXPLOSION1_WIDTH);
 			break;
 		}
 		case SpellID::WaterBolt: {
-
+			spellName = "WaterBolt";
+			duration = 1.45f; //lifetime of firebolt
+			animationFrames = 11; //waterbolt
+			//setTexture(static_cast<int>(SPRITE_SHEETS::waterbolt));
+			moveSpeed = 0.65f;
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			resize(WATERBOLT_WIDTH, WATERBOLT_HEIGHT);
 			break;
 		}
 		case SpellID::SustainedExplosion: {
@@ -638,6 +648,41 @@ void Spell::update(double dt) {
 			the bolts are their own Spell, so just create them here and they will handle generating their own directions/collsions/damage
 
 			*/
+			Renderable* createdWaterBolt = nullptr;
+			glm::mat4 move;
+			glm::mat4 rotation;
+		
+
+			//flip the waterBolt direction if player is facing left
+			
+
+			for (int i = 0; i < WATERBOLT_AMOUNT; i++) {
+
+				//create water bolt and set its direction + random angle
+				createdWaterBolt = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::waterbolt), SpellID::WaterBolt);
+
+				float angle = static_cast<float>(floatDistribution(getGame()->getNumberEngine()));
+
+
+				
+
+				rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+				dynamic_cast<Spell*>(createdWaterBolt)->updatePosition(rotation);
+				
+				dynamic_cast<Spell*>(createdWaterBolt)->setDirection(glm::normalize(rotation * glm::vec4(direction, 0.0f)));
+
+
+				move = glm::translate(glm::mat4(1.0f), dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
+				dynamic_cast<Spell*>(createdWaterBolt)->updatePosition(move);
+
+				getGame()->renderableToPendingAdd(createdWaterBolt);
+
+
+
+			}
+
+		
+
 
 			//remove later
 			kill();
@@ -1145,6 +1190,110 @@ void Spell::update(double dt) {
 		}
 		case SpellID::WaterBolt: {
 
+
+
+			glm::mat4 move;
+
+
+			if (firstUpdate) {
+				//do first update things
+				
+				firstUpdate = false;
+			}
+			else
+			{
+				//initially the fireball cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+
+				//play fireball animation
+				if (currentAnimationFrame > animationFrames) {
+					currentAnimationFrame = 0;
+				}
+
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+				}
+				else
+				{
+					animationTimer = WATERBOLT_ANIMATION_TIMER;
+					currentAnimationFrame++;
+
+					if (currentAnimationFrame > animationFrames) {
+						currentAnimationFrame = 4;
+					}
+				}
+
+				//have the fireball travel
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt, 0.0f));
+				updatePosition(move);
+
+
+				//update hitbox
+				getHitBox().updateHitBox(getOrigin(), WATERBOLT_HEIGHT, WATERBOLT_HEIGHT, WATERBOLT_HEIGHT, WATERBOLT_HEIGHT);
+
+
+
+
+
+				//check collisions here, if collision, destroy this spell and create an explosion spell at that point
+
+			//COLLISION CHECK
+				if (!queue.empty())
+				{
+					
+
+
+					for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+						//checks collision with ENEMY renderable in the queue
+						if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
+
+
+							//deal fireball damage
+							float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack() * WATERBOLT_DAMAGE_MULT;
+							dynamic_cast<Enemy*>(itr->second)->alterHealth(-(damage));
+							//dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.15f, SpellID::knockback));
+							//dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
+
+
+
+
+							//destroy fireball
+							kill();
+
+
+							//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+							break;
+
+						}
+
+					}
+
+
+				}
+
+
+
+
+				//lifetime of spell
+				duration -= dt;
+				if (duration <= 0.0f) {
+					kill();
+				}
+
+			}
+
+
+
+
+
+
 			break;
 		}
 		case SpellID::SustainedExplosion: {
@@ -1206,6 +1355,10 @@ void Spell::render() {
 		}
 		case SpellID::Explosion1: {
 			renderThisSpell(static_cast<float>(1.0f / 11.0f));//11 frames
+			break;
+		}
+		case SpellID::WaterBolt: {
+			renderThisSpell(static_cast<float>(1.0f / 12.0f));//11 frames
 			break;
 		}
 		}
