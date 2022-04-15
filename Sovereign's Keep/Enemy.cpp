@@ -7,6 +7,7 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 	type = T;
 	animationTimer = ENEMY_WALKING_BASE_TIME;
 
+	damagedBy.clear();
 
 	switch (type) {
 		case EnemyType::slime:
@@ -19,7 +20,7 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 
 
 			setBaseMoveSpeed(0.1f);
-			setCurrentMoveSpeed(0.05f);
+			setCurrentMoveSpeed(0.1f);
 			break;
 		}
 
@@ -122,7 +123,7 @@ void Enemy::update(double dt) {
 
 			//movementVector = glm::normalize(movementVector);
 
-			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed(), movementVector.y * dt * getCurrentMoveSpeed(), 0.0f));
+			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed(), movementVector.y * dt * getCurrentMoveSpeed() * 0.75f, 0.0f));
 
 			//ADD this back when testing is done
 

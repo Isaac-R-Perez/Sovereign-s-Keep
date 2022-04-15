@@ -467,7 +467,7 @@ void Player::update(double dt) {
 		for (itr = queue.begin(); itr != queue.end(); ) {
 
 			//checks collision with EVERY renderable in the queue
-			if (itr->second->getCanCollide() && checkCollision(itr->second)) {
+			if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
 				switch (itr->second->renderOrder) {
 				
 
@@ -640,8 +640,11 @@ void Player::render() {
 		
 
 		//put this code in render function???
-		setTexture(static_cast<int>(SPRITE_SHEETS::player_attacking));
+		setTexture(static_cast<int>(SPRITE_SHEETS::player_attacking_2));
 
+
+		/*
+		old
 
 		if (current_frame == 0) {
 			left = static_cast<float>((current_frame*idle_stride));
@@ -755,6 +758,121 @@ void Player::render() {
 			scale(ATTACK_SCALE_END_X, ATTACK_SCALE_END_Y);
 
 		}
+		*/
+
+
+		if (current_frame == 0) {
+			left = static_cast<float>((current_frame*idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+			up = 0.742857f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+		}
+
+		if (current_frame == 1) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+			up = 0.771428f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+		}
+
+		if (current_frame == 2) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+			up = 0.942857f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+		}
+
+		if (current_frame == 3) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+			up = 0.82857f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+		}
+
+		if (current_frame == 4) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+			up = 0.6f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+		}
+
+		if (current_frame == 5) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+			up = 0.62857f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+		}
+
+		if (current_frame == 6) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+			up = 0.65714f;
+			scale(ATTACK_SCALE_START_X, ATTACK_SCALE_START_Y);
+
+		}
+
+		if (current_frame == 7) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+			up = 1.0f;
+			scale(ATTACK_SCALE_END_X, ATTACK_SCALE_END_Y);
+		}
+
+		if (current_frame == 8) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+			up = 0.971428f;
+			scale(ATTACK_SCALE_END_X, ATTACK_SCALE_END_Y);
+
+		}
+
+		if (current_frame == 9) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+			up = 0.971428f;
+			scale(ATTACK_SCALE_END_X, ATTACK_SCALE_END_Y);
+
+		}
 
 
 		getGame()->setTextureCoordinates(right, up,
@@ -769,9 +887,12 @@ void Player::render() {
 		idle_stride = 0.125f; // (1/8)
 
 		//put this code in render function???
-		setTexture(static_cast<int>(SPRITE_SHEETS::player_casting));
+		setTexture(static_cast<int>(SPRITE_SHEETS::player_casting_2));
 
 
+		/*
+		old 
+		
 		if (current_frame == 0) {
 			left = static_cast<float>((current_frame * idle_stride));
 			left += 0.002f;
@@ -846,6 +967,84 @@ void Player::render() {
 			right -= 0.002f;
 
 		}
+		*/
+
+
+		if (current_frame == 0) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+		}
+
+		if (current_frame == 1) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+		}
+
+		if (current_frame == 2) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+		}
+
+		if (current_frame == 3) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+		}
+
+		if (current_frame == 4) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+		}
+
+		if (current_frame == 5) {
+
+
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+		}
+
+		if (current_frame == 6) {
+
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+
+		}
+
+		if (current_frame == 7) {
+			left = static_cast<float>((current_frame * idle_stride));
+			left += 0.002f;
+
+			right = static_cast<float>((current_frame + 1) * idle_stride);
+			right -= 0.002f;
+
+		}
+
 
 		getGame()->setTextureCoordinates(right, 1.0f,
 			right, 0.0f,

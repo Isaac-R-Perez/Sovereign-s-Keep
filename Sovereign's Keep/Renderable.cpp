@@ -17,6 +17,9 @@ void Renderable::setTexture(int spriteSheet) {
 
 
 Renderable::Renderable(Game* g, int rOrder, int defaultSpriteSheet) {
+	
+	static uint32_t renderableCounter = 0;
+	
 	game = g;
 	renderOrder = rOrder;
 
@@ -28,6 +31,12 @@ Renderable::Renderable(Game* g, int rOrder, int defaultSpriteSheet) {
 	destroy = false;
 
 	canCollide = false;
+
+	if (defaultSpriteSheet != static_cast<int>(SPRITE_SHEETS::air_icon) || defaultSpriteSheet != static_cast<int>(SPRITE_SHEETS::earth_icon)) {
+
+		id = renderableCounter++;
+	}
+
 
 }
 
@@ -72,64 +81,73 @@ void Renderable::flip() {
 }
 
 
-bool Renderable::checkCollision(Renderable* b) {
+//if the targeted renderOrder is not the same, skip collision check
+bool Renderable::checkCollision(Renderable* b, int rOrder) {
 
-	//check if b's hitbox's TOP LEFT is inside of the hitbox
-	if (b->getHitBox().topLeft.x > hitbox.topLeft.x && b->getHitBox().topLeft.x < hitbox.topRight.x) {
-		if (b->getHitBox().topLeft.y < hitbox.topLeft.y && b->getHitBox().topLeft.y > hitbox.bottomLeft.y) {
-			return true;
+
+	//if b is an enemy, the function MUST HAVE the enemy renderOrder
+	if (b->renderOrder == rOrder) {
+
+
+		//check if b's hitbox's TOP LEFT is inside of the hitbox
+		if (b->getHitBox().topLeft.x > hitbox.topLeft.x && b->getHitBox().topLeft.x < hitbox.topRight.x) {
+			if (b->getHitBox().topLeft.y < hitbox.topLeft.y && b->getHitBox().topLeft.y > hitbox.bottomLeft.y) {
+				return true;
+			}
 		}
+
+		if (hitbox.topLeft.x > b->getHitBox().topLeft.x && hitbox.topLeft.x < b->getHitBox().topRight.x) {
+			if (hitbox.topLeft.y < b->getHitBox().topLeft.y && hitbox.topLeft.y > b->getHitBox().bottomLeft.y) {
+				return true;
+			}
+		}
+
+
+		//check if b's hitbox's TOP RIGHT is inside of the hitbox
+		if (b->getHitBox().topRight.x > hitbox.topLeft.x && b->getHitBox().topRight.x < hitbox.topRight.x) {
+			if (b->getHitBox().topRight.y < hitbox.topLeft.y && b->getHitBox().topRight.y > hitbox.bottomLeft.y) {
+				return true;
+			}
+		}
+
+		if (hitbox.topRight.x > b->getHitBox().topLeft.x && hitbox.topRight.x < b->getHitBox().topRight.x) {
+			if (hitbox.topRight.y < b->getHitBox().topRight.y && hitbox.topRight.y > b->getHitBox().bottomRight.y) {
+				return true;
+			}
+		}
+
+
+
+
+		//check if b's hitbox's BOTTOM LEFT is inside of the hitbox
+		if (b->getHitBox().bottomLeft.x > hitbox.topLeft.x && b->getHitBox().bottomLeft.x < hitbox.topRight.x) {
+			if (b->getHitBox().bottomLeft.y < hitbox.topLeft.y && b->getHitBox().bottomLeft.y > hitbox.bottomLeft.y) {
+				return true;
+			}
+		}
+		if (hitbox.bottomLeft.x > b->getHitBox().bottomLeft.x && hitbox.bottomLeft.x < b->getHitBox().bottomRight.x) {
+			if (hitbox.bottomLeft.y < b->getHitBox().topLeft.y && hitbox.bottomLeft.y > b->getHitBox().bottomLeft.y) {
+				return true;
+			}
+		}
+
+
+
+
+		//check if b's hitbox's BOTTOM RIGHT is inside of the hitbox
+		if (b->getHitBox().bottomRight.x > hitbox.topLeft.x && b->getHitBox().bottomRight.x < hitbox.topRight.x) {
+			if (b->getHitBox().bottomRight.y < hitbox.topLeft.y && b->getHitBox().bottomRight.y > hitbox.bottomLeft.y) {
+				return true;
+			}
+		}
+		if (hitbox.bottomRight.x > b->getHitBox().bottomLeft.x && hitbox.bottomRight.x < b->getHitBox().bottomRight.x) {
+			if (hitbox.bottomRight.y < b->getHitBox().topRight.y && hitbox.bottomRight.y >  b->getHitBox().bottomRight.y) {
+				return true;
+			}
+		}
+
 	}
 
-	if (hitbox.topLeft.x > b->getHitBox().topLeft.x && hitbox.topLeft.x < b->getHitBox().topRight.x) {
-		if (hitbox.topLeft.y < b->getHitBox().topLeft.y &&  hitbox.topLeft.y > b->getHitBox().bottomLeft.y) {
-			return true;
-		}
-	}
-	
-
-	//check if b's hitbox's TOP RIGHT is inside of the hitbox
-	if (b->getHitBox().topRight.x > hitbox.topLeft.x && b->getHitBox().topRight.x < hitbox.topRight.x) {
-		if (b->getHitBox().topRight.y < hitbox.topLeft.y && b->getHitBox().topRight.y > hitbox.bottomLeft.y) {
-			return true;
-		}
-	}
-
-	if ( hitbox.topRight.x > b->getHitBox().topLeft.x && hitbox.topRight.x < b->getHitBox().topRight.x) {
-		if ( hitbox.topRight.y < b->getHitBox().topRight.y &&  hitbox.topRight.y > b->getHitBox().bottomRight.y) {
-			return true;
-		}
-	}
-
-
-
-
-	//check if b's hitbox's BOTTOM LEFT is inside of the hitbox
-	if (b->getHitBox().bottomLeft.x > hitbox.topLeft.x && b->getHitBox().bottomLeft.x < hitbox.topRight.x) {
-		if (b->getHitBox().bottomLeft.y < hitbox.topLeft.y && b->getHitBox().bottomLeft.y > hitbox.bottomLeft.y) {
-			return true;
-		}
-	}
-	if ( hitbox.bottomLeft.x > b->getHitBox().bottomLeft.x &&  hitbox.bottomLeft.x < b->getHitBox().bottomRight.x) {
-		if ( hitbox.bottomLeft.y < b->getHitBox().topLeft.y &&  hitbox.bottomLeft.y > b->getHitBox().bottomLeft.y) {
-			return true;
-		}
-	}
-
-
-
-
-	//check if b's hitbox's BOTTOM RIGHT is inside of the hitbox
-	if (b->getHitBox().bottomRight.x > hitbox.topLeft.x && b->getHitBox().bottomRight.x < hitbox.topRight.x) {
-		if (b->getHitBox().bottomRight.y < hitbox.topLeft.y && b->getHitBox().bottomRight.y > hitbox.bottomLeft.y) {
-			return true;
-		}
-	}
-	if (hitbox.bottomRight.x > b->getHitBox().bottomLeft.x &&  hitbox.bottomRight.x < b->getHitBox().bottomRight.x) {
-		if ( hitbox.bottomRight.y < b->getHitBox().topRight.y &&  hitbox.bottomRight.y >  b->getHitBox().bottomRight.y) {
-			return true;
-		}
-	}
 
 
 

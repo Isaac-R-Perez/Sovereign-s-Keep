@@ -37,6 +37,9 @@ private:
 
 	glm::vec3 knockbackDirection;
 
+	//stores the renderables that have damaged this enemy
+	std::vector<Renderable*> damagedBy;
+
 
 public:
 
@@ -56,6 +59,25 @@ public:
 	void applySpellBuffs();
 
 	void setKnockbackDirection(glm::vec3 dir) { knockbackDirection = dir; }
+
+	bool checkDamagedBy(Renderable* r) {
+		if (!damagedBy.empty())
+		{
+			for (int i = 0; i < damagedBy.size(); i++) {
+				if (damagedBy.at(i)->getID() == r->getID()) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		return false;
+	}
+
+	void addToDamagedBy(Renderable* r) { damagedBy.emplace_back(r); }
+
+	std::vector<Renderable*>& getDamagedBy() { return damagedBy; }
 
 	
 };

@@ -165,9 +165,19 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 450, 35, 3, "images/player/player_attack_animation.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_attacking), generatedTexture));
 
+	//player attacking2
+	generateTexture(generatedTexture, 450, 35, 3, "images/player/player_attack_2.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_attacking_2), generatedTexture));
+
+
 	//player casting
 	generateTexture(generatedTexture, 224, 29, 3, "images/player/player_casting_animation.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_casting), generatedTexture));
+
+	//player casting2
+	generateTexture(generatedTexture, 224, 29, 3, "images/player/player_casting_2.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_casting_2), generatedTexture));
+
 
 	//basic attack
 	generateTexture(generatedTexture, 224, 29, 3, "images/player/basic_attack.png");
@@ -212,6 +222,15 @@ void Game::loadAllTextures() {
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::mana_bar), generatedTexture));
 
 
+
+
+	// fireball animation
+	generateTexture(generatedTexture, 160, 12, 3, "images/spell/fireball.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::fireball), generatedTexture));
+
+	// explosion animation
+	generateTexture(generatedTexture, 704, 64, 3, "images/spell/explosion1.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::explosion1), generatedTexture));
 
 }
 

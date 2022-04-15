@@ -6,7 +6,23 @@
 	the spells that the player can cast. Some spells will be rendered as objects, while some will have no rendering, such as passive buffs.
 */
 
-static uint32_t spellCounter = 0;
+//static uint32_t spellCounter = 0;
+
+
+/// <summary>
+///						SPELL DAMAGE BYPASSES DEFENSES!
+/// </summary>
+
+const float FIREBALL_ANIMATION_TIMER = 0.1f;
+const float FIREBALL_WIDTH = 0.04f;
+const float FIREBALL_HEIGHT = 0.035f;
+const float FIREBALL_DAMAGE_MULT = 1.25f; //fireball damage = player_base_damage * 1.25f
+
+//base width, call resize to alter the explosion size
+const float EXPLOSION1_WIDTH = 0.15f;
+const float EXPLOSION1_ANIMATION_TIMER = 0.021f;
+const float EXPLOSION1_DAMAGE_MULT = 1.5f; //all explosion1s deal the same damage
+
 
 enum class SpellID {
 	
@@ -113,9 +129,12 @@ public:
 	float getManaCost() { return manaCost; }
 	float getCastTime() { return castTime; }
 
-	uint32_t getIdentifier() { return identifier; }
+	//uint32_t getIdentifier() { return identifier; }
 
 	void setExplosionType(ExplosionType t) { eType = t; }
+
+	//keeps code cleaner
+	void renderThisSpell(float stride);
 
 
 private:
@@ -129,7 +148,7 @@ private:
 	//use this to identify which spell this is
 	SpellID ID;
 
-	uint32_t identifier;
+	//uint32_t identifier;
 
 
 	//when this timer reaches 0, the spell is over
@@ -159,5 +178,11 @@ private:
 
 	//determines how much explosion damage this spell does
 	ExplosionType eType;
+
+	//true if the spell should flip travel direction
+	bool flipped;
+
+	//is true on the frame that the spell can deal damage
+	bool collisionFrame;
 
 };

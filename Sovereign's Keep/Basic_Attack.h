@@ -9,10 +9,10 @@
 const float BULLET_WIDTH = 0.025f;
 const float BULLET_HEIGHT = 0.02f;
 
-const float BULLET_BASE_SPEED = 0.75f;
+const float BULLET_BASE_SPEED = 0.85f;
 const float BASE_DAMAGE = 20.0f;
 
-const float BULLET_LIFETIME = 1.75f;
+const float BULLET_LIFETIME = 1.45f;
 
 class Basic_Attack : public Renderable {
 

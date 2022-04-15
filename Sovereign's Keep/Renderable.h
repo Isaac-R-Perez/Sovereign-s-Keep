@@ -7,6 +7,8 @@ class Game;
 This class will be the parent of everything in that game that can be rendered, such as the player, enemies, menu system, and GUI entities
 */
 
+
+
 struct HitBox {
 	glm::vec4 topLeft;
 	glm::vec4 topRight;
@@ -67,7 +69,7 @@ public:
 	void flip();
 
 	//this function will return TRUE, if a given renderable's hitbox is WITHIN the caller's hitbox
-	bool checkCollision(Renderable* b);
+	bool checkCollision(Renderable* b, int rOrder);
 
 
 	/*
@@ -105,6 +107,9 @@ public:
 
 	bool getCanCollide() { return canCollide; }
 	void setCanCollide(bool b) { canCollide = b; }
+
+	uint32_t getID() { return id; }
+
 private:
 
 	
@@ -134,6 +139,10 @@ private:
 
 	//false if newly created
 	bool canCollide;
+
+
+	uint32_t id;
+
 };
 
 

@@ -1,5 +1,6 @@
 #include "Spell.h"
 #include "Player.h"
+#include "Enemy.h"
 #include <cstdio>
 
 Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id) 
@@ -10,8 +11,14 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 	//this determines which spell was created/cast
 	ID = id;
 
-	spellCounter++;
-	identifier = spellCounter;
+	//spellCounter++;
+	//identifier = spellCounter;
+	currentAnimationFrame = 0;
+	firstUpdate = true;
+	animationTimer = 0.0f;
+	flipped = false;
+	collisionFrame = false;
+	
 	//add each string name and all info needed for each spell, ALL OF EM
 	switch (ID) {
 		case SpellID::None: {
@@ -69,6 +76,12 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Fireball";
 			manaCost = 20.0f;
 			castTime = 0.8f;
+			duration = 1.45f; //lifetime of firebolt
+			animationFrames = 3; //firebolt
+			setTexture(static_cast<int>(SPRITE_SHEETS::fireball));
+			moveSpeed = 0.85f;
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			resize(FIREBALL_WIDTH, FIREBALL_HEIGHT);
 			break;
 		}
 		case SpellID::FireAir: {
@@ -261,7 +274,10 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			break;
 		}
 		case SpellID::Explosion1: {
-
+			spellName = "Explosion1";
+			animationFrames = 10; 
+			setTexture(static_cast<int>(SPRITE_SHEETS::explosion1));
+			resize(EXPLOSION1_WIDTH, EXPLOSION1_WIDTH);
 			break;
 		}
 		case SpellID::WaterBolt: {
@@ -322,9 +338,13 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 	while others will have an actual "body" that will render and interact with the world
 */
 void Spell::update(double dt) {
-	fflush(stdout);
-	printf("Casted %s \n", spellName.c_str());
+	//fflush(stdout);
+	//printf("Casted %s \n", spellName.c_str());
 	
+
+	std::multimap<int, Renderable*>::iterator itr;
+	std::multimap<int, Renderable*> queue = getGame()->getRenderQueue();
+
 	
 	switch (ID) {
 		
@@ -472,8 +492,129 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+			glm::mat4 move;
+
+
+			if (firstUpdate) {
+				//do first update things
+				move = glm::translate(glm::mat4(1.0f), dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
+
+				updatePosition(move);
+
+				//flip the fireball if player is facing left
+				if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft())
+				{
+					flip();
+					flipped = true;
+					direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+				}
+
+
+				firstUpdate = false;
+			}
+			else
+			{
+				//initially the fireball cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+
+				//play fireball animation
+				if (currentAnimationFrame > animationFrames) {
+					currentAnimationFrame = 0;
+				}
+
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+				}
+				else
+				{
+					animationTimer = FIREBALL_ANIMATION_TIMER;
+					currentAnimationFrame++;
+
+					if (currentAnimationFrame > animationFrames) {
+						currentAnimationFrame = 0;
+					}
+				}
+
+				//have the fireball travel
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, 0.0f, 0.0f));
+				updatePosition(move);
+				
+
+				//update hitbox
+				getHitBox().updateHitBox(getOrigin(), FIREBALL_WIDTH, FIREBALL_WIDTH, FIREBALL_HEIGHT, FIREBALL_HEIGHT);
+
+
+				
+
+
+				//check collisions here, if collision, destroy this spell and create an explosion spell at that point
+
+			//COLLISION CHECK
+				if (!queue.empty())
+				{
+					Renderable* createdExplosion = nullptr;
+					
+
+					for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+						//checks collision with ENEMY renderable in the queue
+						if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+							
+
+
+								//deal fireball damage
+								float fireballDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack() * FIREBALL_DAMAGE_MULT;
+								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(fireballDamage));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.1f, SpellID::knockback));
+								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
+
+
+
+
+								//resize the explosion?
+								
+								//create an explosion at this fireball's origin
+								createdExplosion = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::explosion1), SpellID::Explosion1);
+								move = glm::translate(glm::mat4(1.0f), getOrigin());
+								createdExplosion->updatePosition(move);
+
+								getGame()->renderableToPendingAdd(createdExplosion);
+
+								//destroy fireball
+								kill();
+
+
+								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+								break;
+							
+						}
+
+					}
+
+
+				}
+
+
+
+
+				//lifetime of spell
+				duration -= dt;
+				if (duration <= 0.0f) {
+					kill();
+				}
+
+			}
+
+
+
+
+
+
 			break;
 		}
 		case SpellID::FireAir: {
@@ -901,6 +1042,103 @@ void Spell::update(double dt) {
 		}
 		case SpellID::Explosion1: {
 
+			glm::mat4 move;
+
+
+			if (firstUpdate) {
+				//do first update things
+				firstUpdate = false;
+
+				//update hitbox
+				getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getWidth(), getWidth()); //explosion size can be set by the creating spell
+
+
+			}
+			else
+			{
+				//initially the explosion cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+				//play explosion animation, enable collision on a certain frame
+				if (currentAnimationFrame  ==  3) {
+					collisionFrame = true;
+				}
+				else
+				{
+					collisionFrame = false;
+				}
+
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+				}
+				else
+				{
+					animationTimer = EXPLOSION1_ANIMATION_TIMER;
+					currentAnimationFrame++;
+
+					//destroy explosion at end of animation
+					if (currentAnimationFrame > animationFrames) {
+						kill();
+					}
+				}
+
+
+				
+				
+
+				//only check collision on the collisionFrame
+				if (collisionFrame) {
+
+					//COLLISION CHECK
+					if (!queue.empty())
+					{
+						for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+							//checks collision with ENEMY renderable in the queue
+							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+								
+
+									if (!dynamic_cast<Enemy*>(itr->second)->checkDamagedBy(this)) {
+
+										//deal damage
+										float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack() * EXPLOSION1_DAMAGE_MULT;
+										dynamic_cast<Enemy*>(itr->second)->alterHealth(-(explosionDamage));
+										dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.1f, SpellID::knockback));
+										dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - getOrigin()));
+
+										dynamic_cast<Enemy*>(itr->second)->addToDamagedBy(this);
+
+
+										//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+										break;
+									}
+
+								
+
+								}
+							}
+
+							
+
+						}
+					}
+
+				
+
+				
+
+
+
+
+			}
+
+
+
+
 			break;
 		}
 		case SpellID::WaterBolt: {
@@ -952,6 +1190,68 @@ void Spell::update(double dt) {
 
 
 void Spell::render() {
+
+	//this prevents that spell from appearing at the origin on the first frame
+	if (!firstUpdate) {
+
+
+
+		//only add spells that will be rendered
+		switch (ID) {
+		case SpellID::FireEarth: {
+			renderThisSpell(0.25f);//4 frames
+			break;
+		}
+		case SpellID::Explosion1: {
+			renderThisSpell(static_cast<float>(1.0f / 11.0f));//11 frames
+			break;
+		}
+		}
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+void Spell::renderThisSpell(float stride) {
+
+
+
+	float left = static_cast<float>((currentAnimationFrame)* stride);
+	left += 0.002f;
+	//0.002 is a constant here? without it there is clipping issues...
+
+	float right = static_cast<float>((currentAnimationFrame + 1) * stride);
+	right -= 0.002f;
+
+	getGame()->setTextureCoordinates(right, 1.0f,
+		right, 0.0f,
+		left, 0.0f,
+		left, 1.0f);
+
+
+	GLint objectToWorld = glGetUniformLocation(getGame()->getRenderablesProgID(), "objectToWorld");
+	if (objectToWorld < 0) printf("couldn't find objectToWorld in shader\n");
+	glUniformMatrix4fv(objectToWorld, 1, GL_FALSE, glm::value_ptr(getO2W()));
+
+	glBindTexture(GL_TEXTURE_2D, getTexture());
+	glBindVertexArray(getGame()->getVAO());
+
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	getGame()->resetTextureCoordinates();
+
+
 
 }
 

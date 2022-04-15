@@ -34,13 +34,13 @@ const int WALKING_FRAMES = 5;
 const int CASTING_FRAMES = 7;
 
 
-const float ATTACK_SCALE_START_X = 1.2f;
-const float ATTACK_SCALE_START_Y = 1.0f;
+const float ATTACK_SCALE_START_X = 1.85f;
+const float ATTACK_SCALE_START_Y = 1.1f;
 
 const float ATTACK_SCALE_END_X = 1.5;
 const float ATTACK_SCALE_END_Y = 1.25f;
 
-const float CAST_SCALE = 1.15f;
+const float CAST_SCALE = 1.45f;
 
 const float PLAYER_HEIGHT = 0.0725f;
 const float PLAYER_WIDTH = 0.0275f;

@@ -28,13 +28,16 @@ const float SCREEN_HEIGHT = 1080.0f;
 enum class SPRITE_SHEETS
 {
 	no_texture,
-	player_default, player_idle, player_walking, player_attacking, player_casting, background, basic_attack,
+	player_default, player_idle, player_walking, player_attacking, player_attacking_2, player_casting, player_casting_2, background, basic_attack,
 	slime,
 	fire_icon, water_icon, earth_icon, air_icon,
 	health_bar, mana_bar,
 
 	fire_soul_basic_attack,
-	multishot_basic_attack
+	multishot_basic_attack,
+	fireball,
+	explosion1,
+
 
 };
 

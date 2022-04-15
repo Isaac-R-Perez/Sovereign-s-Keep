@@ -80,7 +80,7 @@ void Basic_Attack::update(double dt) {
 		for (itr = queue.begin(); itr != queue.end(); ) {
 
 			//checks collision with EVERY renderable in the queue
-			if (itr->second->getCanCollide() && checkCollision(itr->second)) {
+			if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) { //this ONLY CHECKS COLLSIONS WITH ENEMIES
 				switch (itr->second->renderOrder) {
 
 
