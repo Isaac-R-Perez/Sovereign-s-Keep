@@ -3,7 +3,7 @@
 Character::Character(Game* g, int rOrder, int defaultSpriteSheet)
 	:Renderable(g, rOrder, defaultSpriteSheet)
 {
-	//set all initial base stats
+	//set all initial base stats AFTER this character is generated
 }
 
 
@@ -88,8 +88,8 @@ void Character::updateBuff(vector<Buff>& buff,float dt)
 void Character::alterHealth(float amt)
 {
 	currentHealth += amt;
-	if (currentHealth > maxHealth) {
-		currentHealth = maxHealth;
+	if (currentHealth > currentMaxHealth) {
+		currentHealth = currentMaxHealth;
 	}
 }
 

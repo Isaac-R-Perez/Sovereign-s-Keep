@@ -32,7 +32,7 @@ Renderable::Renderable(Game* g, int rOrder, int defaultSpriteSheet) {
 
 	canCollide = false;
 
-	if (defaultSpriteSheet != static_cast<int>(SPRITE_SHEETS::air_icon) || defaultSpriteSheet != static_cast<int>(SPRITE_SHEETS::earth_icon)) {
+	if (!(defaultSpriteSheet == static_cast<int>(SPRITE_SHEETS::air_icon) || defaultSpriteSheet == static_cast<int>(SPRITE_SHEETS::earth_icon))) {
 
 		id = renderableCounter++;
 	}

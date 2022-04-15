@@ -51,12 +51,37 @@ private:
 	string name;
 
 	//Character stats
-	float maxHealth;
-	float currentHealth;
+
+
+
+	/*
+		USE THESE WITH THE WAVE MANAGER TO SET BASE STATS
+		THESE BASE STATS WILL BE SET IN THE CONSTRUCTOR
+	*/
+	float baseHealth;
+	float baseMaxHealth;
 	float baseAttack;
 	float baseDefense;
 	float baseMoveSpeed;
+
+
+	/*
+		USE THESE FOR ALL OTHER PURPOSES
+		These will be set every frame to the above set base stats
+	*/
+	float currentMaxHealth;
+	float currentHealth;
 	float currentMoveSpeed;
+	float currentDefense;
+	float currentAttack;
+
+
+	//a buff as applied this, so stop animation, and set movespeed to 0.0 until stun buff is gone
+	bool stunned;
+
+	//a buff as applied this, so stop animation, SET RENDER FLAG TO frozen (blue shifted), and set movespeed to 0.0 until frozen buff is gone
+	bool frozen;
+
 
 	//saves the value of this character's health from the last frame
 	float healthLastFrame = 0.0f;
@@ -125,37 +150,63 @@ public:
 	void updateEffects(float dt);
 	void updateBuff(vector<Buff>& buff,float dt);
 
+
+	/*
+	float baseMoveSpeed;
+
+	
+		USE THESE FOR ALL OTHER PURPOSES
+		These will be set every frame to the above set base stats
+
+	float currentMoveSpeed;
+	*/
+
+
 	//HEALTH
 	float getCurrentHealth() { return currentHealth; }
-	float getMaxHealth() { return maxHealth; }
-	void setMaxHealth(float amt) { maxHealth = amt; }
+	float getCurrentMaxHealth() { return currentMaxHealth; }
+	float getBaseHealth() { return baseHealth; }
+	float getBaseMaxHealth() { return baseMaxHealth; }
+
 	void setCurrentHealth(float amt) { currentHealth = amt; }
+	void setCurrentMaxHealth(float amt) { currentMaxHealth = amt; }
+	void setBaseHealth(float h) { baseHealth = h; }
+	void setBaseMaxHealth(float h) { baseMaxHealth = h; }
 
 	void setHealthLastFrame(float h) { healthLastFrame = h; }
 	float getHealthLastFrame() { return healthLastFrame; }
 
-	//send a positive value to heal, send a negative to damage
+	//send a positive number to heal, a negative to deal damage
 	void alterHealth(float amt);
 
-	void fullHeal() { currentHealth = maxHealth; }
+	void fullHeal() { currentHealth = currentMaxHealth; }
 
 	//ATTACK
 	//float getAttack(); //Returns the final calculation after buff/debuff
 	float getBaseAttack() { return baseAttack; }
+	float getCurrentAttack() { return currentAttack; }
+
 	void setBaseAttack(float amt) { baseAttack = amt; }
+	void setCurrentAttack(float a) { currentAttack = a; }
+
 
 	//DEFENSE
 	//float getDefense();
 	float getBaseDefense() { return baseDefense; }
+	float getCurrentDefense() { return currentDefense; }
+
 	void setBaseDefense(float amt) { baseDefense = amt; }
+	void setCurrentDefense(float d) { currentDefense = d; }
 
 	//MOVE SPEED
 	//float getMoveSpeed();
-	float getBaseMoveSpeed() { return baseMoveSpeed; }
-	void setBaseMoveSpeed(float amt) { baseMoveSpeed = amt; }
+
 
 	//sets the current movespeed for the character (needed to apply buffs/debuffs to the character directly)
+	void setBaseMoveSpeed(float s) { baseMoveSpeed = s; }
 	void setCurrentMoveSpeed(float s) { currentMoveSpeed = s; }
+
+	float getBaseMoveSpeed() { return baseMoveSpeed; }
 	float getCurrentMoveSpeed() { return currentMoveSpeed; }
 
 

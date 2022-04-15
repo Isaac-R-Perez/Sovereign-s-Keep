@@ -79,6 +79,28 @@ public:
 
 	std::vector<Renderable*>& getDamagedBy() { return damagedBy; }
 
+	//removes any null renderables
+	void clearDamagedBy() {
+		
+
+		if (!damagedBy.empty())
+		{
+			//remove any renderables that should be destroyed
+			for (std::vector<Renderable*>::iterator itr = damagedBy.begin(); itr != damagedBy.end(); ) {
+
+				if (*itr == nullptr) {
+					itr = damagedBy.erase(itr);
+				}
+				else
+				{
+					++itr;
+				}
+
+			}
+		}
+
+	}
+
 	
 };
 

@@ -570,8 +570,8 @@ void Spell::update(double dt) {
 								//deal fireball damage
 								float fireballDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack() * FIREBALL_DAMAGE_MULT;
 								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(fireballDamage));
-								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.1f, SpellID::knockback));
-								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
+								//dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.15f, SpellID::knockback));
+								//dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
 
 
 
@@ -1049,8 +1049,10 @@ void Spell::update(double dt) {
 				//do first update things
 				firstUpdate = false;
 
+				float sizeAlter = 0.75f;
+
 				//update hitbox
-				getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getWidth(), getWidth()); //explosion size can be set by the creating spell
+				getHitBox().updateHitBox(getOrigin(), getWidth() * sizeAlter, getWidth() * sizeAlter, getWidth() * sizeAlter, getWidth() * sizeAlter); //explosion size can be set by the creating spell
 
 
 			}
@@ -1064,7 +1066,7 @@ void Spell::update(double dt) {
 
 
 				//play explosion animation, enable collision on a certain frame
-				if (currentAnimationFrame  ==  3) {
+				if (currentAnimationFrame  ==  1) {
 					collisionFrame = true;
 				}
 				else
@@ -1107,7 +1109,7 @@ void Spell::update(double dt) {
 										//deal damage
 										float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack() * EXPLOSION1_DAMAGE_MULT;
 										dynamic_cast<Enemy*>(itr->second)->alterHealth(-(explosionDamage));
-										dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.1f, SpellID::knockback));
+										dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.15f, SpellID::knockback));
 										dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - getOrigin()));
 
 										dynamic_cast<Enemy*>(itr->second)->addToDamagedBy(this);

@@ -52,10 +52,15 @@ class Player : public Character
 private:
 	int monsterSouls; //Stores the monster souls collected during the run.
 
-	float maxMana;
-	float Mana;
-	float manaRegenRate;
+	float baseMaxMana;
+	float baseManaRegenRate;
 
+	float currentMaxMana;
+	float currentMana;
+	float currentManaRegenRate;
+
+	
+	//these is always the same, no need to add 2 variants?
 	float attackSpeed;
 
 
@@ -156,15 +161,34 @@ public:
 	void spendMonsterSouls(int amt);
 	int getMonsterSouls() { return monsterSouls; }
 
+
+	/*
+	
+	float baseManaRegenRate;
+
+	float currentManaRegenRate;
+	*/
+
+
 	//MANA
-	void setMaxMana(float amt) { maxMana = amt; }
-	float getMaxMana() { return maxMana; }
-	void changeCurrentMana(float amt) { Mana += amt; }
-	void setCurrentMana(float amt) { Mana = amt; }
-	float getCurrentMana() { return Mana; }
+	void setBaseMaxMana(float amt) { baseMaxMana = amt; }
+	void setCurrentMaxMana(float m) { currentMaxMana = m; }
+	void setCurrentMana(float amt) { currentMana = amt; }
+
+	float getBaseMaxMana() { return baseMaxMana; }
+	float getCurrentMaxMana() { return currentMaxMana; }
+	float getCurrentMana() { return currentMana; }
+
+	void changeCurrentMana(float amt) { currentMana += amt; }
+
+
 	bool spendMana(float amt);
-	void setManaRegenRate(float amt) { manaRegenRate = amt; }
-	float getManaRegenRate() { return manaRegenRate; }
+
+	void setBaseManaRegenRate(float r) { baseManaRegenRate = r; }
+	void setCurrentManaRegenRate(float amt) { currentManaRegenRate = amt; }
+	
+	float getBaseManaRegenRate() { return baseManaRegenRate; }
+	float getCurrentManaRegenRate() { return currentManaRegenRate; }
 
 	//ELEMENT LEVELS
 	void setFireLevel(int level) { FireLevel = level; }

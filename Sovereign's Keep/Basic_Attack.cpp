@@ -64,7 +64,8 @@ void Basic_Attack::update(double dt) {
 	
 	std::multimap<int, Renderable*>::iterator itr;
 	std::multimap<int, Renderable*> queue = getGame()->getRenderQueue();
-
+	
+	
 	getHitBox().updateHitBox(getOrigin(), BULLET_HEIGHT / 1.6f, BULLET_HEIGHT / 1.6f, BULLET_HEIGHT / 1.6f, BULLET_HEIGHT / 1.6f);
 
 	
@@ -72,8 +73,9 @@ void Basic_Attack::update(double dt) {
 	
 	updatePosition(move);
 
-
-
+	
+	
+	
 	//COLLISION CHECK
 	if (!queue.empty())
 	{
@@ -81,10 +83,10 @@ void Basic_Attack::update(double dt) {
 
 			//checks collision with EVERY renderable in the queue
 			if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) { //this ONLY CHECKS COLLSIONS WITH ENEMIES
-				switch (itr->second->renderOrder) {
+				
 
 
-				case 3: {//enemy
+				
 
 					//need to process the hit here and calculate bullet damage done to the enemy
 					float playerAttack = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack();
@@ -94,17 +96,18 @@ void Basic_Attack::update(double dt) {
 					dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
 					kill();
 
-					printf("Bullet IS COLLIDING WITH Enemy\n");
+					//printf("Bullet IS COLLIDING WITH Enemy\n");
 					break;
-				}
-
-				}
+				
 			}
 
 			++itr;
 
 		}
 	}
+
+	
+	
 
 
 

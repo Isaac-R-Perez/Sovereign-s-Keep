@@ -13,14 +13,16 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 		case EnemyType::slime:
 		{
 			resize(SLIME_WIDTH, SLIME_HEIGHT);
-			setMaxHealth(400.0f);
-			setCurrentHealth(40.0f);
+			setCurrentMaxHealth(400.0f);
+			setCurrentHealth(400.0f);
 			setBaseAttack(20.0f);
 			setBaseDefense(5.0f);
+			setCurrentAttack(getBaseAttack());
+			setCurrentDefense(getBaseDefense());
 
 
 			setBaseMoveSpeed(0.1f);
-			setCurrentMoveSpeed(0.1f);
+			setCurrentMoveSpeed(getBaseMoveSpeed());
 			break;
 		}
 
@@ -154,7 +156,10 @@ void Enemy::update(double dt) {
 			kill();
 		}
 
+		//add these function to player as well
+		//clearDamagedBy();
 
+		//printf("%d\n", damagedBy.size());
 
 }
 
@@ -228,6 +233,9 @@ int Enemy::getSoulDrop()
 
 //all buffs are searched and all stats are calculated for this frame
 void Enemy::applySpellBuffs() {
+
+
+	//set all current stats to the BASE stats for this enemy
 
 
 }

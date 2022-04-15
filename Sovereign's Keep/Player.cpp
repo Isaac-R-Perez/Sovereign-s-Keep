@@ -56,8 +56,12 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	currentSpellID = SpellID::None;
 	referenceSpell = nullptr;
 
-	setMaxHealth(INITIAL_MAX_HEALTH);
-	setMaxMana(INITIAL_MAX_MANA);
+
+	/*
+		These should be set by the function creating the player, so that the BASE stats can be set according to the save file
+	*/
+	setBaseMaxHealth(INITIAL_MAX_HEALTH);
+	setCurrentMaxMana(INITIAL_MAX_MANA);
 	setCurrentHealth(INITIAL_MAX_HEALTH);
 	setCurrentMana(INITIAL_MAX_MANA);
 	setBaseAttack(INITIAL_PLAYER_BASE_ATTACK);
@@ -81,8 +85,13 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	spellRightElement = nullptr;
 
 	attackSpeed = PLAYER_ATTACKING_FRAME_TIME;
-	manaRegenRate = INITIAL_BASE_MANA_REGEN;
 
+
+	/*
+		same here, need to alter the base mana regen rate, then alter the current based on that in a function creating the player
+	*/
+	baseManaRegenRate = INITIAL_BASE_MANA_REGEN;
+	currentManaRegenRate = baseManaRegenRate;
 
 }
 
@@ -505,8 +514,8 @@ void Player::SavePlayerData()
 	if (playerFile.is_open())
 	{
 		//Health/Mana/Souls
-		playerFile << getMaxHealth() << endl;
-		playerFile << getMaxMana() << endl;
+		playerFile << getCurrentMaxHealth() << endl;
+		playerFile << getCurrentMaxMana() << endl;
 		playerFile << getMonsterSouls() << endl;
 
 		//Base Stats
@@ -538,9 +547,9 @@ void Player::LoadPlayerData()
 
 		//Health/Mana/Souls
 		getline(playerFile, line);
-		setMaxHealth(stof(line));
+		setBaseMaxHealth(stof(line));
 		getline(playerFile, line);
-		setMaxMana(stof(line));
+		setBaseMaxMana(stof(line));
 		getline(playerFile, line);
 		setMonsterSouls(stoi(line));
 
@@ -1111,10 +1120,10 @@ void Player::spendMonsterSouls(int amt)
 
 bool Player::spendMana(float amt)
 {
-	if (amt < Mana)
+	if (amt < currentMana)
 	{
 		//Returns true if the player can cast the spell
-		Mana -= amt;
+		currentMana -= amt;
 		return true;
 	}
 	else
@@ -1761,10 +1770,10 @@ void Player::setPlayerCurrentSpellID(SpellID i) {
 
 void Player::applyManaRegen(double dt) {
 
-	changeCurrentMana(manaRegenRate * dt);
+	changeCurrentMana(currentManaRegenRate * dt);
 
-	if (getCurrentMana() > getMaxMana()) {
-		setCurrentMana(getMaxMana());
+	if (getCurrentMana() > getCurrentMaxMana()) {
+		setCurrentMana(getCurrentMaxMana());
 	}
 
 }
@@ -2059,11 +2068,15 @@ void Player::applySpellBuffs() {
 	int amt = 0; //holds the number of a certain buff
 
 	//set ALL stats to their base value
-	setCurrentMoveSpeed(PLAYER_BASE_SPEED);
+	setCurrentMoveSpeed(getBaseMoveSpeed());
+	
 	attackSpeed = PLAYER_ATTACKING_FRAME_TIME;
-	manaRegenRate = INITIAL_BASE_MANA_REGEN;
-	setBaseDefense(INITIAL_PLAYER_BASE_DEFENSE);
-	setBaseAttack(INITIAL_PLAYER_BASE_ATTACK);
+	
+	setCurrentManaRegenRate(getBaseManaRegenRate());
+	
+	setCurrentDefense(getBaseDefense());
+	
+	setCurrentAttack(getBaseAttack());
 
 
 	//search for all buffs and apply them now, stacking stats where applicable
@@ -2100,17 +2113,17 @@ void Player::applySpellBuffs() {
 
 	//mana regen buffs
 	if (searchSpellBuff(SpellID::Water)) {
-		manaRegenRate = INITIAL_BASE_MANA_REGEN * WATER_MANA_REGEN_BUFF;
+		setCurrentManaRegenRate(getCurrentManaRegenRate() * WATER_MANA_REGEN_BUFF);
 	}
 
 	//defense buffs
 	if (searchSpellBuff(SpellID::Earth)) {
-		setBaseDefense(getBaseDefense() + EARTH_DEFENSE_BUFF); //added to defense
+		setCurrentDefense(getCurrentDefense() + EARTH_DEFENSE_BUFF); //added to defense
 	}
 
 	//attack buffs
 	if (searchSpellBuff(SpellID::Fire)) {
-		setBaseAttack(getBaseAttack() * FIRE_ATTACK_BUFF); //added to defense
+		setCurrentAttack(getCurrentAttack() * FIRE_ATTACK_BUFF); //added to defense
 	}
 
 

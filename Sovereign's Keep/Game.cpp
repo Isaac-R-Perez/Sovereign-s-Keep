@@ -886,6 +886,9 @@ void Game::update(double dt) {
 		for (itr = renderQueue.begin(); itr != renderQueue.end(); ) {
 
 			if (itr->second->shouldDestroy()) {
+				delete itr->second;
+
+				
 				itr = renderQueue.erase(itr);
 			}
 			else
