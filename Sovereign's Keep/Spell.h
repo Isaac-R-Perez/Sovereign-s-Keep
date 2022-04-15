@@ -27,7 +27,7 @@ const float WATERBOLT_DAMAGE_MULT = 1.15f;
 
 
 //base width, call resize to alter the explosion size
-const float EXPLOSION1_WIDTH = 0.15f;
+const float EXPLOSION1_WIDTH = 0.25f;
 const float EXPLOSION1_ANIMATION_TIMER = 0.021f;
 const float EXPLOSION1_DAMAGE_MULT = 1.5f; //all explosion1s deal the same damage
 

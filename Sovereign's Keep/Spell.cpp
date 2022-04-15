@@ -663,9 +663,6 @@ void Spell::update(double dt) {
 
 				float angle = static_cast<float>(floatDistribution(getGame()->getNumberEngine()));
 
-
-				
-
 				rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
 				dynamic_cast<Spell*>(createdWaterBolt)->updatePosition(rotation);
 				
@@ -1258,8 +1255,8 @@ void Spell::update(double dt) {
 							//deal fireball damage
 							float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack() * WATERBOLT_DAMAGE_MULT;
 							dynamic_cast<Enemy*>(itr->second)->alterHealth(-(damage));
-							//dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.15f, SpellID::knockback));
-							//dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
+							dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.65f, SpellID::knockback));
+							dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
 
 
 
