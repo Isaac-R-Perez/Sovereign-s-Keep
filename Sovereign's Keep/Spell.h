@@ -91,6 +91,8 @@ enum class SpellID {
 
 	SaturnRock, //rock created by Saturn's storm
 
+	knockback, //used for when an enemy is hit by a basic attack(/spell?)
+
 };
 
 

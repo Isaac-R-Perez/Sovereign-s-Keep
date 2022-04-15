@@ -31,6 +31,13 @@ private:
 	int current_frame;
 
 
+	/*
+		KNOCKBACK is possible, just need a buff for it, as well as a direction of the knockback
+	*/
+
+	glm::vec3 knockbackDirection;
+
+
 public:
 
 
@@ -43,6 +50,12 @@ public:
 
 	void setSoulDrop(int amt);
 	int getSoulDrop();
+
+
+	//all buffs are searched and all stats are calculated for this frame
+	void applySpellBuffs();
+
+	void setKnockbackDirection(glm::vec3 dir) { knockbackDirection = dir; }
 
 	
 };

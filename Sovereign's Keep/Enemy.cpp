@@ -12,13 +12,13 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 		case EnemyType::slime:
 		{
 			resize(SLIME_WIDTH, SLIME_HEIGHT);
-			setMaxHealth(40.0f);
+			setMaxHealth(400.0f);
 			setCurrentHealth(40.0f);
 			setBaseAttack(20.0f);
-			setBaseDefense(0.0f);
+			setBaseDefense(5.0f);
 
 
-			setBaseMoveSpeed(0.05f);
+			setBaseMoveSpeed(0.1f);
 			setCurrentMoveSpeed(0.05f);
 			break;
 		}
@@ -37,6 +37,10 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 	//FOR TESTING REMOVE THIS LATER
 	glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
 	updatePosition(move);
+
+
+	glm::vec3 knockbackDirection = glm::vec3(1.0f);
+
 }
 
 /*
@@ -60,6 +64,8 @@ void Enemy::update(double dt) {
 	updateEffects(dt);
 
 
+
+
 	if (dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x > getOrigin().x)
 	{
 		if (facingLeft) {
@@ -76,6 +82,10 @@ void Enemy::update(double dt) {
 			facingLeft = true;
 		}
 	}
+
+
+	//the direction of the last knockback is what the enemy travels in
+	bool knockback = searchSpellBuff(SpellID::knockback);
 
 
 	//update hitbox
@@ -106,16 +116,34 @@ void Enemy::update(double dt) {
 		}
 
 
-		//create a vector TOWARDS the player's origin
-		movementVector = dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin() - getOrigin();
+		if (knockback) {
+			//create a vector TOWARDS the player's origin
+			movementVector = knockbackDirection;
 
-		movementVector = glm::normalize(movementVector);
+			//movementVector = glm::normalize(movementVector);
 
-		move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed(), movementVector.y * dt * getCurrentMoveSpeed(), 0.0f));
+			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed(), movementVector.y * dt * getCurrentMoveSpeed(), 0.0f));
 
-		//ADD this back when testing is done
+			//ADD this back when testing is done
 
-		updatePosition(move);
+			updatePosition(move);
+		}
+		else
+		{
+
+			//create a vector TOWARDS the player's origin
+			movementVector = dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin() - getOrigin();
+
+			movementVector = glm::normalize(movementVector);
+
+			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed(), movementVector.y * dt * getCurrentMoveSpeed(), 0.0f));
+
+			//ADD this back when testing is done
+
+			updatePosition(move);
+		}
+
+
 
 
 		setHealthLastFrame(getCurrentHealth());
@@ -193,4 +221,12 @@ void Enemy::setSoulDrop(int amt)
 int Enemy::getSoulDrop()
 {
 	return soulDrop;
+}
+
+
+
+//all buffs are searched and all stats are calculated for this frame
+void Enemy::applySpellBuffs() {
+
+
 }
