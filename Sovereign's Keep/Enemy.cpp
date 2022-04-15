@@ -19,6 +19,7 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 
 
 			setBaseMoveSpeed(0.05f);
+			setCurrentMoveSpeed(0.05f);
 			break;
 		}
 
@@ -110,16 +111,21 @@ void Enemy::update(double dt) {
 
 		movementVector = glm::normalize(movementVector);
 
-		move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getMoveSpeed(), movementVector.y * dt * getMoveSpeed(), 0.0f));
+		move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed(), movementVector.y * dt * getCurrentMoveSpeed(), 0.0f));
 
 		//ADD this back when testing is done
 
 		updatePosition(move);
 
+
+		setHealthLastFrame(getCurrentHealth());
+
 		if (getCurrentHealth() <= 0.0f)
 		{
 			kill();
 		}
+
+
 
 }
 
@@ -127,6 +133,11 @@ void Enemy::render() {
 	float idle_stride = 0.0f;
 	float left = 0.0f;
 	float right = 0.0f;
+
+	if (getHealthLastFrame() - getCurrentHealth() >= 1.0f) {
+		//took more than 1 damage, so flash red for one frame
+		getGame()->setGUIFlag(-1);
+	}
 
 	switch (type) {
 	case EnemyType::slime:
@@ -169,6 +180,7 @@ void Enemy::render() {
 	getGame()->resetTextureCoordinates();
 
 
+	getGame()->setGUIFlag(0);
 		
 }
 

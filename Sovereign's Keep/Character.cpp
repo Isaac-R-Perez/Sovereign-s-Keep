@@ -16,7 +16,7 @@ void Character::updateEffects(float dt)
 	* Will also handle buffs/debuffs.
 	*/
 
-	currentMoveSpeed = getMoveSpeed(); //getMoveSpeed() will check if Frozen or Stunned.
+	//currentMoveSpeed = getMoveSpeed(); //getMoveSpeed() will check if Frozen or Stunned.
 
 	//STATUS DURATION
 	if (status.getDuration() > 0.0)
@@ -94,6 +94,10 @@ void Character::alterHealth(float amt)
 }
 
 
+/*
+
+
+
 float Character::getAttack()
 {
 	float buffTotal = 0.0f;
@@ -130,6 +134,9 @@ float Character::getMoveSpeed()
 		return baseMoveSpeed + buffTotal;
 	}
 }
+
+*/
+
 
 void Character::removeStatus()
 {

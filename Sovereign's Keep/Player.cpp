@@ -62,6 +62,7 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	setCurrentMana(INITIAL_MAX_MANA);
 	setBaseAttack(10.0f);
 	setBaseMoveSpeed(PLAYER_BASE_SPEED);
+	setBaseDefense(INITIAL_PLAYER_BASE_DEFENSE);
 
 
 	HealthBar = new GUI_Element(getGame(), 5, static_cast<int>(SPRITE_SHEETS::health_bar), GUIType::HealthBar);
@@ -80,6 +81,7 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	spellRightElement = nullptr;
 
 	attackSpeed = PLAYER_ATTACKING_FRAME_TIME;
+	manaRegenRate = INITIAL_BASE_MANA_REGEN;
 
 
 }
@@ -112,6 +114,11 @@ void Player::update(double dt) {
 	//printf("TR: %f %f \n", getHitBox().topRight.x, getHitBox().topRight.y);
 	updateEffects(dt);
 
+
+	//apply all spellBuffs
+	applySpellBuffs();
+
+
 	//update player's mana
 	applyManaRegen(dt);
 
@@ -123,8 +130,6 @@ void Player::update(double dt) {
 	displayCurrentSpell();
 
 
-	//apply all spellBuffs
-	applySpellBuffs();
 
 
 
@@ -256,21 +261,38 @@ void Player::update(double dt) {
 		//player can attack so check which direction to fire
 		if (CAN_BASIC_ATTACK) {
 
+			bool fireSoul = searchSpellBuff(SpellID::FireFireFire);
+			bool multiShot = searchSpellBuff(SpellID::WaterAirAir);
+
 
 			if (ATTACK_RIGHT) {
 
 
 				
-				spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack), 0.0f);
-
-				glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
-
-				spawnedBasicAttack->updatePosition(move);
-
-
-				getGame()->renderableToPendingAdd(spawnedBasicAttack);
 				
 				
+				
+				if (fireSoul || multiShot) {
+
+					if (fireSoul) {
+						spawnAdditionalFireSoulBullets();
+					}
+					if (multiShot) {
+						spawnMultiShotBullets(false); //SPAWN BULLETS TO THE RIGHT
+					}
+
+				}
+				else
+				{
+					spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack), 0.0f);
+
+					glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
+
+					spawnedBasicAttack->updatePosition(move);
+
+
+					getGame()->renderableToPendingAdd(spawnedBasicAttack);
+				}
 
 				
 
@@ -288,17 +310,30 @@ void Player::update(double dt) {
 			}
 			else if (ATTACK_LEFT) {
 				
-				spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack), glm::pi<float>());
-
-				glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
-
-				spawnedBasicAttack->updatePosition(move);
 
 
-				getGame()->renderableToPendingAdd(spawnedBasicAttack);
+				if (fireSoul || multiShot) {
+
+					if (fireSoul) {
+						spawnAdditionalFireSoulBullets();
+					}
+					if (multiShot) {
+						spawnMultiShotBullets(true); //SPAWN BULLETS TO THE LEFT
+					}
+
+				}
+				else
+				{
+					spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack), glm::pi<float>());
+
+					glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
+
+					spawnedBasicAttack->updatePosition(move);
 
 
-
+					getGame()->renderableToPendingAdd(spawnedBasicAttack);
+				}
+				
 
 
 				//UPDATE THIS LATER TO ACCOUNT FOR BUFFED BASIC ATTACK COOLDOWN REDUCTION
@@ -453,6 +488,12 @@ void Player::update(double dt) {
 	}
 
 
+
+
+	setHealthLastFrame(getCurrentHealth());
+
+
+
 }
 
 
@@ -538,6 +579,12 @@ void Player::render() {
 	float right = 0.0f; //x value
 	float up = 0.0f;
 	
+
+	if (getHealthLastFrame() - getCurrentHealth() >= 1.0f) {
+		//took more than 1 damage, so flash red for one frame
+		getGame()->setGUIFlag(-1);
+	}
+
 	
 	if (animationState == states::idling) {
 
@@ -838,6 +885,9 @@ void Player::render() {
 			resize(PLAYER_WIDTH, PLAYER_HEIGHT);
 		}
 	}
+
+
+	getGame()->setGUIFlag(0);
 
 }
 
@@ -1797,8 +1847,14 @@ void Player::displayCurrentSpell() {
 
 
 
-const float AIR_MOVESPEED_BUFF = 1.2f; //20 percent buff
+const float AIR_MOVESPEED_BUFF = 1.15f; //25 percent buff
+const float AIR_AIR_MOVESPEED_BUFF = 1.35f;
+const float AIR_AIR_AIR_MOVESPEED_BUFF = 1.5f;
+
 const float FIRE_AIR_ATTACK_SPEED_BUFF = 0.75f; //reduces timer by 25% making it faster
+const float WATER_MANA_REGEN_BUFF = 2.5f; //multiplies base mana regen (base regen is saved in file?)
+const float EARTH_DEFENSE_BUFF = 25.0f;
+const float FIRE_ATTACK_BUFF = 1.75f;
 
 void Player::applySpellBuffs() {
 	int amt = 0; //holds the number of a certain buff
@@ -1806,6 +1862,8 @@ void Player::applySpellBuffs() {
 	//set ALL stats to their base value
 	setCurrentMoveSpeed(PLAYER_BASE_SPEED);
 	attackSpeed = PLAYER_ATTACKING_FRAME_TIME;
+	manaRegenRate = INITIAL_BASE_MANA_REGEN;
+	setBaseDefense(INITIAL_PLAYER_BASE_DEFENSE);
 
 
 	//search for all buffs and apply them now, stacking stats where applicable
@@ -1816,6 +1874,19 @@ void Player::applySpellBuffs() {
 		setCurrentMoveSpeed(getCurrentMoveSpeed() * AIR_MOVESPEED_BUFF);
 	}
 
+	amt = buffAmount(SpellID::AirAir);
+	if(amt > 0){
+		for (int i = 0; i < amt; i++) {
+			setCurrentMoveSpeed(getCurrentMoveSpeed() * AIR_AIR_MOVESPEED_BUFF);
+		}
+	}
+
+	amt = buffAmount(SpellID::AirAirAir);
+	if (amt > 0) {
+		for (int i = 0; i < amt; i++) {
+			setCurrentMoveSpeed(getCurrentMoveSpeed() * AIR_AIR_AIR_MOVESPEED_BUFF);
+		}
+	}
 
 	//attack speed buffs
 
@@ -1827,6 +1898,71 @@ void Player::applySpellBuffs() {
 	}
 
 
+	//mana regen buffs
+	if (searchSpellBuff(SpellID::Water)) {
+		manaRegenRate = INITIAL_BASE_MANA_REGEN * WATER_MANA_REGEN_BUFF;
+	}
+
+	//defense buffs
+	if (searchSpellBuff(SpellID::Earth)) {
+		setBaseDefense(getBaseDefense() + EARTH_DEFENSE_BUFF); //added to defense
+	}
+
+	//attack buffs
+	if (searchSpellBuff(SpellID::Fire)) {
+		setBaseAttack(getBaseAttack() * FIRE_ATTACK_BUFF); //added to defense
+	}
 
 
+}
+
+
+
+
+
+
+//spawn fire soul bullets
+void Player::spawnAdditionalFireSoulBullets() {
+
+	Renderable* spawnedBasicAttack = nullptr;
+		
+	for (int i = 0; i < 8; i++) {
+		spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack), static_cast<float>(i) * (glm::pi<float>() / 4.0f ), 1.1f);
+
+		glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
+
+		spawnedBasicAttack->updatePosition(move);
+
+
+		getGame()->renderableToPendingAdd(spawnedBasicAttack);
+	}
+
+		
+
+}
+
+//spawn multishot bullets IN FACING DIRECTION
+void Player::spawnMultiShotBullets(bool flip) {
+	
+	Renderable* spawnedBasicAttack = nullptr;
+
+	for (int i = 0; i < 5; i++) {
+		
+		if (!flip) {
+			spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack),
+				(-glm::pi<float>() / 3.0f) + (static_cast<float>(i) * (glm::pi<float>() / 6.0f)), 0.9f);
+		}
+		else
+		{
+			spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack),
+				((4.0f * glm::pi<float>()) / 3.0f) - (static_cast<float>(i) * (glm::pi<float>() / 6.0f)), 0.9f);
+		}
+
+		glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
+
+		spawnedBasicAttack->updatePosition(move);
+
+
+		getGame()->renderableToPendingAdd(spawnedBasicAttack);
+	}
 }

@@ -26,24 +26,28 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Fired Up";
 			manaCost = 5.0f;
 			castTime = 0.25f;
+			duration = 1200.0f;
 			break;
 		}
 		case SpellID::Water: {
 			spellName = "Replenish";
 			manaCost = 5.0f;
 			castTime = 0.25f;
+			duration = 1200.0f;
 			break;
 		}
 		case SpellID::Earth: {
 			spellName = "Stone Armor";
 			manaCost = 5.0f;
 			castTime = 0.25f;
+			duration = 1200.0f;
 			break;
 		}
 		case SpellID::Air: {
 			spellName = "Swift Speed I";
 			manaCost = 5.0f;
 			castTime = 0.25f;
+			duration = 1200.0f;
 			break;
 		}
 
@@ -64,14 +68,14 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		case SpellID::FireEarth: {
 			spellName = "Fireball";
 			manaCost = 20.0f;
-			castTime = 1.0f;
+			castTime = 0.8f;
 			break;
 		}
 		case SpellID::FireAir: {
 			spellName = "Fanned Flames I";
 			manaCost = 25.0f;
 			castTime = 0.25f;
-			duration = 55.0f;
+			duration = 15.0f;
 			break;
 		}
 
@@ -109,8 +113,9 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 
 		case SpellID::AirAir: {
 			spellName = "Swift Speed II";
-			manaCost = 20.0f;
+			manaCost = 25.0f;
 			castTime = 0.5f;
+			duration = 15.0f;
 			break;
 		}
 
@@ -122,6 +127,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Fire Soul";
 			manaCost = 50.0f;
 			castTime = 1.5f;
+			duration = 15.0f;
 			break;
 		}
 		case SpellID::FireFireWater: {
@@ -146,6 +152,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Soothing Waters";
 			manaCost = 20.0f;
 			castTime = 0.61f;
+			duration = 15.0f;
 			break;
 		}
 		case SpellID::FireWaterEarth: {
@@ -176,6 +183,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Fire Storm";
 			manaCost = 75.0f;
 			castTime = 1.0f;
+			duration = 10.0f;
 			break;
 		}
 		case SpellID::WaterWaterWater: {
@@ -194,12 +202,14 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Waterspout";
 			manaCost = 60.0f;
 			castTime = 0.95f;
+			duration = 7.0f;
 			break;
 		}
 		case SpellID::WaterEarthEarth: {
 			spellName = "Earth Wave";
 			manaCost = 45.0f;
 			castTime = 0.75f;
+			duration = 5.0f;
 			break;
 		}
 		case SpellID::WaterEarthAir: {
@@ -210,8 +220,9 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::WaterAirAir: {
 			spellName = "Multishot";
-			manaCost = 60.0f;
+			manaCost = 45.0f;
 			castTime = 0.5f;
+			duration = 20.0f;
 			break;
 		}
 		case SpellID::EarthEarthEarth: {
@@ -224,6 +235,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Saturn's Storm";
 			manaCost = 60.0f;
 			castTime = 1.0f;
+			duration = 8.0f;
 			break;
 		}
 		case SpellID::EarthAirAir: {
@@ -236,6 +248,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Swift Speed III";
 			manaCost = 50.0f;
 			castTime = 0.5f;
+			duration = 20.0f;
 			break;
 		}
 
@@ -320,17 +333,63 @@ void Spell::update(double dt) {
 			
 			//apply fire buff, the buff should cancel any other single element buff
 
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Fire)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Fire);
+			}
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Water)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Water);
+			}
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Earth)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Earth);
+			}
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Air)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Air);
+			}
+
+			dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(duration, ID));
+
 			kill();
 			break;
 		}
 		case SpellID::Water: {
 			//apply water buff, the buff should cancel any other single element buff
 
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Fire)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Fire);
+			}
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Water)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Water);
+			}
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Earth)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Earth);
+			}
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Air)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Air);
+			}
+
+			dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(duration, ID));
+
 			kill();
 			break;
 		}
 		case SpellID::Earth: {
 			//apply earth buff, the buff should cancel any other single element buff
+
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Fire)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Fire);
+			}
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Water)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Water);
+			}
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Earth)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Earth);
+			}
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Air)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Air);
+			}
+
+			dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(duration, ID));
+
 
 			kill();
 			break;
@@ -341,11 +400,22 @@ void Spell::update(double dt) {
 
 			//check if any other basic buff is applied, if it is, remove it then apply new buff
 
-			
-			if (!dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(ID)) {
-				//player does NOT have the buff already
-				dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(1000.0f, ID));
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Fire)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Fire);
 			}
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Water)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Water);
+			}
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Earth)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Earth);
+			}
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->searchSpellBuff(SpellID::Air)) {
+				dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::Air);
+			}
+
+			
+			dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(duration, ID));
+			
 
 			
 
@@ -500,7 +570,7 @@ void Spell::update(double dt) {
 			apply the stacking swift speed II buff, kill this spell
 
 			*/
-
+			dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(duration, ID));
 			//remove later
 			kill();
 			break;
@@ -516,6 +586,13 @@ void Spell::update(double dt) {
 
 			kill spell
 			*/
+
+			//remove this buff if it already exists
+			dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::FireFireFire);
+			
+			//apply a fresh stack
+			dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(duration, ID));
+
 
 			//remove later
 			kill();
@@ -736,6 +813,13 @@ void Spell::update(double dt) {
 
 			*/
 
+			//remove this buff if it already exists
+			dynamic_cast<Player*>(getGame()->getPlayer())->removeSpellBuff(SpellID::WaterAirAir);
+
+			//apply a fresh stack
+			dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(duration, ID));
+
+
 			//remove later
 			kill();
 			break;
@@ -792,6 +876,7 @@ void Spell::update(double dt) {
 			destroy this spell
 
 			*/
+			dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(duration, ID));
 
 			//remove later
 			kill();

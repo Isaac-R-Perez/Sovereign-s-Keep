@@ -16,6 +16,8 @@
 const int MAX_MONSTER_SOULS = 999;
 const float INITIAL_MAX_MANA = 100.0f;
 const float INITIAL_MAX_HEALTH = 100.0f;
+const float INITIAL_BASE_MANA_REGEN = 2.0f;
+const float INITIAL_PLAYER_BASE_DEFENSE = 10.0f;
 
 const float PLAYER_BASE_SPEED = 0.3f;
 
@@ -51,7 +53,7 @@ private:
 
 	float maxMana;
 	float Mana;
-	float manaRegenRate = 2.0f;
+	float manaRegenRate;
 
 	float attackSpeed;
 
@@ -250,5 +252,12 @@ public:
 
 	//all buffs are searched and all stats are calculated for this frame
 	void applySpellBuffs();
+
+
+	//spawn fire soul bullets
+	void spawnAdditionalFireSoulBullets();
+
+	//spawn multishot bullets IN FACING DIRECTION
+	void spawnMultiShotBullets(bool flip);
 
 };

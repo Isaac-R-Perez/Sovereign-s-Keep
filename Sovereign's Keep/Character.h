@@ -58,6 +58,9 @@ private:
 	float baseMoveSpeed;
 	float currentMoveSpeed;
 
+	//saves the value of this character's health from the last frame
+	float healthLastFrame = 0.0f;
+
 	//Element Damage Multipliers
 	float fireDMG = 1.0;
 	float waterDMG = 1.0;
@@ -128,23 +131,26 @@ public:
 	void setMaxHealth(float amt) { maxHealth = amt; }
 	void setCurrentHealth(float amt) { currentHealth = amt; }
 
+	void setHealthLastFrame(float h) { healthLastFrame = h; }
+	float getHealthLastFrame() { return healthLastFrame; }
+
 	//send a positive value to heal, send a negative to damage
 	void alterHealth(float amt);
 
 	void fullHeal() { currentHealth = maxHealth; }
 
 	//ATTACK
-	float getAttack(); //Returns the final calculation after buff/debuff
+	//float getAttack(); //Returns the final calculation after buff/debuff
 	float getBaseAttack() { return baseAttack; }
 	void setBaseAttack(float amt) { baseAttack = amt; }
 
 	//DEFENSE
-	float getDefense();
+	//float getDefense();
 	float getBaseDefense() { return baseDefense; }
 	void setBaseDefense(float amt) { baseDefense = amt; }
 
 	//MOVE SPEED
-	float getMoveSpeed();
+	//float getMoveSpeed();
 	float getBaseMoveSpeed() { return baseMoveSpeed; }
 	void setBaseMoveSpeed(float amt) { baseMoveSpeed = amt; }
 

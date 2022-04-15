@@ -9,7 +9,7 @@
 const float BULLET_WIDTH = 0.025f;
 const float BULLET_HEIGHT = 0.02f;
 
-const float BULLET_BASE_SPEED = 0.6f;
+const float BULLET_BASE_SPEED = 0.75f;
 const float BASE_DAMAGE = 20.0f;
 
 const float BULLET_LIFETIME = 1.75f;
@@ -19,6 +19,7 @@ class Basic_Attack : public Renderable {
 public:
 
 	Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet, float ang);
+	Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet, float ang, float speedModifier);
 
 	void render();
 	void update(double dt);
