@@ -18,6 +18,7 @@ const float INITIAL_MAX_MANA = 100.0f;
 const float INITIAL_MAX_HEALTH = 100.0f;
 const float INITIAL_BASE_MANA_REGEN = 2.0f;
 const float INITIAL_PLAYER_BASE_DEFENSE = 10.0f;
+const float INITIAL_PLAYER_BASE_ATTACK = 10.0f;
 
 const float PLAYER_BASE_SPEED = 0.3f;
 

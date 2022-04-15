@@ -90,7 +90,7 @@ void Basic_Attack::update(double dt) {
 					float playerAttack = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack();
 					float enemyDefense = dynamic_cast<Enemy*>(itr->second)->getBaseDefense();
 					dynamic_cast<Enemy*>(itr->second)->alterHealth(-(playerAttack - enemyDefense));
-					dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.25f, SpellID::knockback));
+					dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.2f, SpellID::knockback));
 					dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
 					kill();
 

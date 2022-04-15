@@ -60,7 +60,7 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	setMaxMana(INITIAL_MAX_MANA);
 	setCurrentHealth(INITIAL_MAX_HEALTH);
 	setCurrentMana(INITIAL_MAX_MANA);
-	setBaseAttack(10.0f);
+	setBaseAttack(INITIAL_PLAYER_BASE_ATTACK);
 	setBaseMoveSpeed(PLAYER_BASE_SPEED);
 	setBaseDefense(INITIAL_PLAYER_BASE_DEFENSE);
 
@@ -1864,6 +1864,7 @@ void Player::applySpellBuffs() {
 	attackSpeed = PLAYER_ATTACKING_FRAME_TIME;
 	manaRegenRate = INITIAL_BASE_MANA_REGEN;
 	setBaseDefense(INITIAL_PLAYER_BASE_DEFENSE);
+	setBaseAttack(INITIAL_PLAYER_BASE_ATTACK);
 
 
 	//search for all buffs and apply them now, stacking stats where applicable
