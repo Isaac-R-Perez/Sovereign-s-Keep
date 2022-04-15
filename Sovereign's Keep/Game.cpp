@@ -173,6 +173,15 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 224, 29, 3, "images/player/basic_attack.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::basic_attack), generatedTexture));
 
+	//Fire Soul Basic Attack
+	generateTexture(generatedTexture, 224, 29, 3, "images/player/basic_attack_fire.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::fire_soul_basic_attack), generatedTexture));
+
+	//Fire Sould Basic Attack
+	generateTexture(generatedTexture, 224, 29, 3, "images/player/basic_attack_air.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::multishot_basic_attack), generatedTexture));
+
+
 	// slime enemy
 	generateTexture(generatedTexture, 96, 20, 3, "images/enemy/slime/Slime_Run.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::slime), generatedTexture));

@@ -1927,7 +1927,7 @@ void Player::spawnAdditionalFireSoulBullets() {
 	Renderable* spawnedBasicAttack = nullptr;
 		
 	for (int i = 0; i < 8; i++) {
-		spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack), static_cast<float>(i) * (glm::pi<float>() / 4.0f ), 1.1f);
+		spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::fire_soul_basic_attack), static_cast<float>(i) * (glm::pi<float>() / 4.0f ), 1.1f);
 
 		glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
 
@@ -1949,12 +1949,12 @@ void Player::spawnMultiShotBullets(bool flip) {
 	for (int i = 0; i < 5; i++) {
 		
 		if (!flip) {
-			spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack),
+			spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::multishot_basic_attack),
 				(-glm::pi<float>() / 3.0f) + (static_cast<float>(i) * (glm::pi<float>() / 6.0f)), 0.9f);
 		}
 		else
 		{
-			spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack),
+			spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::multishot_basic_attack),
 				((4.0f * glm::pi<float>()) / 3.0f) - (static_cast<float>(i) * (glm::pi<float>() / 6.0f)), 0.9f);
 		}
 

@@ -33,6 +33,9 @@ enum class SPRITE_SHEETS
 	fire_icon, water_icon, earth_icon, air_icon,
 	health_bar, mana_bar,
 
+	fire_soul_basic_attack,
+	multishot_basic_attack
+
 };
 
 enum class ELEMENTS {
