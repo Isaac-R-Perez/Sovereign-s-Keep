@@ -65,8 +65,8 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		//double element spells
 		case SpellID::FireFire: {
 			spellName = "Flame Ring";
-			manaCost = 15.0f;
-			castTime = 1.0f;
+			manaCost = 25.0f;
+			castTime = 0.75f;
 			duration = 10.0f;
 			animationFrames = 2;
 			setTexture(static_cast<int>(SPRITE_SHEETS::flame_ring));
@@ -114,7 +114,11 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		case SpellID::WaterEarth: {
 			spellName = "Mud Pit";
 			manaCost = 50.0f;
-			castTime = 1.5f;
+			castTime = 0.8f;
+			duration = 15.0f;
+			setTexture(static_cast<int>(SPRITE_SHEETS::mud_pit));
+			resize(MUD_WIDTH, MUD_HEIGHT);
+			
 			break;
 		}
 		case SpellID::WaterAir: {
@@ -934,8 +938,97 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+
+
+
+
+			glm::mat4 move;
+			float xDistance = 0.35f;
+
+
+			if (firstUpdate) {
+				//do first update things
+				firstUpdate = false;
+
+				if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingRight()) {
+
+					move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin() + glm::vec3(xDistance,0.0f,0.0f)));
+					updatePosition(move);
+				}
+				else
+				{
+					move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin() + glm::vec3(-xDistance, 0.0f, 0.0f)));
+					updatePosition(move);
+				}
+
+
+				//update hitbox
+				getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getHeight(), getHeight()); //explosion size can be set by the creating spell
+
+
+			}
+			else
+			{
+				//initially the explosion cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+				if (damageTimer <= 0.0f)
+				{
+
+					//COLLISION CHECK
+					if (!queue.empty())
+					{
+						for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+							//checks collision with ENEMY renderable in the queue
+							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
+
+								//deal damage
+								
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(5.0f, SpellID::WaterEarth));
+
+								damageTimer = 0.15f; //can apply effect every 0.15 seconds
+
+								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+								//break;
+
+
+
+
+							}
+						}
+
+
+
+					}
+
+				}
+
+
+				damageTimer -= dt;
+
+
+
+				duration -= dt;
+				if (duration <= 0.0f) {
+					kill();
+				}
+
+
+
+			}
+
+
+
+
+
+
+
 			break;
 		}
 		case SpellID::WaterAir: {
@@ -1701,6 +1794,10 @@ void Spell::render() {
 		}
 		case SpellID::WaterAir: {
 			renderThisSpell(static_cast<float>(1.0f / 9.0f));//8 frames
+			break;
+		}
+		case SpellID::WaterEarth: {
+			renderThisSpell(1.0f);//8 frames
 			break;
 		}
 		case SpellID::FireEarth: {

@@ -421,14 +421,25 @@ void Player::update(double dt) {
 				
 				if (getCurrentMana() > referenceSpell->getManaCost()) {
 					
-					
+					if (currentSpellID == SpellID::WaterEarth) {
+						//create a spell to add to the game
+						Renderable* castedSpell = new Spell(getGame(), 1, static_cast<int>(SPRITE_SHEETS::no_texture), currentSpellID);
 
-					//create a spell to add to the game
-					Renderable* castedSpell = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::no_texture), currentSpellID);
-					
-					getGame()->renderableToPendingAdd(castedSpell);
+						getGame()->renderableToPendingAdd(castedSpell);
 
-					spendMana(referenceSpell->getManaCost());
+						spendMana(referenceSpell->getManaCost());
+					}
+					else //add other ELSE IF as needed???
+					{
+						//create a spell to add to the game
+						Renderable* castedSpell = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::no_texture), currentSpellID);
+
+						getGame()->renderableToPendingAdd(castedSpell);
+
+						spendMana(referenceSpell->getManaCost());
+					}
+
+					
 				}
 
 			}

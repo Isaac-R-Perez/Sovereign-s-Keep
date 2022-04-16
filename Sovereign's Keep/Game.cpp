@@ -250,6 +250,10 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 576, 64, 3, "images/spell/bubble_shot.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::bubble_shot), generatedTexture));
 
+	// mud animation
+	generateTexture(generatedTexture, 52, 19, 3, "images/spell/mud_pit.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::mud_pit), generatedTexture));
+
 
 }
 

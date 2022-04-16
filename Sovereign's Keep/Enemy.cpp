@@ -72,7 +72,7 @@ void Enemy::update(double dt) {
 
 	updateEffects(dt);
 
-
+	applySpellBuffs();
 
 
 	if (dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x > getOrigin().x)
@@ -235,13 +235,21 @@ int Enemy::getSoulDrop()
 	return soulDrop;
 }
 
-
+const float MUD_SLOW = 0.5f;
 
 //all buffs are searched and all stats are calculated for this frame
 void Enemy::applySpellBuffs() {
 
+	setCurrentMoveSpeed(getBaseMoveSpeed());
+
+	setCurrentDefense(getBaseDefense());
+
+	setCurrentAttack(getBaseAttack());
+
 
 	//set all current stats to the BASE stats for this enemy
-
+	if (searchSpellBuff(SpellID::WaterEarth)) {
+		setCurrentMoveSpeed(getCurrentMoveSpeed() * MUD_SLOW);
+	}
 
 }
