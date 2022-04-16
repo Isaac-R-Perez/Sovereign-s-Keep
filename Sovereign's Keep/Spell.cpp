@@ -578,7 +578,7 @@ void Spell::update(double dt) {
 								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.075f, SpellID::knockback));
 								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - getOrigin()));
 
-								damageTimer = 0.55f; //can deal damage every 1 second
+								damageTimer = 0.33f; //can deal damage every 1 second
 
 								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
 								//break;
@@ -1513,8 +1513,8 @@ void Spell::update(double dt) {
 
 
 			glm::mat4 move;
-			float alterSizeW = 0.7f;
-			float alterSizeH = 0.6f;
+			float alterSizeW = 0.75f;
+			float alterSizeH = 0.525f;
 
 			if (firstUpdate) {
 				//do first update things
