@@ -1212,15 +1212,6 @@ void Game::sendElementsData() {
 
 }
 
-void Game::SpawnSlime(float x, float y)
-{
-	glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
-	Renderable* enemy = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime, Enemy::stats(100.0,100.0f,10.0f,0.0f,0.2f));
-
-	dynamic_cast<Enemy*>(enemy)->updatePosition(move);
-	renderableToPendingAdd(enemy);
-}
-
 void Game::GenerateNextWave()
 {
 	
@@ -1239,6 +1230,7 @@ void Game::SpawnEnemy()
 
 	Renderable* newEnemy = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime, dynamic_cast<Enemy*>(baseEnemies[0])->getEnemyStats());
 	dynamic_cast<Enemy*>(newEnemy)->updatePosition(move);
+	dynamic_cast<Enemy*>(newEnemy)->WaveBuff(WaveNumber); //Will buff the base stats based on the wave number.
 
 	renderableToPendingAdd(newEnemy);
 }

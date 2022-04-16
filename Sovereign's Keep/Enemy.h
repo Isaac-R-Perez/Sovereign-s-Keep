@@ -86,6 +86,8 @@ public:
 
 	void setKnockbackDirection(glm::vec3 dir) { knockbackDirection = dir; }
 
+	void WaveBuff(int wave);
+
 
 	/*
 	

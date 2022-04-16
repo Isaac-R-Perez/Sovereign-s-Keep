@@ -298,3 +298,48 @@ void Enemy::applySpellBuffs() {
 	}
 
 }
+
+//Called from the Game::SpawnEnemy() function.
+void Enemy::WaveBuff(int wave)
+{
+	//Percentage based
+	float hpBuff = 0.0f;
+	float atkBuff = 0.0f;
+	float defBuff = 0.0f;
+	float speedBuff = 0.0f;
+
+	switch (wave)
+	{
+	//Wave 2
+	case 2:
+		hpBuff = 1.0f;
+		speedBuff = 0.5f;
+		break;
+	//Wave 3
+	case 3:
+		speedBuff = 2.0f;
+		break;
+	//For all waves that aren't defined
+	default:
+		//Increase their base stats by 1%
+		hpBuff = 0.01f;
+		atkBuff = 0.01f;
+		defBuff = 0.01f;
+		speedBuff = 0.01f;
+		break;
+	}
+	setBaseMaxHealth(getBaseMaxHealth() + (getBaseMaxHealth() * hpBuff));
+	setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
+
+	setBaseHealth(getBaseMaxHealth() + (getBaseMaxHealth() * hpBuff));
+	setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
+
+	setBaseAttack(getBaseAttack() + (getBaseAttack() * atkBuff));
+	setCurrentAttack(getCurrentAttack() + (getCurrentAttack() * atkBuff));
+
+	setBaseDefense(getBaseDefense() + (getBaseDefense() * defBuff));
+	setCurrentDefense(getCurrentDefense() + (getCurrentDefense() * defBuff));
+
+	setBaseMoveSpeed(getBaseMoveSpeed() + (getBaseMoveSpeed() * speedBuff));
+	setCurrentMoveSpeed(getCurrentMoveSpeed() + (getCurrentMoveSpeed() * speedBuff));
+}

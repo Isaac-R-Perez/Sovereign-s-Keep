@@ -131,7 +131,6 @@ public:
 	std::mt19937& getNumberEngine() { return numberEngine; }
 
 	//Enemy Wave functions
-	void SpawnSlime(float x, float y);
 	void GenerateNextWave();
 	void SpawnEnemy();
 
