@@ -236,6 +236,10 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 704, 64, 3, "images/spell/explosion1.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::explosion1), generatedTexture));
 
+	// steam blast animation
+	generateTexture(generatedTexture, 512, 64, 3, "images/spell/steam_blast.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::steam_blast), generatedTexture));
+
 }
 
 

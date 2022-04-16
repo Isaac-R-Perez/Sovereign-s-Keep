@@ -9,6 +9,8 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 
 	damagedBy.clear();
 
+
+	//remove this when level manager is done
 	switch (type) {
 		case EnemyType::slime:
 		{

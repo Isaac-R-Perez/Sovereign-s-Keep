@@ -70,7 +70,10 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		case SpellID::FireWater: {
 			spellName = "Steam Blast";
 			manaCost = 10.0f;
-			castTime = 0.4f;
+			castTime = 0.25f;
+			animationFrames = 7;
+			setTexture(static_cast<int>(SPRITE_SHEETS::steam_blast));
+			resize(STEAM_BLAST_WIDTH, STEAM_BLAST_WIDTH);
 			break;
 		}
 		case SpellID::FireEarth: {
@@ -487,8 +490,125 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+
+			glm::mat4 move;
+
+
+			if (firstUpdate) {
+				//do first update things
+				firstUpdate = false;
+
+				float sizeAlter = 0.75f;
+				float xDistance = 0.3f;
+
+				flipped = dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft();
+
+				if (!flipped) {
+					move = glm::translate(glm::mat4(1.0f), glm::vec3(
+						dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x + xDistance, dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().y, 0.0f));
+
+				}
+				else
+				{
+					move = glm::translate(glm::mat4(1.0f), glm::vec3(
+						dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x - xDistance, dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().y, 0.0f));
+				}
+
+				
+				updatePosition(move);
+
+				//update hitbox
+				getHitBox().updateHitBox(getOrigin(), getWidth() * sizeAlter, getWidth() * sizeAlter, getWidth() * sizeAlter, getWidth() * sizeAlter); //explosion size can be set by the creating spell
+
+
+			}
+			else
+			{
+				//initially the explosion cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+				//play explosion animation, enable collision on a certain frame
+				if (currentAnimationFrame == 1) {
+					collisionFrame = true;
+				}
+				else
+				{
+					collisionFrame = false;
+				}
+
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+				}
+				else
+				{
+					animationTimer = STEAM_BLAST_ANIMATION_TIMER;
+					currentAnimationFrame++;
+
+					//destroy explosion at end of animation
+					if (currentAnimationFrame > animationFrames) {
+						kill();
+					}
+				}
+
+
+
+
+
+				//only check collision on the collisionFrame
+				if (collisionFrame) {
+
+					//COLLISION CHECK
+					if (!queue.empty())
+					{
+						for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+							//checks collision with ENEMY renderable in the queue
+							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
+
+								if (!dynamic_cast<Enemy*>(itr->second)->checkDamagedBy(this)) {
+
+									//deal damage
+									float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack() * STEAM_BLAST_DAMAGE_MULT;
+									dynamic_cast<Enemy*>(itr->second)->alterHealth(-(explosionDamage));
+									dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.3f, SpellID::knockback));
+									dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - getOrigin()));
+
+									dynamic_cast<Enemy*>(itr->second)->addToDamagedBy(this);
+
+
+									//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+									break;
+								}
+
+
+
+							}
+						}
+
+
+
+					}
+				}
+
+
+
+
+
+
+
+
+			}
+
+
+
+
+
+			
 			break;
 		}
 		case SpellID::FireEarth: {
@@ -1346,6 +1466,10 @@ void Spell::render() {
 
 		//only add spells that will be rendered
 		switch (ID) {
+		case SpellID::FireWater: {
+			renderThisSpell(static_cast<float>(1.0f / 8.0f));//8 frames
+			break;
+		}
 		case SpellID::FireEarth: {
 			renderThisSpell(0.25f);//4 frames
 			break;

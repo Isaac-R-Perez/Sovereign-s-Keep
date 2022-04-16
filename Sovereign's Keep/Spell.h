@@ -31,6 +31,10 @@ const float EXPLOSION1_WIDTH = 0.25f;
 const float EXPLOSION1_ANIMATION_TIMER = 0.021f;
 const float EXPLOSION1_DAMAGE_MULT = 1.5f; //all explosion1s deal the same damage
 
+const float STEAM_BLAST_WIDTH = 0.3f;
+const float STEAM_BLAST_ANIMATION_TIMER = 0.021f;
+const float STEAM_BLAST_DAMAGE_MULT = 1.1f; //all explosion1s deal the same damage
+
 
 enum class SpellID {
 	
