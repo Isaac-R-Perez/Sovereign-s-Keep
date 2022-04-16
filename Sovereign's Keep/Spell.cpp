@@ -1253,7 +1253,7 @@ void Spell::update(double dt) {
 							//checks collision with ENEMY renderable in the queue
 							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
 
-								getHitBox().updateHitBox(getOrigin(), getWidth() * 1.1f, getWidth() * 1.1f, getHeight() * 1.1f, getHeight() * 1.1f);
+								//getHitBox().updateHitBox(getOrigin(), getWidth() * 1.1f, getWidth() * 1.1f, getHeight() * 1.1f, getHeight() * 1.1f);
 
 								//deal fireball damage
 								float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * BOULDER_DAMAGE_MULT;
@@ -1264,7 +1264,7 @@ void Spell::update(double dt) {
 
 
 								dealtDamage = true;
-								damageTimer = 0.4f;
+								damageTimer = 0.37f;
 
 								//destroy fireball
 								//kill();
