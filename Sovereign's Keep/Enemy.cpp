@@ -1,7 +1,7 @@
 #include "Enemy.h"
 #include "Player.h"
 
-Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
+Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T, stats s)
 	:Character(g, rOrder, defaultSpriteSheet)
 {
 	type = T;
@@ -15,21 +15,23 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 		case EnemyType::slime:
 		{
 			resize(SLIME_WIDTH, SLIME_HEIGHT);
-			setCurrentMaxHealth(400.0f);
-			setCurrentHealth(400.0f);
-			setBaseAttack(20.0f);
-			setBaseDefense(5.0f);
-			setCurrentAttack(getBaseAttack());
-			setCurrentDefense(getBaseDefense());
-
-
-			setBaseMoveSpeed(0.1f);
-			setCurrentMoveSpeed(getBaseMoveSpeed());
+			setCurrentMaxHealth(10.0f);
+			setCurrentHealth(10.0f);
 			break;
 		}
 
-	
 	}
+
+	setBaseHealth(s.h);
+	setCurrentHealth(s.h);
+	setBaseMaxHealth(s.mh);
+	setCurrentMaxHealth(s.mh);
+	setBaseAttack(s.a);
+	setCurrentAttack(s.a);
+	setBaseDefense(s.d);
+	setCurrentDefense(s.d);
+	setBaseMoveSpeed(s.s);
+	setCurrentMoveSpeed(s.s);
 
 	//this sets the size of the enemy to the size of the renderable's width and height
 	
@@ -40,8 +42,8 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T)
 	current_frame = 0;
 	
 	//FOR TESTING REMOVE THIS LATER
-	glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
-	updatePosition(move);
+	//glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
+	//updatePosition(move);
 
 
 	glm::vec3 knockbackDirection = glm::vec3(1.0f);

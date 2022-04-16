@@ -30,7 +30,6 @@ private:
 	float animationTimer;
 	int current_frame;
 
-
 	/*
 		KNOCKBACK is possible, just need a buff for it, as well as a direction of the knockback
 	*/
@@ -43,8 +42,13 @@ private:
 
 public:
 
+	struct stats
+	{
+		float h, mh, a, d, s;
+		stats(float health, float mhealth, float atk, float def, float spd) : h(health), mh(mhealth), a(atk), d(def), s(spd) {}
+	};
 
-	Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType Type);
+	Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType Type, stats s);
 
 
 	void render();

@@ -45,9 +45,6 @@
     <ClCompile Include="Basic_Attack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LevelManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Spell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -78,9 +75,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Basic_Attack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LevelManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Spell.h">

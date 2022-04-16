@@ -148,7 +148,6 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="image.cpp" />
-    <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderable.cpp" />
@@ -162,7 +161,6 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GUI_Element.h" />
-    <ClInclude Include="LevelManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Renderable.h" />
     <ClInclude Include="Spell.h" />

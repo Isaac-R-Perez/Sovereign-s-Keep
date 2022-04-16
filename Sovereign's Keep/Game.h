@@ -125,6 +125,9 @@ public:
 
 	std::mt19937& getNumberEngine() { return numberEngine; }
 
+	//Enemy Wave functions
+	void SpawnSlime(float x, float y);
+
 private:
 
 	//window that everything is rendered to
@@ -184,5 +187,10 @@ private:
 
 	//number engine
 	std::mt19937 numberEngine;
+
+	//Enemy Wave
+	int WaveNumber; //The current wave the game is on. Ex. Wave 1, Wave 2, etc...
+	float WaveTimer; //How long a given wave lasts.
+	float SpawnTickRate; //How often enemys of that wave spawn.
 
 };

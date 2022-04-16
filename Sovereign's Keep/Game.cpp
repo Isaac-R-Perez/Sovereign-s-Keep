@@ -785,9 +785,11 @@ bool Game::initialize() {
 	
 	renderQueue.insert(pair<int, Renderable*>(player->renderOrder, player));
 
-	b = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime);
-	renderableToPendingAdd(b);
-
+	//b = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime);
+	//renderableToPendingAdd(b);
+	SpawnSlime(0.5,0.0);
+	SpawnSlime(-0.5,0.0);
+	SpawnSlime(0.6, 0.2);
 
 	return true;
 
@@ -916,7 +918,16 @@ void Game::update(double dt) {
 
 	//printf("%d\n", renderQueue.size());
 	
-
+	//Enemy Wave
+	if (WaveTimer > 0)
+	{
+		WaveTimer -= dt;
+	}
+	else
+	{
+		WaveTimer = 60.0f;
+		WaveNumber++;
+	}
 
 
 	if (!paused) {
@@ -1163,4 +1174,13 @@ void Game::sendElementsData() {
 	
 
 
+}
+
+void Game::SpawnSlime(float x, float y)
+{
+	glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
+	Renderable* enemy = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime, Enemy::stats(100.0,100.0f,10.0f,0.0f,0.2f));
+
+	dynamic_cast<Enemy*>(enemy)->updatePosition(move);
+	renderableToPendingAdd(enemy);
 }
