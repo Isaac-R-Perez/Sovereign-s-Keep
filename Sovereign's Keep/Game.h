@@ -43,7 +43,7 @@ enum class SPRITE_SHEETS
 	explosion1, steam_blast,
 	flame_ring, bubble_shot,
 	mud_pit, boulder_shot,
-
+	air_spike, barrage, flash_freeze, geyser,
 
 
 

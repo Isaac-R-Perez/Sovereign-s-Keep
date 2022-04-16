@@ -258,6 +258,20 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 192, 64, 3, "images/spell/boulder_shot.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::boulder_shot), generatedTexture));
 
+
+	generateTexture(generatedTexture, 352, 32, 3, "images/spell/air_spike.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::air_spike), generatedTexture));
+
+	generateTexture(generatedTexture, 384, 48, 3, "images/spell/barrage.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::barrage), generatedTexture));
+
+	generateTexture(generatedTexture, 990, 77, 3, "images/spell/flash_freeze.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::flash_freeze), generatedTexture));
+
+	generateTexture(generatedTexture, 960, 80, 3, "images/spell/geyser.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::geyser), generatedTexture));
+
+
 }
 
 
