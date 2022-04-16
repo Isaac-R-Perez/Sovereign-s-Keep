@@ -33,6 +33,8 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T, stats s)
 	setBaseMoveSpeed(s.s);
 	setCurrentMoveSpeed(s.s);
 
+	enemyStats = s;
+
 	//this sets the size of the enemy to the size of the renderable's width and height
 	
 

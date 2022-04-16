@@ -14,6 +14,8 @@ const float ENEMY_WALKING_BASE_TIME = 0.1f;
 const float SLIME_WIDTH = 0.04f;
 const float SLIME_HEIGHT = 0.04f;
 
+
+
 class Enemy: public Character
 {
 private:
@@ -45,8 +47,18 @@ public:
 	struct stats
 	{
 		float h, mh, a, d, s;
+		stats()
+		{
+			h = 0.0f;
+			mh = 0.0f;
+			a = 0.0f;
+			d = 0.0f;
+			s = 0.0f;
+		}
 		stats(float health, float mhealth, float atk, float def, float spd) : h(health), mh(mhealth), a(atk), d(def), s(spd) {}
 	};
+
+	stats enemyStats;
 
 	Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType Type, stats s);
 
@@ -57,6 +69,8 @@ public:
 
 	void setSoulDrop(int amt);
 	int getSoulDrop();
+
+	stats getEnemyStats() { return enemyStats; }
 
 
 	//all buffs are searched and all stats are calculated for this frame

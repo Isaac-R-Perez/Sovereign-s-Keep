@@ -27,6 +27,8 @@ const float SCREEN_Y_MOVE_MODIFIER = 1.7777f;
 const float SCREEN_WIDTH = 1920.0f;
 const float SCREEN_HEIGHT = 1080.0f;
 
+const float MAX_WAVE_TIME = 30.0f;
+
 enum class SPRITE_SHEETS
 {
 	no_texture,
@@ -127,6 +129,7 @@ public:
 
 	//Enemy Wave functions
 	void SpawnSlime(float x, float y);
+	void GenerateNextWave();
 
 private:
 
@@ -192,5 +195,9 @@ private:
 	int WaveNumber; //The current wave the game is on. Ex. Wave 1, Wave 2, etc...
 	float WaveTimer; //How long a given wave lasts.
 	float SpawnTickRate; //How often enemys of that wave spawn.
+
+	std::vector<Renderable*> baseEnemies;
+	std::uniform_int_distribution<int> waveDistribution;
+	std::uniform_real_distribution<float> enemyPosition;
 
 };
