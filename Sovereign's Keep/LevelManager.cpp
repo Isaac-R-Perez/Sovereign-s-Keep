@@ -1,6 +1,6 @@
 #include "LevelManager.h"
 
-LevelManager::LevelManager()
+LevelManager::LevelManager(Game* g) : game(g)
 {
 	Wave = 1;
 	WaveTimer = MAX_WAVE_TIME;
@@ -32,10 +32,25 @@ void LevelManager::GenerateNextWave()
 void LevelManager::SpawnEnemy()
 {
 	// Spawns only one enemy randomly picked from the Wave Vector
+	
+
 }
 
 void LevelManager::SpawnEnemyGroup()
 {
 	// Should select a group of enemies (min 3) from the Wave vector
 	// and spawn them together.
+}
+
+void LevelManager::SpawnSlime_1(float x, float y)
+{
+	glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
+	Renderable* enemy = new Enemy(game, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime);
+	dynamic_cast<Enemy*>(enemy)->setBaseHealth(100.0f);
+	dynamic_cast<Enemy*>(enemy)->setBaseMaxHealth(100.0f);
+	dynamic_cast<Enemy*>(enemy)->setBaseAttack(20.0f);
+	dynamic_cast<Enemy*>(enemy)->setBaseDefense(5.0f);
+	dynamic_cast<Enemy*>(enemy)->setBaseMoveSpeed(0.3f);
+	dynamic_cast<Enemy*>(enemy)->updatePosition(move);
+	game->renderableToPendingAdd(enemy);
 }
