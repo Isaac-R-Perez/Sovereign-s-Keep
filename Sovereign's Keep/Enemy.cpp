@@ -15,8 +15,6 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T, stats s)
 		case EnemyType::slime:
 		{
 			resize(SLIME_WIDTH, SLIME_HEIGHT);
-			setCurrentMaxHealth(10.0f);
-			setCurrentHealth(10.0f);
 			break;
 		}
 

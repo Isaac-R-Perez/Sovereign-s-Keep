@@ -133,6 +133,7 @@ public:
 	//Enemy Wave functions
 	void SpawnSlime(float x, float y);
 	void GenerateNextWave();
+	void SpawnEnemy();
 
 private:
 
@@ -199,7 +200,7 @@ private:
 	float WaveTimer; //How long a given wave lasts.
 	float SpawnTickRate; //How often enemys of that wave spawn.
 
-	std::vector<Renderable*> baseEnemies;
+	std::vector<Renderable*> baseEnemies; //Initialized in the initialized() function
 	std::uniform_int_distribution<int> waveDistribution;
 	std::uniform_real_distribution<float> enemyPosition;
 

@@ -951,17 +951,7 @@ void Game::update(double dt) {
 		if (SpawnTickRate <= 0)
 		{
 			SpawnTickRate = 2.0f;
-			enemyPosition = std::uniform_real_distribution<float>(1.1,1.5);
-			float offset = enemyPosition(numberEngine);
-			glm::vec3 direction = glm::vec3(offset + player->getOrigin().x, 0.0 + player->getOrigin().y, 0.0);
-			enemyPosition = std::uniform_real_distribution<float>(0.0, 2.0f * glm::pi<float>());
-			float angle = enemyPosition(numberEngine);
-			glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
-			direction = rotation * glm::vec4(direction, 0.0f);
-			glm::mat4 move = glm::translate(glm::mat4(1.0f), direction);
-			Renderable* newEnemy = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime, dynamic_cast<Enemy*>(baseEnemies[0])->getEnemyStats());
-			dynamic_cast<Enemy*>(newEnemy)->updatePosition(move);
-			renderableToPendingAdd(newEnemy);
+			SpawnEnemy();
 		}
 		else
 		{
@@ -1233,5 +1223,22 @@ void Game::SpawnSlime(float x, float y)
 
 void Game::GenerateNextWave()
 {
+	
+}
 
+void Game::SpawnEnemy()
+{
+	enemyPosition = std::uniform_real_distribution<float>(1.1, 1.5);
+	float offset = enemyPosition(numberEngine);
+	glm::vec3 direction = glm::vec3(offset + player->getOrigin().x, 0.0 + player->getOrigin().y, 0.0);
+	enemyPosition = std::uniform_real_distribution<float>(0.0, 2.0f * glm::pi<float>());
+	float angle = enemyPosition(numberEngine);
+	glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+	direction = rotation * glm::vec4(direction, 0.0f);
+	glm::mat4 move = glm::translate(glm::mat4(1.0f), direction);
+
+	Renderable* newEnemy = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime, dynamic_cast<Enemy*>(baseEnemies[0])->getEnemyStats());
+	dynamic_cast<Enemy*>(newEnemy)->updatePosition(move);
+
+	renderableToPendingAdd(newEnemy);
 }
