@@ -16,29 +16,34 @@
 const float FLAME_RING_ANIMATION_TIMER = 0.15f;
 const float FLAME_RING_WIDTH = 0.275f;
 const float FLAME_RING_HEIGHT = 0.325f;
-const float FLAME_RING_DAMAGE_MULT = 0.5f;
+const float FLAME_RING_DAMAGE_MULT = 0.65f;
 
 const float FIREBALL_ANIMATION_TIMER = 0.1f;
 const float FIREBALL_WIDTH = 0.04f;
 const float FIREBALL_HEIGHT = 0.035f;
-const float FIREBALL_DAMAGE_MULT = 1.25f; //fireball damage = player_base_damage * 1.25f
+const float FIREBALL_DAMAGE_MULT = 2.5f; //fireball damage = player_base_damage * 1.25f
 
 
 const float WATERBOLT_ANIMATION_TIMER = 0.033f;
-const int WATERBOLT_AMOUNT = 15;
+const int WATERBOLT_AMOUNT = 18;
 const float WATERBOLT_WIDTH = 0.045f;
 const float WATERBOLT_HEIGHT = 0.04f;
-const float WATERBOLT_DAMAGE_MULT = 1.15f;
+const float WATERBOLT_DAMAGE_MULT = 1.25f;
+
+const float BUBBLE_SHOT_ANIMATION_TIMER = 0.05;
+const float BUBBLE_SHOT_WIDTH = 0.1f;
+const float BUBBLE_SHOT_HEIGHT = 0.15f;
+const float BUBBLE_SHOT_DAMAGE_MULT = 2.5f;
 
 
 //base width, call resize to alter the explosion size
 const float EXPLOSION1_WIDTH = 0.25f;
 const float EXPLOSION1_ANIMATION_TIMER = 0.021f;
-const float EXPLOSION1_DAMAGE_MULT = 1.5f; //all explosion1s deal the same damage
+const float EXPLOSION1_DAMAGE_MULT = 3.5f; //all explosion1s deal the same damage
 
 const float STEAM_BLAST_WIDTH = 0.3f;
 const float STEAM_BLAST_ANIMATION_TIMER = 0.021f;
-const float STEAM_BLAST_DAMAGE_MULT = 1.1f; //all explosion1s deal the same damage
+const float STEAM_BLAST_DAMAGE_MULT = 1.5f; //all explosion1s deal the same damage
 
 
 enum class SpellID {
@@ -204,9 +209,11 @@ private:
 	//true if the spell should flip travel direction
 	bool flipped;
 
-	//is true on the frame that the spell can deal damage
+	//is true on the frame that the spell can deal damage on this frame
 	bool collisionFrame;
 
+	//true if damage on the collision frame has been dealt
+	bool dealtDamage;
 
 
 	//spawnDistribution(numberEngine)

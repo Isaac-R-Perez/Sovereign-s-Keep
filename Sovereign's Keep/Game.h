@@ -41,7 +41,7 @@ enum class SPRITE_SHEETS
 	multishot_basic_attack,
 	fireball, waterbolt,
 	explosion1, steam_blast,
-	flame_ring,
+	flame_ring, bubble_shot,
 
 
 

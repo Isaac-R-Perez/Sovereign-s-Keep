@@ -19,6 +19,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 	flipped = false;
 	collisionFrame = false;
 	damageTimer = 0.0f;
+	dealtDamage = false;
 	
 	
 	//add each string name and all info needed for each spell, ALL OF EM
@@ -119,7 +120,13 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		case SpellID::WaterAir: {
 			spellName = "Bubble Shot";
 			manaCost = 5.0f;
-			castTime = 0.20f;
+			castTime = 0.1f;
+			duration = 1.45f; //lifetime of firebolt
+			animationFrames = 8; //firebolt
+			setTexture(static_cast<int>(SPRITE_SHEETS::bubble_shot));
+			moveSpeed = 0.65f;
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			resize(BUBBLE_SHOT_WIDTH, BUBBLE_SHOT_HEIGHT);
 			break;
 		}
 
@@ -530,7 +537,8 @@ void Spell::update(double dt) {
 
 
 
-				
+				if (damageTimer <= 0.0f)
+				{
 
 					//COLLISION CHECK
 					if (!queue.empty())
@@ -541,19 +549,17 @@ void Spell::update(double dt) {
 							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
 
 
-								if (damageTimer <= 0.0f) {
+								//deal damage
+								float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * FLAME_RING_DAMAGE_MULT;
+								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(damage));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.075f, SpellID::knockback));
+								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - getOrigin()));
 
-									//deal damage
-									float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack() * FLAME_RING_DAMAGE_MULT;
-									dynamic_cast<Enemy*>(itr->second)->alterHealth(-(damage));
-									dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.075f, SpellID::knockback));
-									dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - getOrigin()));
+								damageTimer = 0.55f; //can deal damage every 1 second
 
-									damageTimer = 1.0f; //can deal damage every 1 second
+								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+								//break;
 
-									//printf("PLAYER IS COLLIDING WITH ENEMY\n");
-									break;
-								}
 
 
 
@@ -563,7 +569,9 @@ void Spell::update(double dt) {
 
 
 					}
-				
+
+				}
+
 
 					damageTimer -= dt;
 
@@ -668,36 +676,34 @@ void Spell::update(double dt) {
 
 
 				//only check collision on the collisionFrame
-				if (collisionFrame) {
+				if (collisionFrame && !dealtDamage) {
 
 					//COLLISION CHECK
 					if (!queue.empty())
 					{
-						for (itr = queue.begin(); itr != queue.end(); ++itr) {
 
-							//checks collision with ENEMY renderable in the queue
-							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+						
 
+							for (itr = queue.begin(); itr != queue.end(); ++itr) {
 
-								if (!dynamic_cast<Enemy*>(itr->second)->checkDamagedBy(this)) {
+								//checks collision with ENEMY renderable in the queue
+								if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
 
 									//deal damage
-									float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack() * STEAM_BLAST_DAMAGE_MULT;
+									float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * STEAM_BLAST_DAMAGE_MULT;
 									dynamic_cast<Enemy*>(itr->second)->alterHealth(-(explosionDamage));
-									dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.3f, SpellID::knockback));
+									dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.75f, SpellID::knockback));
 									dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - getOrigin()));
 
-									dynamic_cast<Enemy*>(itr->second)->addToDamagedBy(this);
+									//tell the game to not process anymore possible collisions for this spell
+									dealtDamage = true;
 
 
-									//printf("PLAYER IS COLLIDING WITH ENEMY\n");
-									break;
 								}
-
-
-
 							}
-						}
+						
+
 
 
 
@@ -807,7 +813,7 @@ void Spell::update(double dt) {
 
 
 								//deal fireball damage
-								float fireballDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack() * FIREBALL_DAMAGE_MULT;
+								float fireballDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * FIREBALL_DAMAGE_MULT;
 								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(fireballDamage));
 								//dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.15f, SpellID::knockback));
 								//dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
@@ -942,8 +948,119 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+
+			glm::mat4 move;
+
+
+			if (firstUpdate) {
+				//do first update things
+				move = glm::translate(glm::mat4(1.0f), dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
+
+				updatePosition(move);
+
+				//flip the fireball if player is facing left
+				if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft())
+				{
+					flip();
+					flipped = true;
+					direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+				}
+
+
+				firstUpdate = false;
+			}
+			else
+			{
+				//initially the fireball cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+
+				//play fireball animation
+				if (currentAnimationFrame > animationFrames) {
+					currentAnimationFrame = 0;
+				}
+
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+				}
+				else
+				{
+					animationTimer = BUBBLE_SHOT_ANIMATION_TIMER;
+					currentAnimationFrame++;
+
+					if (currentAnimationFrame > animationFrames) {
+						currentAnimationFrame = 0;
+					}
+				}
+
+				//have the fireball travel
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, 0.0f, 0.0f));
+				updatePosition(move);
+
+				float alter = 0.45f;
+
+				//update hitbox
+				getHitBox().updateHitBox(getOrigin(), getWidth() * alter, getWidth() * alter, getHeight() * alter, getHeight() * alter);
+
+
+
+
+
+				//check collisions here, if collision, destroy this spell and create an explosion spell at that point
+
+			//COLLISION CHECK
+				if (!queue.empty())
+				{
+					Renderable* createdExplosion = nullptr;
+
+
+					for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+						//checks collision with ENEMY renderable in the queue
+						if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
+
+
+							//deal fireball damage
+							float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * BUBBLE_SHOT_DAMAGE_MULT;
+							dynamic_cast<Enemy*>(itr->second)->alterHealth(-(damage));
+							dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.75f, SpellID::knockback));
+							dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
+
+
+
+
+							//destroy fireball
+							kill();
+
+
+							//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+							break;
+
+						}
+
+					}
+
+
+				}
+
+
+
+
+				//lifetime of spell
+				duration -= dt;
+				if (duration <= 0.0f) {
+					kill();
+				}
+
+			}
+
+
+
 			break;
 		}
 
@@ -1364,7 +1481,7 @@ void Spell::update(double dt) {
 				
 
 				//only check collision on the collisionFrame
-				if (collisionFrame) {
+				if (collisionFrame && !dealtDamage) {
 
 					//COLLISION CHECK
 					if (!queue.empty())
@@ -1375,20 +1492,19 @@ void Spell::update(double dt) {
 							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
 								
 
-									if (!dynamic_cast<Enemy*>(itr->second)->checkDamagedBy(this)) {
 
 										//deal damage
-										float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack() * EXPLOSION1_DAMAGE_MULT;
+										float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * EXPLOSION1_DAMAGE_MULT;
 										dynamic_cast<Enemy*>(itr->second)->alterHealth(-(explosionDamage));
 										dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.15f, SpellID::knockback));
 										dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - getOrigin()));
 
 										dynamic_cast<Enemy*>(itr->second)->addToDamagedBy(this);
 
-
+										dealtDamage = true;
 										//printf("PLAYER IS COLLIDING WITH ENEMY\n");
-										break;
-									}
+										//break;
+									
 
 								
 
@@ -1482,7 +1598,7 @@ void Spell::update(double dt) {
 
 
 							//deal fireball damage
-							float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack() * WATERBOLT_DAMAGE_MULT;
+							float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * WATERBOLT_DAMAGE_MULT;
 							dynamic_cast<Enemy*>(itr->second)->alterHealth(-(damage));
 							dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.65f, SpellID::knockback));
 							dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
@@ -1581,6 +1697,10 @@ void Spell::render() {
 			}
 		case SpellID::FireWater: {
 			renderThisSpell(static_cast<float>(1.0f / 8.0f));//8 frames
+			break;
+		}
+		case SpellID::WaterAir: {
+			renderThisSpell(static_cast<float>(1.0f / 9.0f));//8 frames
 			break;
 		}
 		case SpellID::FireEarth: {

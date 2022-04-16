@@ -246,6 +246,10 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 222, 75, 3, "images/spell/Flame_Ring.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::flame_ring), generatedTexture));
 
+	// bubble shot animation
+	generateTexture(generatedTexture, 576, 64, 3, "images/spell/bubble_shot.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::bubble_shot), generatedTexture));
+
 
 }
 
@@ -312,7 +316,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		//casting logic should be checked first?
 
 		//move up
-		if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
 
 			/*
 				Check if the player can cast current spell
@@ -325,7 +329,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 
 		}
-		if (key == GLFW_KEY_Q && action == GLFW_REPEAT) {
+		if (key == GLFW_KEY_SPACE && action == GLFW_REPEAT) {
 			if (!dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getCasting()) {
 				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setCasting(true);
 
@@ -333,7 +337,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 			}
 		}
 
-		if (key == GLFW_KEY_Q && action == GLFW_RELEASE) {
+		if (key == GLFW_KEY_SPACE && action == GLFW_RELEASE) {
 
 		}
 
@@ -925,7 +929,7 @@ void Game::update(double dt) {
 		WaveTimer -= dt;
 		if (SpawnTickRate <= 0)
 		{
-			SpawnTickRate = 0.5f;
+			SpawnTickRate = 2.0f;
 			enemyPosition = std::uniform_real_distribution<float>(1.1,1.5);
 			float offset = enemyPosition(numberEngine);
 			glm::vec3 direction = glm::vec3(offset + player->getOrigin().x, 0.0 + player->getOrigin().y, 0.0);
