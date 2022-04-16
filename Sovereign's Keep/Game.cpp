@@ -925,10 +925,10 @@ void Game::update(double dt) {
 		WaveTimer -= dt;
 		if (SpawnTickRate <= 0)
 		{
-			SpawnTickRate = 2.0f;
+			SpawnTickRate = 0.5f;
 			enemyPosition = std::uniform_real_distribution<float>(1.1,1.5);
 			float offset = enemyPosition(numberEngine);
-			glm::vec3 direction = glm::vec3(offset, 0.0, 0.0);
+			glm::vec3 direction = glm::vec3(offset + player->getOrigin().x, 0.0 + player->getOrigin().y, 0.0);
 			enemyPosition = std::uniform_real_distribution<float>(0.0, 2.0f * glm::pi<float>());
 			float angle = enemyPosition(numberEngine);
 			glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
