@@ -2143,15 +2143,16 @@ void Player::applySpellBuffs() {
 
 
 
-
+const int FIRE_SOUL_BULLETS = 12;
 
 //spawn fire soul bullets
 void Player::spawnAdditionalFireSoulBullets() {
 
 	Renderable* spawnedBasicAttack = nullptr;
 		
-	for (int i = 0; i < 8; i++) {
-		spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::fire_soul_basic_attack), static_cast<float>(i) * (glm::pi<float>() / 4.0f ), 1.1f);
+	for (int i = 0; i < FIRE_SOUL_BULLETS; i++) {
+		spawnedBasicAttack = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::fire_soul_basic_attack),
+			static_cast<float>(i) * (2.0f * glm::pi<float>()) / static_cast<float>(FIRE_SOUL_BULLETS), 1.1f);
 
 		glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
 

@@ -60,7 +60,7 @@ const float AIR_SPIKE_HEIGHT = 0.15f;
 const float AIR_SPIKE_DAMAGE_MULT = 1.75f;
 
 
-const float GEYSER_ANIMATION_TIMER = 0.06f;
+const float GEYSER_ANIMATION_TIMER = 0.05f;
 const float GEYSER_WIDTH = 0.08;
 const float GEYSER_HEIGHT = 0.225f;
 const float GEYSER_DAMAGE_MULT = 5.0f;

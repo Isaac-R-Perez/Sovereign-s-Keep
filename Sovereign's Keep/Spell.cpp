@@ -206,6 +206,8 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			manaCost = 35.0f;
 			castTime = 0.4f;
 			animationFrames = 14; //firebolt
+			moveSpeed = 0.03f;
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
 			setTexture(static_cast<int>(SPRITE_SHEETS::geyser));
 			resize(GEYSER_HEIGHT, GEYSER_HEIGHT);
 			break;
@@ -1228,6 +1230,7 @@ void Spell::update(double dt) {
 					}
 				}
 
+
 				//have the fireball travel
 				move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, 0.0f, 0.0f));
 				updatePosition(move);
@@ -1271,7 +1274,7 @@ void Spell::update(double dt) {
 
 
 								dealtDamage = true;
-								damageTimer = 0.37f;
+								damageTimer = 0.3f;
 
 								//destroy fireball
 								//kill();
@@ -1570,7 +1573,6 @@ void Spell::update(double dt) {
 				//do first update things
 				firstUpdate = false;
 
-				float sizeAlter = 0.9f;
 				float smallestDistance = 10000.0f;
 				float checkDistance = 0.0f;
 				Renderable* nearestEnemy = nullptr;
@@ -1602,6 +1604,8 @@ void Spell::update(double dt) {
 
 					if (dynamic_cast<Enemy*>(nearestEnemy)->getOrigin().x < dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x) {
 						flip();
+						direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+
 					}
 
 					move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Enemy*>(nearestEnemy)->getOrigin()));
@@ -1615,8 +1619,6 @@ void Spell::update(double dt) {
 
 
 
-				//update hitbox
-				getHitBox().updateHitBox(getOrigin(), getWidth() * sizeAlter, getWidth() * sizeAlter, getHeight() * sizeAlter, getHeight() * sizeAlter); //explosion size can be set by the creating spell
 
 
 
@@ -1627,6 +1629,16 @@ void Spell::update(double dt) {
 				if (!getCanCollide()) {
 					setCanCollide(true);
 				}
+
+
+				//have the fireball travel
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, 0.0f, 0.0f));
+				updatePosition(move);
+
+				float sizeAlter = 0.9f;
+
+				//update hitbox
+				getHitBox().updateHitBox(getOrigin(), getWidth()* sizeAlter, getWidth()* sizeAlter, getHeight()* sizeAlter, getHeight()* sizeAlter); //explosion size can be set by the creating spell
 
 
 
