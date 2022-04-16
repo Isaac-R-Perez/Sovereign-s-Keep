@@ -13,6 +13,11 @@
 ///						SPELL DAMAGE BYPASSES DEFENSES!
 /// </summary>
 
+const float FLAME_RING_ANIMATION_TIMER = 0.15f;
+const float FLAME_RING_WIDTH = 0.275f;
+const float FLAME_RING_HEIGHT = 0.325f;
+const float FLAME_RING_DAMAGE_MULT = 0.5f;
+
 const float FIREBALL_ANIMATION_TIMER = 0.1f;
 const float FIREBALL_WIDTH = 0.04f;
 const float FIREBALL_HEIGHT = 0.035f;
@@ -167,6 +172,9 @@ private:
 
 	//when this timer reaches 0, the spell is over
 	float duration;
+
+	//if 0, the spell can deal damage
+	float damageTimer;
 
 
 	//is this spell newly created?
