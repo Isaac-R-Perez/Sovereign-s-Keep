@@ -65,6 +65,10 @@ const float GEYSER_WIDTH = 0.08;
 const float GEYSER_HEIGHT = 0.225f;
 const float GEYSER_DAMAGE_MULT = 5.0f;
 
+const float BARRAGE_ANIMATION_TIMER = 0.026f;
+const float BARRAGE_WIDTH = 0.2f;
+const float BARRAGE_HEIGHT = 0.275f;
+const float BARRAGE_DAMAGE_MULT = 1.1f;
 
 
 enum class SpellID {

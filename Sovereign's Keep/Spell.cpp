@@ -180,6 +180,10 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Barrage";
 			manaCost = 60.0f;
 			castTime = 1.0f;
+			duration = 4.5f; 
+			animationFrames = 7;
+			setTexture(static_cast<int>(SPRITE_SHEETS::barrage));
+			resize(BARRAGE_WIDTH, BARRAGE_HEIGHT);
 			break;
 		}
 		case SpellID::FireFireEarth: {
@@ -1507,8 +1511,115 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+
+			glm::mat4 move;
+			float alterSizeW = 0.7f;
+			float alterSizeH = 0.6f;
+
+			if (firstUpdate) {
+				//do first update things
+				firstUpdate = false;
+
+				if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft()) {
+					move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin() - glm::vec3(0.275f, 0.0f, 0.0f)));
+					updatePosition(move);
+				}
+				else
+				{
+					move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin() + glm::vec3(0.275f,0.0f,0.0f)));
+					updatePosition(move);
+				}
+
+				
+
+				//update hitbox
+				getHitBox().updateHitBox(getOrigin(), getWidth() * alterSizeW, getWidth()* alterSizeW, getHeight()* alterSizeH, getHeight()* alterSizeH); //explosion size can be set by the creating spell
+
+
+			}
+			else
+			{
+				//initially the explosion cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+				//play explosion animation, enable collision on a certain frame
+
+
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+				}
+				else
+				{
+					animationTimer = BARRAGE_ANIMATION_TIMER;
+					currentAnimationFrame++;
+
+					//destroy explosion at end of animation
+					if (currentAnimationFrame > animationFrames) {
+						currentAnimationFrame = 5;
+					}
+				}
+
+
+
+
+
+				if (damageTimer <= 0.0f)
+				{
+
+					//COLLISION CHECK
+					if (!queue.empty())
+					{
+						for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+							//checks collision with ENEMY renderable in the queue
+							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
+
+								//deal damage
+								float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * BARRAGE_DAMAGE_MULT;
+								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(damage));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.09f, SpellID::knockback));
+								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - 
+									dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
+
+								damageTimer = 0.1f; //can deal damage every seconds
+
+								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+								//break;
+
+
+
+
+							}
+						}
+
+
+
+					}
+
+				}
+
+
+				damageTimer -= dt;
+
+
+
+				duration -= dt;
+				if (duration <= 0.0f) {
+					kill();
+				}
+
+
+
+			}
+
+
+
+
+
 			break;
 		}
 		case SpellID::FireFireEarth: {
@@ -2241,6 +2352,10 @@ void Spell::render() {
 		}
 		case SpellID::FireWaterEarth: {
 			renderThisSpell(static_cast<float>(1.0f / 15.0f));//4 frames
+			break;
+		}
+		case SpellID::FireFireWater: {
+			renderThisSpell(static_cast<float>(1.0f / 8.0f));//4 frames
 			break;
 		}
 		case SpellID::Explosion1: {
