@@ -308,26 +308,13 @@ void Enemy::WaveBuff(int wave)
 	float defBuff = 0.0f;
 	float speedBuff = 0.0f;
 
-	switch (wave)
-	{
-	//Wave 2
-	case 2:
-		hpBuff = 1.0f;
-		speedBuff = 0.5f;
-		break;
-	//Wave 3
-	case 3:
-		speedBuff = 2.0f;
-		break;
-	//For all waves that aren't defined
-	default:
-		//Increase their base stats by 1%
-		hpBuff = 0.01f;
-		atkBuff = 0.01f;
-		defBuff = 0.01f;
-		speedBuff = 0.01f;
-		break;
-	}
+	
+
+	hpBuff = (static_cast<float>(wave) * 0.1f); //10% per wave
+	atkBuff = (static_cast<float>(wave) * 0.05f); //5% per wave
+	defBuff = (static_cast<float>(wave) * 0.075f); //7.5% per wave
+	speedBuff = (static_cast<float>(wave) * 0.06f); //6% per wave
+
 	setBaseMaxHealth(getBaseMaxHealth() + (getBaseMaxHealth() * hpBuff));
 	setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
 
