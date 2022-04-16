@@ -254,6 +254,9 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 52, 19, 3, "images/spell/mud_pit.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::mud_pit), generatedTexture));
 
+	// boulder animation
+	generateTexture(generatedTexture, 192, 64, 3, "images/spell/boulder_shot.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::boulder_shot), generatedTexture));
 
 }
 

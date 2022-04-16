@@ -39,7 +39,15 @@ private:
 	glm::vec3 knockbackDirection;
 
 	//stores the renderables that have damaged this enemy
-	std::vector<Renderable*> damagedBy;
+	//std::vector<Renderable*> damagedBy;
+
+
+
+	//a buff as applied this, so stop animation, and set movespeed to 0.0 until stun buff is gone
+	bool stunned;
+
+	//a buff as applied this, so stop animation, SET RENDER FLAG TO frozen (blue shifted), and set movespeed to 0.0 until frozen buff is gone
+	bool frozen;
 
 
 public:
@@ -78,6 +86,10 @@ public:
 
 	void setKnockbackDirection(glm::vec3 dir) { knockbackDirection = dir; }
 
+
+	/*
+	
+	
 	bool checkDamagedBy(Renderable* r) {
 		if (!damagedBy.empty())
 		{
@@ -118,6 +130,9 @@ public:
 		}
 
 	}
+
+	*/
+
 
 	
 };

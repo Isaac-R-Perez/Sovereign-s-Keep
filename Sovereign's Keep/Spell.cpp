@@ -125,19 +125,25 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Bubble Shot";
 			manaCost = 5.0f;
 			castTime = 0.1f;
-			duration = 1.45f; //lifetime of firebolt
+			duration = 1.6f; //lifetime of firebolt
 			animationFrames = 8; //firebolt
 			setTexture(static_cast<int>(SPRITE_SHEETS::bubble_shot));
 			moveSpeed = 0.65f;
-			direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			//direction = glm::vec3(1.0f, 0.0f, 0.0f);
 			resize(BUBBLE_SHOT_WIDTH, BUBBLE_SHOT_HEIGHT);
 			break;
 		}
 
 		case SpellID::EarthEarth: {
 			spellName = "Boulder Sling";
-			manaCost = 7.5f;
+			manaCost = 25.0f;
 			castTime = 0.4f;
+			duration = 1.45f; //lifetime of firebolt
+			animationFrames = 2; //firebolt
+			setTexture(static_cast<int>(SPRITE_SHEETS::boulder_shot));
+			moveSpeed = 0.75f;
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			resize(BOULDER_WIDTH, BOULDER_HEIGHT);
 			break;
 		}
 		case SpellID::EarthAir: {
@@ -1108,7 +1114,7 @@ void Spell::update(double dt) {
 			//COLLISION CHECK
 				if (!queue.empty())
 				{
-					Renderable* createdExplosion = nullptr;
+					
 
 
 					for (itr = queue.begin(); itr != queue.end(); ++itr) {
@@ -1132,7 +1138,7 @@ void Spell::update(double dt) {
 
 
 							//printf("PLAYER IS COLLIDING WITH ENEMY\n");
-							break;
+							
 
 						}
 
@@ -1166,8 +1172,131 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+
+			glm::mat4 move;
+
+
+			if (firstUpdate) {
+				//do first update things
+				move = glm::translate(glm::mat4(1.0f), dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
+
+				updatePosition(move);
+
+				//flip the fireball if player is facing left
+				if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft())
+				{
+					flip();
+					flipped = true;
+					direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+				}
+
+
+				firstUpdate = false;
+			}
+			else
+			{
+				//initially the fireball cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+
+				//play fireball animation
+				if (currentAnimationFrame > animationFrames) {
+					currentAnimationFrame = 0;
+				}
+
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+				}
+				else
+				{
+					animationTimer = BOULDER_ANIMATION_TIMER;
+					currentAnimationFrame++;
+
+					if (currentAnimationFrame > animationFrames) {
+						currentAnimationFrame = 0;
+					}
+				}
+
+				//have the fireball travel
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, 0.0f, 0.0f));
+				updatePosition(move);
+
+				float alter = 0.8f;
+
+				//update hitbox
+				getHitBox().updateHitBox(getOrigin(), getWidth() * alter, getWidth() * alter, getHeight() * alter, getHeight() * alter);
+
+
+
+
+
+				//check collisions here, if collision, destroy this spell and create an explosion spell at that point
+
+				if (damageTimer <= 0.0f) {
+					dealtDamage = false;
+				}
+
+				
+
+			//COLLISION CHECK
+				if (!queue.empty())
+				{
+					
+					if (!dealtDamage) {
+
+						for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+							//checks collision with ENEMY renderable in the queue
+							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
+								getHitBox().updateHitBox(getOrigin(), getWidth() * 1.1f, getWidth() * 1.1f, getHeight() * 1.1f, getHeight() * 1.1f);
+
+								//deal fireball damage
+								float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * BOULDER_DAMAGE_MULT;
+								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(damage));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.65f, SpellID::knockback));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(1.5f, SpellID::EarthEarth));
+								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
+
+
+								dealtDamage = true;
+								damageTimer = 0.4f;
+
+								//destroy fireball
+								//kill();
+
+
+								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+
+
+							}
+
+						}
+					}
+
+
+
+				}
+
+
+
+				damageTimer -= dt;
+
+				//lifetime of spell
+				duration -= dt;
+				if (duration <= 0.0f) {
+					kill();
+				}
+
+			}
+
+
+
+			
 			break;
 		}
 		case SpellID::EarthAir: {
@@ -1592,7 +1721,7 @@ void Spell::update(double dt) {
 										dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.15f, SpellID::knockback));
 										dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - getOrigin()));
 
-										dynamic_cast<Enemy*>(itr->second)->addToDamagedBy(this);
+										//dynamic_cast<Enemy*>(itr->second)->addToDamagedBy(this);
 
 										dealtDamage = true;
 										//printf("PLAYER IS COLLIDING WITH ENEMY\n");
@@ -1802,6 +1931,10 @@ void Spell::render() {
 		}
 		case SpellID::FireEarth: {
 			renderThisSpell(0.25f);//4 frames
+			break;
+		}
+		case SpellID::EarthEarth: {
+			renderThisSpell(static_cast<float>(1.0f / 3.0f));//4 frames
 			break;
 		}
 		case SpellID::Explosion1: {

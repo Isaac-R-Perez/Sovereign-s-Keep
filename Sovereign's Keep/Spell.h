@@ -48,6 +48,11 @@ const float STEAM_BLAST_DAMAGE_MULT = 1.5f; //all explosion1s deal the same dama
 const float MUD_WIDTH = 0.21f;
 const float MUD_HEIGHT = 0.325f;
 
+const float BOULDER_ANIMATION_TIMER = 0.02f;
+const float BOULDER_WIDTH = 0.15f;
+const float BOULDER_HEIGHT = 0.175f;
+const float BOULDER_DAMAGE_MULT = 3.0f;
+
 
 
 enum class SpellID {

@@ -7,7 +7,7 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T, stats s)
 	type = T;
 	animationTimer = ENEMY_WALKING_BASE_TIME;
 
-	damagedBy.clear();
+	//damagedBy.clear();
 
 
 	//remove this when level manager is done
@@ -114,6 +114,7 @@ void Enemy::update(double dt) {
 
 	//printf("TR: %f %f \n", getHitBox().topRight.x, getHitBox().topRight.y);
 
+	if (!stunned && !frozen) {
 
 		if (animationTimer > 0.0f) {
 			animationTimer -= dt;
@@ -151,6 +152,36 @@ void Enemy::update(double dt) {
 
 			updatePosition(move);
 		}
+
+
+	}
+	if (stunned) {
+
+
+
+		if (knockback) {
+			//create a vector TOWARDS the player's origin
+			movementVector = knockbackDirection;
+
+			//movementVector = glm::normalize(movementVector);
+
+			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed(), movementVector.y * dt * getCurrentMoveSpeed() * 0.85f, 0.0f));
+
+			//ADD this back when testing is done
+
+			updatePosition(move);
+		}
+
+
+
+	}
+	if (frozen) {
+
+
+
+		//also set GUI flag for blue tint
+
+	}
 
 
 
@@ -246,10 +277,16 @@ void Enemy::applySpellBuffs() {
 
 	setCurrentAttack(getBaseAttack());
 
+	stunned = false;
+
 
 	//set all current stats to the BASE stats for this enemy
 	if (searchSpellBuff(SpellID::WaterEarth)) {
 		setCurrentMoveSpeed(getCurrentMoveSpeed() * MUD_SLOW);
+	}
+
+	if (searchSpellBuff(SpellID::EarthEarth)) {
+		stunned = true;
 	}
 
 }

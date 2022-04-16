@@ -76,11 +76,6 @@ private:
 	float currentAttack;
 
 
-	//a buff as applied this, so stop animation, and set movespeed to 0.0 until stun buff is gone
-	bool stunned;
-
-	//a buff as applied this, so stop animation, SET RENDER FLAG TO frozen (blue shifted), and set movespeed to 0.0 until frozen buff is gone
-	bool frozen;
 
 
 	//saves the value of this character's health from the last frame
