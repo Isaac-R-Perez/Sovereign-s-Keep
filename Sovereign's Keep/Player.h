@@ -15,7 +15,7 @@
 */
 const int MAX_MONSTER_SOULS = 999;
 const float INITIAL_MAX_MANA = 100.0f;
-const float INITIAL_MAX_HEALTH = 100.0f;
+const float INITIAL_MAX_HEALTH = 200.0f;
 const float INITIAL_BASE_MANA_REGEN = 2.0f;
 const float INITIAL_PLAYER_BASE_DEFENSE = 10.0f;
 const float INITIAL_PLAYER_BASE_ATTACK = 20.0f;

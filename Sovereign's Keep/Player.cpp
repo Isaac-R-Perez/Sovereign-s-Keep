@@ -62,7 +62,8 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	*/
 	setBaseMaxHealth(INITIAL_MAX_HEALTH);
 	setCurrentMaxMana(INITIAL_MAX_MANA);
-	setCurrentHealth(INITIAL_MAX_HEALTH);
+	setCurrentMaxHealth(200.0f);
+	setCurrentHealth(10.0f);
 	setCurrentMana(INITIAL_MAX_MANA);
 	setBaseAttack(INITIAL_PLAYER_BASE_ATTACK);
 	setBaseMoveSpeed(PLAYER_BASE_SPEED);
@@ -127,6 +128,9 @@ void Player::update(double dt) {
 	//apply all spellBuffs
 	applySpellBuffs();
 
+	if (getCurrentHealth() > getCurrentMaxHealth()) {
+		setCurrentHealth(getCurrentMaxHealth());
+	}
 
 	//update player's mana
 	applyManaRegen(dt);
@@ -2075,6 +2079,8 @@ const float WATER_MANA_REGEN_BUFF = 2.5f; //multiplies base mana regen (base reg
 const float EARTH_DEFENSE_BUFF = 25.0f;
 const float FIRE_ATTACK_BUFF = 1.75f;
 
+const float SOOTHING_WATERS_HEAL = 0.01f / 60.0f; //1% per second
+
 void Player::applySpellBuffs() {
 	int amt = 0; //holds the number of a certain buff
 
@@ -2137,6 +2143,15 @@ void Player::applySpellBuffs() {
 		setCurrentAttack(getCurrentAttack() * FIRE_ATTACK_BUFF); //added to defense
 	}
 
+	//heals
+	amt = buffAmount(SpellID::FireWaterWater);
+	if (amt > 0) {
+		for (int i = 0; i < amt; i++) {
+			setCurrentHealth(getCurrentHealth() + getCurrentMaxHealth() * SOOTHING_WATERS_HEAL);
+		}
+	}
+
+	//printf("%f\n", getCurrentHealth());
 
 }
 

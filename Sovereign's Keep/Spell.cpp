@@ -2059,6 +2059,7 @@ void Spell::update(double dt) {
 
 			*/
 
+			dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(duration, ID));
 			//remove later
 			kill();
 			break;

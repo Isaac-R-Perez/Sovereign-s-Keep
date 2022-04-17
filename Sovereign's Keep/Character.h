@@ -163,7 +163,9 @@ public:
 	float getBaseHealth() { return baseHealth; }
 	float getBaseMaxHealth() { return baseMaxHealth; }
 
-	void setCurrentHealth(float amt) { currentHealth = amt; }
+	void setCurrentHealth(float amt) { 
+		currentHealth = amt;
+	}
 	void setCurrentMaxHealth(float amt) { currentMaxHealth = amt; }
 	void setBaseHealth(float h) { baseHealth = h; }
 	void setBaseMaxHealth(float h) { baseMaxHealth = h; }
