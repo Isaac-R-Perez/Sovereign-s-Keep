@@ -528,12 +528,12 @@ void Player::SavePlayerData()
 	playerFile.open("PlayerGameData.game", ios::out);
 	if (playerFile.is_open())
 	{
-		//Health/Mana/Souls
+		//Health
 		playerFile << getCurrentMaxHealth() << endl;
 		playerFile << getCurrentMaxMana() << endl;
 		playerFile << getMonsterSouls() << endl;
 
-		//Base Stats
+		//Attack
 		playerFile << getBaseAttack() << endl;
 		playerFile << getBaseDefense() << endl;
 		playerFile << getBaseMoveSpeed() << endl;
