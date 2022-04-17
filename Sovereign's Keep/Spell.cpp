@@ -2241,8 +2241,159 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+
+			glm::mat4 move;
+
+
+			if (firstUpdate) {
+				//do first update things
+				firstUpdate = false;
+
+				float smallestDistance = 10000.0f;
+				float checkDistance = 0.0f;
+				Renderable* nearestEnemy = nullptr;
+
+				//search for nearest enemy here set location of this spell to that enemy's origin
+
+				if (!queue.empty())
+				{
+					for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+						if (itr->second->renderOrder == 3) {
+							checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
+
+							if (checkDistance < smallestDistance) {
+								smallestDistance = checkDistance;
+								nearestEnemy = itr->second;
+							}
+						}
+
+
+
+					}
+
+				}
+
+
+				if (nearestEnemy != nullptr) {
+					//move to that enemies origin
+
+					if (dynamic_cast<Enemy*>(nearestEnemy)->getOrigin().x < dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x) {
+						flip();
+						direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+
+					}
+
+					move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Enemy*>(nearestEnemy)->getOrigin()));
+					updatePosition(move);
+				}
+				else {
+					//move to player origin
+					move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
+					updatePosition(move);
+				}
+
+
+
+
+
+
+			}
+			else
+			{
+				//initially the explosion cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+				//have the fireball travel
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, 0.0f, 0.0f));
+				updatePosition(move);
+
+				float sizeAlter = 0.9f;
+
+				//update hitbox
+				getHitBox().updateHitBox(getOrigin(), getWidth() * sizeAlter, getWidth() * sizeAlter, getHeight() * sizeAlter, getHeight() * sizeAlter); //explosion size can be set by the creating spell
+
+
+
+				//play explosion animation, enable collision on a certain frame
+				if (currentAnimationFrame == 3) {
+					collisionFrame = true;
+				}
+				else
+				{
+					collisionFrame = false;
+				}
+
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+				}
+				else
+				{
+					animationTimer = GEYSER_ANIMATION_TIMER;
+					currentAnimationFrame++;
+
+					//destroy explosion at end of animation
+					if (currentAnimationFrame > animationFrames) {
+						kill();
+					}
+				}
+
+
+
+
+
+				//only check collision on the collisionFrame
+				if (collisionFrame && !dealtDamage) {
+
+					//COLLISION CHECK
+					if (!queue.empty())
+					{
+						for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+							//checks collision with ENEMY renderable in the queue
+							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
+
+
+								//deal damage
+								float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * GEYSER_DAMAGE_MULT;
+								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(explosionDamage));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.75f, SpellID::knockback));
+								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
+
+								//dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(2.5f, SpellID::EarthAir));
+
+								dealtDamage = true;
+								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+								//break;
+
+
+
+
+							}
+						}
+
+
+
+					}
+				}
+
+
+
+
+
+
+
+
+			}
+
+
+
+
+
 			break;
 		}
 		case SpellID::FireEarthEarth: {

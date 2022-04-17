@@ -62,7 +62,7 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	*/
 	setBaseMaxHealth(INITIAL_MAX_HEALTH);
 	setCurrentMaxMana(INITIAL_MAX_MANA);
-	setCurrentMaxHealth(200.0f);
+	setCurrentMaxHealth(getBaseMaxHealth());
 	setCurrentHealth(10.0f);
 	setCurrentMana(INITIAL_MAX_MANA);
 	setBaseAttack(INITIAL_PLAYER_BASE_ATTACK);
