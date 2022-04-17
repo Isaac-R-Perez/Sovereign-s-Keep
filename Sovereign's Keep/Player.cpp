@@ -61,6 +61,7 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 		These should be set by the function creating the player, so that the BASE stats can be set according to the save file
 	*/
 	setBaseMaxHealth(INITIAL_MAX_HEALTH);
+	setBaseMaxMana(INITIAL_MAX_MANA);
 	setCurrentMaxMana(INITIAL_MAX_MANA);
 	setCurrentMaxHealth(200.0f);
 	setCurrentHealth(10.0f);
