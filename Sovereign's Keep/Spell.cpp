@@ -1,7 +1,9 @@
 #include "Spell.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Basic_Attack.h"
 #include <cstdio>
+#include "GLM/gtx/vector_angle.hpp"
 
 //const float FLIP_TIME = 0.25f;
 
@@ -27,6 +29,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 	WALKING = false;
 	FIND_ENEMY = false;
 	closestEnemy = nullptr;
+	attackTimer = 0.0f;
 	
 	//add each string name and all info needed for each spell, ALL OF EM
 	switch (ID) {
@@ -167,6 +170,8 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			manaCost = 25.0f;
 			castTime = 0.5f;
 			duration = 15.0f;
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
+
 			break;
 		}
 
@@ -210,6 +215,8 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Firecracker";
 			manaCost = 40.0f;
 			castTime = 0.5f;
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			animationFrames = 0;
 			break;
 		}
 		case SpellID::FireWaterWater: {
@@ -265,6 +272,12 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Water Elemental";
 			manaCost = 25.0f;
 			castTime = 0.8f;
+			duration = 45.0f; //golem lasts this long
+			moveSpeed = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentMoveSpeed() / 3.0f;
+			WALKING = true;
+			ATTACKING = false;
+			FIND_ENEMY = true;
+			attackTimer = GOLEM_WATER_ATTACK_TIMER;
 			break;
 		}
 		case SpellID::WaterWaterAir: {
@@ -311,6 +324,12 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Air Elemental";
 			manaCost = 25.0f;
 			castTime = 0.8f;
+			duration = 45.0f; //golem lasts this long
+			moveSpeed = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentMoveSpeed();
+			WALKING = true;
+			ATTACKING = false;
+			FIND_ENEMY = true;
+			attackTimer = GOLEM_AIR_ATTACK_TIMER;
 			break;
 		}
 		case SpellID::AirAirAir: {
@@ -1486,6 +1505,26 @@ void Spell::update(double dt) {
 			apply the stacking swift speed II buff, kill this spell
 
 			*/
+			
+			/*
+			float blinkDistance = 0.1f;
+
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft()) {
+				glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin() + glm::vec3(0.1f, 0.0f, 0.0f)));
+				dynamic_cast<Player*>(getGame()->getPlayer())->updatePosition(move);
+			}
+			else
+			{
+				glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin() - glm::vec3(0.1f, 0.0f, 0.0f)));
+				dynamic_cast<Player*>(getGame()->getPlayer())->updatePosition(move);
+			}
+			
+			*/
+			
+
+			
+
+
 			dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(duration, ID));
 			//remove later
 			kill();
@@ -1728,159 +1767,166 @@ void Spell::update(double dt) {
 							
 							}
 						
-					}
 
 
 
-					if (animationTimer > 0.0f) {
-						animationTimer -= dt;
+
+
+							if (animationTimer > 0.0f) {
+								animationTimer -= dt;
 
 
 
-					}
-					else
-					{
-
-
-
-						currentAnimationFrame++;
-
-
-
-						if (WALKING) {
-							animationFrames = 4;
-							animationTimer = GOLEM_WALKING_ANIMATION_TIMER;
-
-							//destroy explosion at end of animation
-							if (currentAnimationFrame > animationFrames) {
-								currentAnimationFrame = 0;
-
-							}
-						}
-
-						if (ATTACKING) {
-							animationFrames = 10;
-							animationTimer = GOLEM_ATTACKING_ANIMATION_TIMER;
-
-
-
-							if (currentAnimationFrame > animationFrames) {
-								currentAnimationFrame = 0;
-								ATTACKING = false;
-								WALKING = true;
-
-								if (glm::length(dynamic_cast<Enemy*>(closestEnemy)->getOrigin() - getOrigin()) < 0.09f) {
-									WALKING = false;
-									ATTACKING = true;
-
-								}
-							}
-
-							if (currentAnimationFrame == 4 || currentAnimationFrame == 8) {
-								collisionFrame = true;
 							}
 							else
 							{
-								collisionFrame = false;
-							}
-
-
-						}
 
 
 
-					}
+								currentAnimationFrame++;
 
 
 
+								if (WALKING) {
+									animationFrames = 4;
+									animationTimer = GOLEM_WALKING_ANIMATION_TIMER;
 
-
-
-					if (ATTACKING) {
-						//printf("%d\n", flipped);
-						damageTimer -= dt;
-
-						resize(GOLEM_ATTACKING_WIDTH, GOLEM_ATTACKING_HEIGHT);
-						getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth() , getHeight() * 1.25f, getHeight() * 1.25f); //explosion size can be set by the creating spell
-
-
-						if (damageTimer <= 0.0f && collisionFrame)
-						{
-
-							//COLLISION CHECK
-							if (!queue.empty())
-							{
-								for (itr = queue.begin(); itr != queue.end(); ++itr) {
-
-									//checks collision with ENEMY renderable in the queue
-									if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
-
-
-
-
-										//deal damage
-										float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * FIRE_GOLEM_DAMAGE_MULT;
-										dynamic_cast<Enemy*>(itr->second)->alterHealth(-(damage));
-										dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.3f, SpellID::knockback));
-										dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() -
-											dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
-
-										damageTimer = 0.15f; //can deal damage every seconds
-
-										//printf("PLAYER IS COLLIDING WITH ENEMY\n");
-										//break;
-
-
-
+									//destroy explosion at end of animation
+									if (currentAnimationFrame > animationFrames) {
+										currentAnimationFrame = 0;
 
 									}
 								}
 
+								if (ATTACKING) {
+									animationFrames = 10;
+									animationTimer = GOLEM_FIRE_ATTACK_TIMER;
+
+
+
+									if (currentAnimationFrame > animationFrames) {
+										currentAnimationFrame = 0;
+										ATTACKING = false;
+										WALKING = true;
+
+										if (glm::length(dynamic_cast<Enemy*>(closestEnemy)->getOrigin() - getOrigin()) < 0.09f) {
+											WALKING = false;
+											ATTACKING = true;
+
+										}
+									}
+
+									if (currentAnimationFrame == 4 || currentAnimationFrame == 8) {
+										collisionFrame = true;
+									}
+									else
+									{
+										collisionFrame = false;
+									}
+
+
+								}
+
 
 
 							}
 
-						}
-
-						
-
-					}
-
-
-					if (WALKING) {
-						//move
-						if (closestEnemy != nullptr) {
 
 
 
 
-							direction = glm::normalize(dynamic_cast<Enemy*>(closestEnemy)->getOrigin() - getOrigin());
-							move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt, 0.0f));
-							updatePosition(move);
+
+							if (ATTACKING) {
+								//printf("%d\n", flipped);
+								damageTimer -= dt;
+
+								resize(GOLEM_ATTACKING_WIDTH, GOLEM_ATTACKING_HEIGHT);
+								getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getHeight() * 1.25f, getHeight() * 1.25f); //explosion size can be set by the creating spell
+
+
+								if (damageTimer <= 0.0f && collisionFrame)
+								{
+
+									//COLLISION CHECK
+									if (!queue.empty())
+									{
+										for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+											//checks collision with ENEMY renderable in the queue
+											if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
 
 
 
-							//update hitbox
-							resize(GOLEM_WALKING_WIDTH, GOLEM_WALKING_HEIGHT);
 
-							getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getHeight(), getHeight()); //explosion size can be set by the creating spell
+												//deal damage
+												float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * FIRE_GOLEM_DAMAGE_MULT;
+												dynamic_cast<Enemy*>(itr->second)->alterHealth(-(damage));
+												dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.3f, SpellID::knockback));
+												dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() -
+													dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
+
+												damageTimer = 0.15f; //can deal damage every seconds
+
+												//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+												//break;
 
 
-							if (glm::length(dynamic_cast<Enemy*>(closestEnemy)->getOrigin() - getOrigin()) < 0.09f) {
-								WALKING = false;
-								ATTACKING = true;
-								currentAnimationFrame = 0;
+
+
+											}
+										}
+
+
+
+									}
+
+								}
+
+
 
 							}
 
 
-						}
+							if (WALKING) {
+								//move
+								if (closestEnemy != nullptr) {
+
+
+
+
+									direction = glm::normalize(dynamic_cast<Enemy*>(closestEnemy)->getOrigin() - getOrigin());
+									move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt, 0.0f));
+									updatePosition(move);
+
+
+
+									//update hitbox
+									resize(GOLEM_WALKING_WIDTH, GOLEM_WALKING_HEIGHT);
+
+									getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getHeight(), getHeight()); //explosion size can be set by the creating spell
+
+
+									if (glm::length(dynamic_cast<Enemy*>(closestEnemy)->getOrigin() - getOrigin()) < 0.09f) {
+										WALKING = false;
+										ATTACKING = true;
+										currentAnimationFrame = 0;
+
+									}
+
+
+								}
+
+							}
+
+
+
+
+
+
+
+
 
 					}
-
-
-
-
 
 
 
@@ -1912,8 +1958,99 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+			Renderable* createdExplosion = nullptr;
+			glm::mat4 move;
+			glm::mat4 rotation;
+			
+
+			//flip the waterBolt direction if player is facing left
+			float angle = 0.0f;
+
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft()) {
+				direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+			}
+			else
+			{
+				direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			}
+
+			
+			damageTimer -= dt;
+
+			if (damageTimer <= 0.0f) {
+
+				if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft()) {
+					angle = (-glm::pi<float>()) / 3.0f;
+
+					rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+					direction = rotation * glm::vec4(direction, 0.0f);
+
+
+
+					angle = (((2.0 * glm::pi<float>() / 3.0f)) / (static_cast<float>(FIRECRACKER_AMOUNT))) * static_cast<float>(animationFrames);
+
+
+					//create water bolt and set its direction + random angle
+					createdExplosion = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::explosion1), SpellID::Explosion1);
+
+					//angle += (((2.0 * glm::pi<float>() / 3.0f)) / (static_cast<float>(FIRECRACKER_AMOUNT)));
+
+					rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+				}
+				else
+				{
+					angle = (glm::pi<float>()) / 3.0f;
+
+
+
+
+					rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+					direction = rotation * glm::vec4(direction, 0.0f);
+
+
+
+					angle = (((2.0 * glm::pi<float>() / 3.0f)) / (static_cast<float>(FIRECRACKER_AMOUNT))) * static_cast<float>(animationFrames);
+
+
+					//create water bolt and set its direction + random angle
+					createdExplosion = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::explosion1), SpellID::Explosion1);
+
+					//angle += (((2.0 * glm::pi<float>() / 3.0f)) / (static_cast<float>(FIRECRACKER_AMOUNT)));
+
+					rotation = glm::rotate(glm::mat4(1.0f), -angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+
+				}
+				
+				
+
+					direction = rotation * glm::vec4(direction, 0.0f);
+
+
+					move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x + direction.x / 2.25f,
+						dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().y + direction.y / 2.25f, 0.0f));
+
+					dynamic_cast<Spell*>(createdExplosion)->updatePosition(move);
+
+					getGame()->renderableToPendingAdd(createdExplosion);
+
+
+					damageTimer = FIRECRACKER_TIMER;
+
+					animationFrames++;
+
+					if (animationFrames == FIRECRACKER_AMOUNT) {
+						kill();
+					}
+
+				
+			}
+
+
+
 			break;
 		}
 		case SpellID::FireWaterWater: {
@@ -2179,8 +2316,257 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+
+
+			glm::mat4 move;
+			//float alterSizeW = 0.75f;
+			//float alterSizeH = 0.525f;
+
+			if (firstUpdate) {
+				//do first update things
+				firstUpdate = false;
+
+
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
+				updatePosition(move);
+
+				FIND_ENEMY = true;
+
+				resize(GOLEM_WALKING_WIDTH * WATER_GOLEM_SIZE_MULT, GOLEM_WALKING_HEIGHT * WATER_GOLEM_SIZE_MULT);
+
+			}
+			else
+			{
+				//initially the explosion cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+				closestEnemy = nullptr;
+
+				//play explosion animation, enable collision on a certain frame
+
+				float smallestDistance = 10000.0f;
+				float checkDistance = 0.0f;
+
+
+				//search for nearest enemy here set location of this spell to that enemy's origin
+
+				if (!queue.empty())
+				{
+					for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+						if (itr->second->renderOrder == 3 && !itr->second->shouldDestroy()) {
+							checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - getOrigin());
+
+							if (checkDistance < smallestDistance) {
+								smallestDistance = checkDistance;
+								closestEnemy = itr->second;
+							}
+						}
+
+
+
+					}
+
+				}
+
+
+				/*
+				flipTimer -= dt;
+
+				if (flipTimer <= 0.0f) {
+
+					flipTimer = FLIP_TIME;
+				}
+				*/
+
+				if (closestEnemy != nullptr) {
+
+					if ((dynamic_cast<Enemy*>(closestEnemy)->getOrigin().x < getOrigin().x)) {
+						flipped = true;
+
+					}
+
+					if ((dynamic_cast<Enemy*>(closestEnemy)->getOrigin().x >= getOrigin().x)) {
+						flipped = false;
+
+					}
+
+				}
+
+
+
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+
+
+
+				}
+				else
+				{
+
+
+
+					currentAnimationFrame++;
+
+
+
+					if (WALKING) {
+						animationFrames = 4;
+						animationTimer = GOLEM_WALKING_ANIMATION_TIMER;
+
+						//destroy explosion at end of animation
+						if (currentAnimationFrame > animationFrames) {
+							currentAnimationFrame = 0;
+
+						}
+					}
+
+					if (ATTACKING) {
+						animationFrames = 10;
+						animationTimer = GOLEM_WATER_ATTACK_TIMER;
+
+
+
+						if (currentAnimationFrame > animationFrames) {
+							currentAnimationFrame = 0;
+							ATTACKING = false;
+							WALKING = true;
+
+						}
+
+						if (currentAnimationFrame == 4 || currentAnimationFrame == 8) {
+							collisionFrame = true;
+						}
+						else
+						{
+							collisionFrame = false;
+						}
+
+
+					}
+
+
+
+				}
+
+
+
+
+
+
+				if (ATTACKING) {
+					//printf("%d\n", flipped);
+					damageTimer -= dt;
+
+					resize(GOLEM_ATTACKING_WIDTH * WATER_GOLEM_SIZE_MULT, GOLEM_ATTACKING_HEIGHT* WATER_GOLEM_SIZE_MULT);
+					//getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getHeight() * 1.25f, getHeight() * 1.25f); //explosion size can be set by the creating spell
+
+
+					if (damageTimer <= 0.0f && collisionFrame && closestEnemy != nullptr)
+					{
+
+						Renderable* createdBullet = nullptr;
+						//spawn bullet at the golems origin towards nearest enemy
+
+						direction = glm::normalize(dynamic_cast<Enemy*>(closestEnemy)->getOrigin() - getOrigin());
+
+						
+						float angle = glm::angle(direction, glm::vec3(1.0f, 0.0f, 0.0f));
+
+						if (dynamic_cast<Enemy*>(closestEnemy)->getOrigin().y < getOrigin().y) {
+							createdBullet = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack), -angle, 1.2f);
+
+						}
+						else
+						{
+							createdBullet = new Basic_Attack(getGame(), 4, static_cast<int>(SPRITE_SHEETS::basic_attack), angle, 1.2f);
+
+						}
+
+						
+
+
+						
+
+						glm::mat4 move = glm::translate(glm::mat4(1.0f), glm::vec3(getOrigin().x, getOrigin().y, 0.0f));
+
+						createdBullet->updatePosition(move);
+
+
+						getGame()->renderableToPendingAdd(createdBullet);
+
+								
+						damageTimer = 0.1f; //can deal damage every seconds
+
+									//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+									//break;
+
+						
+
+
+					}
+
+
+
+				}
+
+
+				if (WALKING) {
+					//move
+					if (closestEnemy != nullptr) {
+
+
+
+
+						direction = glm::normalize(dynamic_cast<Enemy*>(closestEnemy)->getOrigin() - getOrigin());
+						move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt, 0.0f));
+						updatePosition(move);
+
+
+
+						//update hitbox
+						resize(GOLEM_WALKING_WIDTH * WATER_GOLEM_SIZE_MULT, GOLEM_WALKING_HEIGHT * WATER_GOLEM_SIZE_MULT);
+
+						//getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getHeight(), getHeight()); //explosion size can be set by the creating spell
+
+
+						attackTimer -= dt;
+
+						if (attackTimer <= 0.0f) {
+							attackTimer = GOLEM_WATER_ATTACK_TIMER;
+							WALKING = false;
+							ATTACKING = true;
+						}
+
+
+					}
+
+				}
+
+
+
+
+
+
+
+
+
+				duration -= dt;
+				if (duration <= 0.0f) {
+					kill();
+				}
+
+
+
+			}
+
+
+
+
 			break;
 		}
 		case SpellID::WaterWaterAir: {
@@ -2286,8 +2672,244 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+
+
+			glm::mat4 move;
+			//float alterSizeW = 0.75f;
+			//float alterSizeH = 0.525f;
+
+			if (firstUpdate) {
+				//do first update things
+				firstUpdate = false;
+
+
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
+				updatePosition(move);
+
+				FIND_ENEMY = true;
+
+				resize(GOLEM_WALKING_WIDTH * AIR_GOLEM_SIZE_MULT, GOLEM_WALKING_HEIGHT * AIR_GOLEM_SIZE_MULT);
+
+			}
+			else
+			{
+				//initially the explosion cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+				closestEnemy = nullptr;
+
+				//play explosion animation, enable collision on a certain frame
+
+				float smallestDistance = 10000.0f;
+				float checkDistance = 0.0f;
+
+
+				//search for nearest enemy here set location of this spell to that enemy's origin
+
+				if (!queue.empty())
+				{
+					for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+						if (itr->second->renderOrder == 3 && !itr->second->shouldDestroy()) {
+							checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - getOrigin());
+
+							if (checkDistance < smallestDistance) {
+								smallestDistance = checkDistance;
+								closestEnemy = itr->second;
+							}
+						}
+
+
+
+					}
+
+				}
+
+
+				/*
+				flipTimer -= dt;
+
+				if (flipTimer <= 0.0f) {
+
+					flipTimer = FLIP_TIME;
+				}
+				*/
+
+				if (closestEnemy != nullptr) {
+
+					if ((dynamic_cast<Enemy*>(closestEnemy)->getOrigin().x < getOrigin().x)) {
+						flipped = true;
+
+					}
+
+					if ((dynamic_cast<Enemy*>(closestEnemy)->getOrigin().x >= getOrigin().x)) {
+						flipped = false;
+
+					}
+
+
+
+
+					if (animationTimer > 0.0f) {
+						animationTimer -= dt;
+
+
+
+					}
+					else
+					{
+
+
+
+						currentAnimationFrame++;
+
+
+
+						if (WALKING) {
+							animationFrames = 4;
+							animationTimer = GOLEM_WALKING_ANIMATION_TIMER;
+
+							//destroy explosion at end of animation
+							if (currentAnimationFrame > animationFrames) {
+								currentAnimationFrame = 0;
+
+							}
+						}
+
+						if (ATTACKING) {
+							animationFrames = 10;
+							animationTimer = GOLEM_AIR_ATTACK_TIMER;
+
+
+
+							if (currentAnimationFrame > animationFrames) {
+								currentAnimationFrame = 0;
+								ATTACKING = false;
+								WALKING = true;
+
+							}
+
+							if (currentAnimationFrame == 4 || currentAnimationFrame == 8) {
+								collisionFrame = true;
+							}
+							else
+							{
+								collisionFrame = false;
+							}
+
+
+						}
+
+
+
+					}
+
+
+
+
+
+
+					if (ATTACKING) {
+						//printf("%d\n", flipped);
+						damageTimer -= dt;
+
+						resize(GOLEM_ATTACKING_WIDTH * AIR_GOLEM_SIZE_MULT, GOLEM_ATTACKING_HEIGHT * AIR_GOLEM_SIZE_MULT);
+						//getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getHeight() * 1.25f, getHeight() * 1.25f); //explosion size can be set by the creating spell
+
+
+						if (damageTimer <= 0.0f && collisionFrame)
+						{
+
+							//spawn bullet at the golems origin towards nearest enemy
+
+							Renderable* createdAirSpike = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::no_texture), SpellID::EarthAir);
+
+							getGame()->renderableToPendingAdd(createdAirSpike);
+
+
+							damageTimer = 0.25f; //can deal damage every seconds
+
+										//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+										//break;
+
+
+
+
+						}
+
+
+
+					}
+
+
+					if (WALKING) {
+						//move
+						if (closestEnemy != nullptr) {
+
+
+
+
+							direction = glm::normalize(dynamic_cast<Enemy*>(closestEnemy)->getOrigin() - getOrigin());
+							move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt, 0.0f));
+							updatePosition(move);
+
+
+
+							//update hitbox
+							resize(GOLEM_WALKING_WIDTH * AIR_GOLEM_SIZE_MULT, GOLEM_WALKING_HEIGHT * AIR_GOLEM_SIZE_MULT);
+
+							//getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getHeight(), getHeight()); //explosion size can be set by the creating spell
+
+
+							attackTimer -= dt;
+
+							if (attackTimer <= 0.0f) {
+								attackTimer = GOLEM_AIR_ATTACK_TIMER;
+								WALKING = false;
+								ATTACKING = true;
+							}
+
+
+						}
+
+					}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				}
+
+
+
+
+				duration -= dt;
+				if (duration <= 0.0f) {
+					kill();
+				}
+
+
+
+			}
+
+
+
+
 			break;
 		}
 		case SpellID::AirAirAir: {
@@ -2648,6 +3270,65 @@ void Spell::render() {
 
 			break;
 		}
+		case SpellID::WaterWaterEarth: {
+			if (flipped) {
+				flip();
+			}
+
+			if (WALKING) {
+
+
+				setTexture(static_cast<int>(SPRITE_SHEETS::water_golem_walking));
+				renderThisSpell(static_cast<float>(1.0f / 5.0f));//4 frames
+			}
+			if (ATTACKING) {
+				if (flipped) {
+					flip();
+					setTexture(static_cast<int>(SPRITE_SHEETS::water_golem_attacking_left));
+					renderThisSpell(static_cast<float>(1.0f / 11.0f));//4 frames
+				}
+				else
+				{
+					setTexture(static_cast<int>(SPRITE_SHEETS::water_golem_attacking));
+					renderThisSpell(static_cast<float>(1.0f / 11.0f));//4 frames
+				}
+
+
+			}
+
+
+			break;
+		}
+		case SpellID::EarthAirAir: {
+			if (flipped) {
+				flip();
+			}
+
+			if (WALKING) {
+
+
+				setTexture(static_cast<int>(SPRITE_SHEETS::air_golem_walking));
+				renderThisSpell(static_cast<float>(1.0f / 5.0f));//4 frames
+			}
+			if (ATTACKING) {
+				if (flipped) {
+					flip();
+					setTexture(static_cast<int>(SPRITE_SHEETS::air_golem_attacking_left));
+					renderThisSpell(static_cast<float>(1.0f / 11.0f));//4 frames
+				}
+				else
+				{
+					setTexture(static_cast<int>(SPRITE_SHEETS::air_golem_attacking));
+					renderThisSpell(static_cast<float>(1.0f / 11.0f));//4 frames
+				}
+
+
+			}
+
+
+			break;
+		}
+
 		case SpellID::Explosion1: {
 			renderThisSpell(static_cast<float>(1.0f / 11.0f));//11 frames
 			break;

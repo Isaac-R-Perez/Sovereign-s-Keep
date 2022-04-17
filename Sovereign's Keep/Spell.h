@@ -71,12 +71,22 @@ const float BARRAGE_HEIGHT = 0.275f;
 const float BARRAGE_DAMAGE_MULT = 1.1f;
 
 const float GOLEM_WALKING_ANIMATION_TIMER = 0.06f;
-const float GOLEM_ATTACKING_ANIMATION_TIMER = 0.08f;
+const float GOLEM_FIRE_ATTACK_TIMER = 0.08f;
+const float GOLEM_WATER_ATTACK_TIMER = 0.1f;
+const float GOLEM_AIR_ATTACK_TIMER = 0.15f;
+
 const float GOLEM_WALKING_WIDTH = 0.05f;
 const float GOLEM_WALKING_HEIGHT = 0.075f;
 const float GOLEM_ATTACKING_WIDTH = 0.061f;
 const float GOLEM_ATTACKING_HEIGHT = 0.092f;
+
+const float GOLEM_ATTACK_TIMER = 1.0f;
 const float FIRE_GOLEM_DAMAGE_MULT = 2.5f;
+const float WATER_GOLEM_SIZE_MULT = 0.8f;
+const float AIR_GOLEM_SIZE_MULT = 1.21f;
+
+const int FIRECRACKER_AMOUNT = 7;
+const float FIRECRACKER_TIMER = 0.135f;
 
 
 enum class SpellID {
@@ -244,8 +254,7 @@ private:
 
 
 	//for golems
-	bool facingRight;
-	bool facingLeft;
+	float attackTimer;
 
 	//is true on the frame that the spell can deal damage on this frame
 	bool collisionFrame;
