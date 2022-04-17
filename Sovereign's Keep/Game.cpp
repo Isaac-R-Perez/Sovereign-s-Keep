@@ -840,6 +840,8 @@ bool Game::initialize() {
 	
 
 	player = new Player(this, 2, static_cast<int>(SPRITE_SHEETS::player_default));
+	//Load data from file
+	dynamic_cast<Player*>(player)->LoadPlayerData();
 	
 	renderQueue.insert(pair<int, Renderable*>(player->renderOrder, player));
 
@@ -994,6 +996,8 @@ void Game::update(double dt) {
 		
 		WaveTimer = MAX_WAVE_TIME;
 		WaveNumber++;
+		dynamic_cast<Player*>(player)->WaveBuff();
+		dynamic_cast<Player*>(player)->SavePlayerData();
 	}
 
 

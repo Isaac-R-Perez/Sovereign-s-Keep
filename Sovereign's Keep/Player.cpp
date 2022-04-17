@@ -525,27 +525,20 @@ void Player::SavePlayerData()
 {
 	fstream playerFile;
 	// Save player stats to a PlayerData.game
-	playerFile.open("PlayerGameData.game", ios::out);
+	playerFile.open("player.dat", ios::out);
 	if (playerFile.is_open())
 	{
 		//Health
-		playerFile << getCurrentMaxHealth() << endl;
-		playerFile << getCurrentMaxMana() << endl;
-		playerFile << getMonsterSouls() << endl;
+		playerFile << getBaseMaxHealth() << endl;
 
 		//Attack
 		playerFile << getBaseAttack() << endl;
-		playerFile << getBaseDefense() << endl;
-		playerFile << getBaseMoveSpeed() << endl;
 
-		//Element Levels
-		playerFile << getFireLevel() << endl;
-		playerFile << getWaterLevel() << endl;
-		playerFile << getEarthLevel() << endl;
-		playerFile << getAirLevel() << endl;
-		playerFile << getElectricityLevel() << endl;
-		playerFile << getIceLevel() << endl;
-		playerFile << getGravityLevel() << endl;
+		//Defense
+		playerFile << getBaseDefense() << endl;
+
+		//Move Speed
+		playerFile << getBaseMoveSpeed() << endl;
 
 		playerFile.close();
 	}
@@ -555,45 +548,59 @@ void Player::LoadPlayerData()
 {
 	fstream playerFile;
 	// Load player data from PlayerData.game
-	playerFile.open("PlayerGameData.game", ios::in);
+	playerFile.open("player.dat", ios::in);
 	if (playerFile.is_open())
 	{
 		string line;
 
-		//Health/Mana/Souls
+		//Health
 		getline(playerFile, line);
 		setBaseMaxHealth(stof(line));
-		getline(playerFile, line);
-		setBaseMaxMana(stof(line));
-		getline(playerFile, line);
-		setMonsterSouls(stoi(line));
+		setBaseHealth(getBaseMaxHealth());
+		setCurrentMaxHealth(getBaseMaxHealth());
+		setCurrentHealth(getBaseHealth());
 
-		//Base Stats
+		//Attack
 		getline(playerFile, line);
 		setBaseAttack(stof(line));
+		setCurrentAttack(getBaseAttack());
+
+		//Defense
 		getline(playerFile, line);
 		setBaseDefense(stof(line));
+		setCurrentDefense(getBaseDefense());
+
+		//Move Speed
 		getline(playerFile, line);
 		setBaseMoveSpeed(stof(line));
-
-		//Element Levels
-		getline(playerFile, line);
-		setFireLevel(stoi(line));
-		getline(playerFile, line);
-		setWaterLevel(stoi(line));
-		getline(playerFile, line);
-		setEarthLevel(stoi(line));
-		getline(playerFile, line);
-		setAirLevel(stoi(line));
-		getline(playerFile, line);
-		setElectricityLevel(stoi(line));
-		getline(playerFile, line);
-		setIceLevel(stoi(line));
-		getline(playerFile, line);
-		setGravityLevel(stoi(line));
+		setCurrentMoveSpeed(getBaseMoveSpeed());
 
 		playerFile.close();
 	}
+}
+
+void Player::WaveBuff()
+{
+	//Percentage based
+	float hpBuff = 0.05f; // %5
+	float atkBuff = 0.01f; // %1
+	float defBuff = 0.01f; // %1
+	float speedBuff = 0.02f; // %2
+
+	setBaseMaxHealth(getBaseMaxHealth() + (getBaseMaxHealth() * hpBuff));
+	setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
+
+	setBaseHealth(getBaseMaxHealth() + (getBaseMaxHealth() * hpBuff));
+	setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
+
+	setBaseAttack(getBaseAttack() + (getBaseAttack() * atkBuff));
+	setCurrentAttack(getCurrentAttack() + (getCurrentAttack() * atkBuff));
+
+	setBaseDefense(getBaseDefense() + (getBaseDefense() * defBuff));
+	setCurrentDefense(getCurrentDefense() + (getCurrentDefense() * defBuff));
+
+	setBaseMoveSpeed(getBaseMoveSpeed() + (getBaseMoveSpeed() * speedBuff));
+	setCurrentMoveSpeed(getCurrentMoveSpeed() + (getCurrentMoveSpeed() * speedBuff));
 }
 
 void Player::render() {

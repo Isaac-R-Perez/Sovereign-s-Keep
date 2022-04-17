@@ -227,6 +227,9 @@ public:
 	void SavePlayerData();
 	void LoadPlayerData();
 
+	//Wave Upgrade
+	void WaveBuff();
+
 	//run this function everytime a player presses Q, AND CAN CAST THE SPELL
 	void resetCastingVariables() {
 		current_frame = 0; //make sure the animation start at the beginning
