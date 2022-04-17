@@ -272,6 +272,15 @@ void Game::loadAllTextures() {
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::geyser), generatedTexture));
 
 
+	generateTexture(generatedTexture, 180, 32, 3, "images/player/golem/golem_fire_walking.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::fire_golem_walking), generatedTexture));
+
+	generateTexture(generatedTexture, 506, 42, 3, "images/player/golem/golem_fire_attacking.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::fire_golem_attacking), generatedTexture));
+
+	generateTexture(generatedTexture, 506, 42, 3, "images/player/golem/golem_fire_attacking_L.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::fire_golem_attacking_left), generatedTexture));
+
 }
 
 

@@ -70,6 +70,14 @@ const float BARRAGE_WIDTH = 0.2f;
 const float BARRAGE_HEIGHT = 0.275f;
 const float BARRAGE_DAMAGE_MULT = 1.1f;
 
+const float GOLEM_WALKING_ANIMATION_TIMER = 0.06f;
+const float GOLEM_ATTACKING_ANIMATION_TIMER = 0.08f;
+const float GOLEM_WALKING_WIDTH = 0.05f;
+const float GOLEM_WALKING_HEIGHT = 0.075f;
+const float GOLEM_ATTACKING_WIDTH = 0.061f;
+const float GOLEM_ATTACKING_HEIGHT = 0.092f;
+const float FIRE_GOLEM_DAMAGE_MULT = 2.5f;
+
 
 enum class SpellID {
 	
@@ -234,6 +242,11 @@ private:
 	//true if the spell should flip travel direction
 	bool flipped;
 
+
+	//for golems
+	bool facingRight;
+	bool facingLeft;
+
 	//is true on the frame that the spell can deal damage on this frame
 	bool collisionFrame;
 
@@ -247,6 +260,15 @@ private:
 
 	//holds the ID of the enemy that is closest to player
 	uint32_t nearestEnemyID;
+
+	bool WALKING;
+	bool ATTACKING;
+	bool FIND_ENEMY;
+
+	Renderable* closestEnemy;
+
+	
+
 
 
 };
