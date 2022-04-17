@@ -540,6 +540,12 @@ void Player::SavePlayerData()
 		//Move Speed
 		playerFile << getBaseMoveSpeed() << endl;
 
+		//Mana
+		playerFile << getBaseMaxMana() << endl;
+
+		//Mana Regen
+		playerFile << getBaseManaRegenRate() << endl;
+
 		playerFile.close();
 	}
 }
@@ -575,6 +581,18 @@ void Player::LoadPlayerData()
 		setBaseMoveSpeed(stof(line));
 		setCurrentMoveSpeed(getBaseMoveSpeed());
 
+		//Mana
+		getline(playerFile, line);
+		setBaseMaxMana(stof(line));
+		setCurrentMaxMana(getBaseMaxMana());
+		setCurrentMana(getBaseMaxMana());
+
+		//Mana Regen
+		getline(playerFile, line);
+		setBaseManaRegenRate(stof(line));
+		setCurrentManaRegenRate(getBaseManaRegenRate());
+
+
 		playerFile.close();
 	}
 }
@@ -586,6 +604,8 @@ void Player::WaveBuff()
 	float atkBuff = 0.01f; // %1
 	float defBuff = 0.01f; // %1
 	float speedBuff = 0.02f; // %2
+	float manaBuff = 0.01f;
+	float manaRegenBuff = 0.01f;
 
 	setBaseMaxHealth(getBaseMaxHealth() + (getBaseMaxHealth() * hpBuff));
 	setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
@@ -601,6 +621,12 @@ void Player::WaveBuff()
 
 	setBaseMoveSpeed(getBaseMoveSpeed() + (getBaseMoveSpeed() * speedBuff));
 	setCurrentMoveSpeed(getCurrentMoveSpeed() + (getCurrentMoveSpeed() * speedBuff));
+
+	setBaseMaxMana(getBaseMaxMana() + (getBaseMaxMana() * manaBuff));
+	setCurrentMana(getCurrentMana() + (getCurrentMana() * manaBuff));
+
+	setBaseManaRegenRate(getBaseManaRegenRate() + (getBaseManaRegenRate() * manaRegenBuff));
+	setCurrentManaRegenRate(getCurrentManaRegenRate() + (getCurrentManaRegenRate() * manaRegenBuff));
 }
 
 void Player::render() {
