@@ -93,6 +93,7 @@ public:
 
 	//this function generates one specified texture
 	void generateTexture(GLuint &tex, int w, int h, int nrC, std::string path);
+	//void generateBackgroundTexture(GLuint& tex, int w, int h, int nrC, std::string path);
 
 	//input TOP-LEFT xy, TOP_RIGHT xy, BOTTOM_RIGHT xy texture coordinates
 	void setTextureCoordinates(float TRx, float TRy, float BRx, float BRy, float BLx, float BLy, float TLx, float TLy);

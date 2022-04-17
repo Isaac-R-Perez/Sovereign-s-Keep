@@ -5,8 +5,8 @@
 	To add obstacles for the player, derive another class from this class?
 */
 
-const float BACKGROUND_WIDTH = 3.0f;
-const float BACKGROUND_HEIGHT = 2.0f;
+const float BACKGROUND_WIDTH = 4.0f;
+const float BACKGROUND_HEIGHT = 3.0f;
 
 class Background : public Renderable {
 
