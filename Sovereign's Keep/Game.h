@@ -49,6 +49,7 @@ enum class SPRITE_SHEETS
 	water_golem_walking, water_golem_attacking, water_golem_attacking_left,
 	air_golem_walking, air_golem_attacking, air_golem_attacking_left,
 
+	bat, crab, minotaur, skull,
 
 
 

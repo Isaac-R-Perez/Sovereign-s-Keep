@@ -6,13 +6,30 @@
 * game will have.
 */
 enum class EnemyType {
-	slime,
+	slime, bat, crab, minotaur, skull
 };
 
 const float ENEMY_WALKING_BASE_TIME = 0.1f;
 
 const float SLIME_WIDTH = 0.04f;
 const float SLIME_HEIGHT = 0.04f;
+const float SLIME_TIMER = 0.1f;
+
+const float BAT_WIDTH = 0.035f;
+const float BAT_HEIGHT = 0.0275f;
+const float BAT_TIMER = 0.05f;
+
+const float CRAB_WIDTH = 0.075f;
+const float CRAB_HEIGHT = 0.05f;
+const float CRAB_TIMER = 0.125f;
+
+const float MINOTAUR_WIDTH = 0.01f;
+const float MINOTUAR_HEIGHT = 0.08f;
+const  float MINOTAUR_TIMER = 0.03f;
+
+const float SKULL_WIDTH = 0.025f;
+const float SKULL_HEIGHT = 0.04f;
+const float SKULL_TIMER = 0.8f;
 
 
 

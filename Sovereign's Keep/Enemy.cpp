@@ -5,7 +5,6 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T, stats s)
 	:Character(g, rOrder, defaultSpriteSheet)
 {
 	type = T;
-	animationTimer = ENEMY_WALKING_BASE_TIME;
 
 	//damagedBy.clear();
 
@@ -15,6 +14,31 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T, stats s)
 		case EnemyType::slime:
 		{
 			resize(SLIME_WIDTH, SLIME_HEIGHT);
+			animationTimer = SLIME_TIMER;
+			break;
+		}
+		case EnemyType::bat:
+		{
+			resize(BAT_WIDTH, BAT_HEIGHT);
+			animationTimer = BAT_TIMER;
+			break;
+		}
+		case EnemyType::crab:
+		{
+			resize(CRAB_WIDTH, CRAB_HEIGHT);
+			animationTimer = CRAB_TIMER;
+			break;
+		}
+		case EnemyType::minotaur:
+		{
+			resize(MINOTAUR_WIDTH, MINOTUAR_HEIGHT);
+			animationTimer = MINOTAUR_TIMER;
+			break;
+		}
+		case EnemyType::skull:
+		{
+			resize(SKULL_WIDTH, SKULL_HEIGHT);
+			animationTimer = SKULL_TIMER;
 			break;
 		}
 
@@ -93,13 +117,13 @@ void Enemy::update(double dt) {
 
 	//the direction of the last knockback is what the enemy travels in
 	bool knockback = searchSpellBuff(SpellID::knockback);
+	
+	
 
-
-	//update hitbox
 	switch (type) {
 	case EnemyType::slime:
 	{
-		getHitBox().updateHitBox(getOrigin(), SLIME_WIDTH, SLIME_WIDTH, SLIME_HEIGHT, SLIME_HEIGHT);
+
 
 		if (current_frame > 2) {
 			current_frame = 0;
@@ -107,10 +131,50 @@ void Enemy::update(double dt) {
 
 		break;
 	}
+	case EnemyType::bat:
+	{
 
+
+		if (current_frame > 3) {
+			current_frame = 0;
+		}
+
+		break;
+	}
+	case EnemyType::crab:
+	{
+
+
+		if (current_frame > 5) {
+			current_frame = 0;
+		}
+
+		break;
+	}
+	case EnemyType::minotaur:
+	{
+
+
+		if (current_frame > 3) {
+			current_frame = 0;
+		}
+
+		break;
+	}
+	case EnemyType::skull:
+	{
+
+
+		if (current_frame > 3) {
+			current_frame = 0;
+		}
+
+		break;
 	}
 
-	//printf("TR: %f %f \n", getHitBox().topRight.x, getHitBox().topRight.y);
+	}
+	
+	
 
 	if (!stunned && !frozen) {
 
@@ -119,7 +183,51 @@ void Enemy::update(double dt) {
 		}
 		else
 		{
-			animationTimer = ENEMY_WALKING_BASE_TIME;
+
+
+			switch (type) {
+			case EnemyType::slime:
+			{
+
+
+				animationTimer = SLIME_TIMER;
+
+				break;
+			}
+			case EnemyType::bat:
+			{
+
+				animationTimer = BAT_TIMER;
+
+				break;
+			}
+			case EnemyType::crab:
+			{
+
+				animationTimer = CRAB_TIMER;
+
+
+				break;
+			}
+			case EnemyType::minotaur:
+			{
+				animationTimer = MINOTAUR_TIMER;
+
+
+				break;
+			}
+			case EnemyType::skull:
+			{
+				animationTimer = SKULL_TIMER;
+
+
+				break;
+			}
+
+			}
+			
+			
+			
 			current_frame++;
 		}
 
@@ -182,6 +290,22 @@ void Enemy::update(double dt) {
 	}
 
 
+	
+	
+	
+	
+	
+	
+	getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getHeight(), getHeight());
+
+
+
+
+
+
+
+	//printf("TR: %f %f \n", getHitBox().topRight.x, getHitBox().topRight.y);
+
 
 
 		setHealthLastFrame(getCurrentHealth());
@@ -212,30 +336,43 @@ void Enemy::render() {
 	case EnemyType::slime:
 	{
 		idle_stride = 0.25f;
-
-		//put this code in render function???
-		setTexture(static_cast<int>(SPRITE_SHEETS::slime));
-
-
-		left = static_cast<float>((current_frame)*idle_stride);
-		left += 0.002f;
-		//0.002 is a constant here? without it there is clipping issues...
-
-		right = static_cast<float>((current_frame + 1) * idle_stride);
-		right -= 0.002f;
-
-		getGame()->setTextureCoordinates(right, 1.0f,
-			right, 0.0f,
-			left, 0.0f,
-			left, 1.0f);
-
+		break;
+	}
+	case EnemyType::bat:
+	{
+		idle_stride = static_cast<float>(1.0f / 4.0f);
+		break;
+	}
+	case EnemyType::crab:
+	{
+		idle_stride = static_cast<float>(1.0f / 6.0f);
+		break;
+	}
+	case EnemyType::minotaur:
+	{
+		idle_stride = static_cast<float>(1.0f / 4.0f);
+		break;
+	}
+	case EnemyType::skull:
+	{
+		idle_stride = static_cast<float>(1.0f / 4.0f);
 		break;
 	}
 
 
 	}
 
+	left = static_cast<float>((current_frame)*idle_stride);
+	left += 0.002f;
+	//0.002 is a constant here? without it there is clipping issues...
 
+	right = static_cast<float>((current_frame + 1) * idle_stride);
+	right -= 0.002f;
+
+	getGame()->setTextureCoordinates(right, 1.0f,
+		right, 0.0f,
+		left, 0.0f,
+		left, 1.0f);
 
 	GLint objectToWorld = glGetUniformLocation(getGame()->getRenderablesProgID(), "objectToWorld");
 	if (objectToWorld < 0) printf("couldn't find objectToWorld in shader\n");
