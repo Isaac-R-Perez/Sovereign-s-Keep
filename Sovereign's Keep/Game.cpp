@@ -1154,24 +1154,24 @@ void Game::updateCamera(glm::vec3& playerOrigin) {
 	glm::vec3 cameraCenter = playerOrigin;
 
 
-	const float BACKGROUND_SCALE = BACKGROUND_WIDTH;
+	//const float BACKGROUND_SCALE = BACKGROUND_WIDTH;
 	const float CAMERA_SIZE = 1.0f; //camera is always a square centered at origin with top right corner being (1.0,1.0)
 
-	if (playerOrigin.x + CAMERA_SIZE > BACKGROUND_SCALE)
+	if (playerOrigin.x + CAMERA_SIZE > BACKGROUND_WIDTH)
 	{
-		cameraCenter.x = BACKGROUND_SCALE - CAMERA_SIZE;
+		cameraCenter.x = BACKGROUND_WIDTH - CAMERA_SIZE;
 	}
-	if (playerOrigin.x - CAMERA_SIZE < -BACKGROUND_SCALE)
+	if (playerOrigin.x - CAMERA_SIZE < -BACKGROUND_WIDTH)
 	{
-		cameraCenter.x = -BACKGROUND_SCALE + CAMERA_SIZE;
+		cameraCenter.x = -BACKGROUND_WIDTH + CAMERA_SIZE;
 	}
-	if (playerOrigin.y + CAMERA_SIZE > BACKGROUND_SCALE)
+	if (playerOrigin.y + CAMERA_SIZE > BACKGROUND_HEIGHT)
 	{
-		cameraCenter.y = BACKGROUND_SCALE - CAMERA_SIZE;
+		cameraCenter.y = BACKGROUND_HEIGHT - CAMERA_SIZE;
 	}
-	if (playerOrigin.y - CAMERA_SIZE < -BACKGROUND_SCALE)
+	if (playerOrigin.y - CAMERA_SIZE < -BACKGROUND_HEIGHT)
 	{
-		cameraCenter.y = -BACKGROUND_SCALE + CAMERA_SIZE;
+		cameraCenter.y = -BACKGROUND_HEIGHT + CAMERA_SIZE;
 	}
 	
 	View = glm::lookAt(glm::vec3(cameraCenter.x, cameraCenter.y,1.0f), glm::vec3(cameraCenter.x, cameraCenter.y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
