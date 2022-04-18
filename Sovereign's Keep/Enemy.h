@@ -23,7 +23,7 @@ const float CRAB_WIDTH = 0.075f;
 const float CRAB_HEIGHT = 0.05f;
 const float CRAB_TIMER = 0.125f;
 
-const float MINOTAUR_WIDTH = 0.01f;
+const float MINOTAUR_WIDTH = 0.08f;
 const float MINOTUAR_HEIGHT = 0.08f;
 const  float MINOTAUR_TIMER = 0.03f;
 

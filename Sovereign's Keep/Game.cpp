@@ -905,8 +905,11 @@ bool Game::initialize() {
 	//b = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime);
 	//renderableToPendingAdd(b);
 	baseEnemies.clear();
-	baseEnemies.emplace_back( new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime, Enemy::stats(100.0, 100.0f, 10.0f, 5.0f, 0.2f))); //slime at [0]
-	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::bat), EnemyType::bat, Enemy::stats(65.0, 65.0f, 5.0f, 2.0f, 0.25f))); //bat at [1]
+	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime, Enemy::stats(100.0, 100.0f, 10.0f, 5.0f, 0.2f))); //slime at [0]
+	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::bat), EnemyType::bat, Enemy::stats(65.0, 65.0f, 5.0f, 2.0f, 0.35f))); //bat at [1]
+	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::crab), EnemyType::crab, Enemy::stats(130.0, 130.0f, 5.0f, 3.0f, 0.1f))); //crab at [2]
+	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::minotaur), EnemyType::minotaur, Enemy::stats(200.0, 200.0f, 15.0f, 5.0f, 0.25f))); //minotaur at [3]
+	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::skull), EnemyType::skull, Enemy::stats(75.0, 75.0f, 10.0f, 1.0f, 0.3f))); //skull at [4]
 
 	return true;
 
@@ -1042,7 +1045,7 @@ void Game::update(double dt) {
 		if (SpawnTickRate <= 0)
 		{
 			SpawnTickRate = 2.0f;
-			SpawnEnemy();
+			SpawnEnemy(rand() % 5);
 		}
 		else
 		{
@@ -1310,7 +1313,7 @@ void Game::GenerateNextWave()
 	
 }
 
-void Game::SpawnEnemy()
+void Game::SpawnEnemy(int randomNum)
 {
 	enemyPosition = std::uniform_real_distribution<float>(1.1, 1.5);
 	float offset = enemyPosition(numberEngine);
@@ -1321,7 +1324,24 @@ void Game::SpawnEnemy()
 	direction = rotation * glm::vec4(direction, 0.0f);
 	glm::mat4 move = glm::translate(glm::mat4(1.0f), direction);
 
-	Renderable* newEnemy = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::bat), EnemyType::bat, dynamic_cast<Enemy*>(baseEnemies[1])->getEnemyStats());
+	Renderable* newEnemy = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime, dynamic_cast<Enemy*>(baseEnemies[0])->getEnemyStats());
+
+	switch (randomNum)
+	{
+	case 1:
+		newEnemy = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::bat), EnemyType::bat, dynamic_cast<Enemy*>(baseEnemies[1])->getEnemyStats());
+		break;
+	case 2:
+		newEnemy = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::crab), EnemyType::crab, dynamic_cast<Enemy*>(baseEnemies[2])->getEnemyStats());
+		break;
+	case 3:
+		newEnemy = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::minotaur), EnemyType::minotaur, dynamic_cast<Enemy*>(baseEnemies[3])->getEnemyStats());
+		break;
+	case 4:
+		newEnemy = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::skull), EnemyType::skull, dynamic_cast<Enemy*>(baseEnemies[4])->getEnemyStats());
+		break;
+	}
+
 	dynamic_cast<Enemy*>(newEnemy)->updatePosition(move);
 	dynamic_cast<Enemy*>(newEnemy)->WaveBuff(WaveNumber); //Will buff the base stats based on the wave number.
 
