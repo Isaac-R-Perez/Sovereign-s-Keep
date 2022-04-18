@@ -443,7 +443,7 @@ void Enemy::applySpellBuffs() {
 		setCurrentMoveSpeed(getCurrentMoveSpeed() * MUD_SLOW);
 	}
 
-	if (searchSpellBuff(SpellID::EarthEarth)) {
+	if (searchSpellBuff(SpellID::EarthEarth) || searchSpellBuff(SpellID::FireEarthEarth)) {
 		stunned = true;
 	}
 

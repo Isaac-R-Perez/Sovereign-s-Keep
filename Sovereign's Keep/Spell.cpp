@@ -243,7 +243,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			castTime = 0.45f;
 			animationFrames = 14; //firebolt
 			direction = glm::vec3(1.0f, 0.0f, 0.0f);
-			moveSpeed = 0.01f;
+			moveSpeed = 0.075f;
 			setTexture(static_cast<int>(SPRITE_SHEETS::flash_freeze));
 			resize(FFREEZE_WIDTH, FFREEZE_HEIGHT);
 			break;
@@ -260,8 +260,14 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::FireEarthAir: {
 			spellName = "Fiery Earth Mine";
-			manaCost = 15.0f;
-			castTime = 0.4f;
+			manaCost = 7.0f;
+			castTime = 0.2f;
+			duration = EARTH_MINE_DURATION; //lifetime of firebolt
+			animationFrames = 9; //firebolt
+			setTexture(static_cast<int>(SPRITE_SHEETS::earth_mine));
+			moveSpeed = 0.55f;
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			resize(EARTH_MINE_WIDTH, EARTH_MINE_HEIGHT);
 			break;
 		}
 		case SpellID::FireAirAir: {
@@ -2460,8 +2466,143 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+			glm::mat4 move;
+
+
+			if (firstUpdate) {
+				//do first update things
+				move = glm::translate(glm::mat4(1.0f), dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
+
+				updatePosition(move);
+
+				//flip the fireball if player is facing left
+				if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft())
+				{
+					flip();
+					flipped = true;
+					direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+				}
+
+
+				firstUpdate = false;
+			}
+			else
+			{
+				//initially the fireball cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+
+				//lifetime of spell
+				duration -= dt;
+				if (duration <= 0.0f) {
+					kill();
+				}
+				else if (duration < EARTH_MINE_DURATION - 0.65f) {
+					//no movement
+				}
+				else
+				{
+					//moves slowly and updates hitbox
+					//have the fireball travel
+					move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, 0.0f, 0.0f));
+					updatePosition(move);
+
+
+					//update hitbox
+					getHitBox().updateHitBox(getOrigin(), FIREBALL_WIDTH, FIREBALL_WIDTH, FIREBALL_HEIGHT, FIREBALL_HEIGHT);
+
+				}
+
+
+
+
+
+
+
+				//play fireball animation
+				if (currentAnimationFrame > animationFrames) {
+					currentAnimationFrame = 0;
+				}
+
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+				}
+				else
+				{
+					animationTimer = EARTH_MINE_ANIMATION_TIME;
+					currentAnimationFrame++;
+
+					if (currentAnimationFrame > animationFrames) {
+						currentAnimationFrame = 0;
+					}
+				}
+
+				
+
+
+
+
+				//check collisions here, if collision, destroy this spell and create an explosion spell at that point
+
+			//COLLISION CHECK
+				if (!queue.empty())
+				{
+					Renderable* createdExplosion = nullptr;
+
+
+					for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+						//checks collision with ENEMY renderable in the queue
+						if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
+
+
+							//deal fireball damage
+							float fireballDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * EARTH_MINE_DAMAGE_MULT;
+							dynamic_cast<Enemy*>(itr->second)->alterHealth(-(fireballDamage));
+							//dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.15f, SpellID::knockback));
+							//dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
+
+
+
+
+							//resize the explosion?
+
+							//create an explosion at this fireball's origin
+							createdExplosion = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::explosion1), SpellID::Explosion1);
+							move = glm::translate(glm::mat4(1.0f), getOrigin());
+							createdExplosion->updatePosition(move);
+
+							getGame()->renderableToPendingAdd(createdExplosion);
+
+							//destroy fireball
+							kill();
+
+
+							//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+							//break;
+
+						}
+
+					}
+
+
+				}
+
+
+
+
+			}
+
+
+
+
+
+
 			break;
 		}
 		case SpellID::FireAirAir: {
@@ -3191,6 +3332,7 @@ void Spell::update(double dt) {
 								float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * METEOR_DAMAGE_MULT;
 								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(explosionDamage));
 								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.45f, SpellID::knockback));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(1.75f, SpellID::FireEarthEarth));
 								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - getOrigin()));
 
 								//dynamic_cast<Enemy*>(itr->second)->addToDamagedBy(this);
@@ -3650,6 +3792,10 @@ void Spell::render() {
 		}
 		case SpellID::FireWaterAir: {
 			renderThisSpell(static_cast<float>(1.0f / 15.0f));//4 frames
+			break;
+		}
+		case SpellID::FireEarthAir: {
+			renderThisSpell(static_cast<float>(1.0f / 10.0f));//4 frames
 			break;
 		}
 		case SpellID::Explosion1: {

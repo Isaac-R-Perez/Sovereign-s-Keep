@@ -90,7 +90,7 @@ const float FIRE_GOLEM_DAMAGE_MULT = 2.5f;
 const float WATER_GOLEM_SIZE_MULT = 0.8f;
 const float AIR_GOLEM_SIZE_MULT = 1.21f;
 
-const int FIRECRACKER_AMOUNT = 7;
+const int FIRECRACKER_AMOUNT = 8;
 const float FIRECRACKER_TIMER = 0.135f;
 
 
@@ -101,6 +101,12 @@ const float METEOR_WIDTH = 0.1f;
 const float METEOR_HEIGHT = 0.1125f;
 const float METEOR_DAMAGE_MULT = 3.75f;
 const float METEOR_FLIGHT_TIME = 0.75f;
+
+const float EARTH_MINE_ANIMATION_TIME = 0.06f;
+const float EARTH_MINE_DURATION = 60.0f;
+const float EARTH_MINE_WIDTH = 0.05f;
+const float EARTH_MINE_HEIGHT = 0.0625f;
+const float EARTH_MINE_DAMAGE_MULT = 1.5f;
 
 
 enum class SpellID {
