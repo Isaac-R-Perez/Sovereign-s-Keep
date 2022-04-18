@@ -366,7 +366,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			//setTexture(static_cast<int>(SPRITE_SHEETS::explosion1));
 			resize(METEOR_WIDTH, METEOR_HEIGHT);
 			duration = METEOR_FLIGHT_TIME;
-			moveSpeed = 0.95f;
+			moveSpeed = 1.25f;
 			break;
 		}
 		case SpellID::Explosion1: {
@@ -2432,7 +2432,7 @@ void Spell::update(double dt) {
 				
 
 
-				floatDistribution = std::uniform_real_distribution<float>(1.0f, 2.5f);
+				floatDistribution = std::uniform_real_distribution<float>(0.85f, 2.5f);
 				distance = floatDistribution(getGame()->getNumberEngine());
 
 

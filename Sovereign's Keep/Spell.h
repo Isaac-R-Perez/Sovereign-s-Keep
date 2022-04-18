@@ -96,11 +96,11 @@ const float FIRECRACKER_TIMER = 0.135f;
 
 const float METEOR_BARRAGE_TIMER = 0.2f;
 const int METEOR_AMOUNT = 1; //how many meteors are spawned by meteor barrage
-const float METEOR_ANIMATION_TIMER = 0.06f;
-const float METEOR_WIDTH = 0.1f;
-const float METEOR_HEIGHT = 0.1125f;
+const float METEOR_ANIMATION_TIMER = 0.042f;
+const float METEOR_WIDTH = 0.125f;
+const float METEOR_HEIGHT = 0.145f;
 const float METEOR_DAMAGE_MULT = 3.75f;
-const float METEOR_FLIGHT_TIME = 0.75f;
+const float METEOR_FLIGHT_TIME = 0.575f;
 
 const float EARTH_MINE_ANIMATION_TIME = 0.06f;
 const float EARTH_MINE_DURATION = 60.0f;
