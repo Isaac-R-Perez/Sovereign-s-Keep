@@ -70,10 +70,10 @@ const float FFREEZE_WIDTH = 0.25f;
 const float FFREEZE_HEIGHT = 0.4f;
 const float FFREEZE_DAMAGE_MULT = 2.0f;
 
-const float BARRAGE_ANIMATION_TIMER = 0.0175f;
-const float BARRAGE_WIDTH = 0.2f;
-const float BARRAGE_HEIGHT = 0.275f;
-const float BARRAGE_DAMAGE_MULT = 1.1f;
+const float BARRAGE_ANIMATION_TIMER = 0.017f;
+const float BARRAGE_WIDTH = 0.4f;
+const float BARRAGE_HEIGHT = 0.45f;
+const float BARRAGE_DAMAGE_MULT = 2.5f;
 
 const float GOLEM_WALKING_ANIMATION_TIMER = 0.06f;
 const float GOLEM_FIRE_ATTACK_TIMER = 0.08f;
@@ -110,14 +110,39 @@ const float EARTH_MINE_DAMAGE_MULT = 1.5f;
 
 const float FIRE_STORM_TIMER = 0.135f;
 const float FIRE_BEAM_ANIMATION_TIMER = 0.04f;
-const float FIRE_BEAM_WIDTH = 0.16f;
-const float FIRE_BEAM_HEIGHT = 0.75f;
+const float FIRE_BEAM_WIDTH = 0.145f;
+const float FIRE_BEAM_HEIGHT = 0.885f;
 const float FIRE_BEAM_DAMAGE_MULT = 2.75f;
 
 const float TSUNAMI_ANIMATION_TIME = 0.085;
 const float TSUNAMI_WIDTH = 1.1f;
 const float TSUNAMI_HEIGHT = 1.1f;
 const float TSUNAMI_DAMAGE_MULT = 7.5f;
+
+const float EARTH_WAVE_SPAWN_TIMER = 0.35f;
+const float EARTH_WAVE_ANIMATION_TIMER = 0.06f;
+const float EARTH_WAVE_WIDTH = 0.15f;
+const float EARTH_WAVE_HEIGHT = 0.175f;
+const float EARTH_WAVE_DAMAGE_MULT = 3.5f;
+
+const float WATER_BEAM_ANIMATION_TIMER = 0.01f;
+const float WATER_BEAM_WIDTH = 0.675f;
+const float WATER_BEAM_HEIGHT = 0.25f;
+const float WATER_BEAM_DAMAGE_MULT = 1.95f;
+
+
+const float WATER_SPOUT_ANIMATION_TIMER = 0.02f;
+const float WATER_SPOUT_WIDTH = 0.175f;
+const float WATER_SPOUT_HEIGHT = 0.375f;
+const float WATER_SPOUT_DAMAGE_MULT = 1.75f;
+const float WATER_SPOUT_DAMAGE_TIMER = 0.18f;
+
+
+const float FISSURE_WIDTH = 0.275f;
+const float FISSURE_HEIGHT = 0.375f;
+const float FISSURE_DAMAGE_MULT = 3.0f;
+const float FISSURE_ANIMATION_TIMER = 0.0375f;
+
 
 
 enum class SpellID {
@@ -235,6 +260,9 @@ public:
 	void setDirection(glm::vec3 dir) { direction = dir; }
 
 	void setCurrentAnimationFrame(int f) { currentAnimationFrame = f; }
+
+	void setFlipped(bool f) { flipped = f; }
+	bool getFlipped() { return flipped; }
 
 private:
 

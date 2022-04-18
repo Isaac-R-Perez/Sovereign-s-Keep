@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Player.h"
+#include <random>
 
 Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T, stats s)
 	:Character(g, rOrder, defaultSpriteSheet)
@@ -157,7 +158,9 @@ void Enemy::update(double dt) {
 			}
 			case EnemyType::minotaur:
 			{
-				animationTimer = MINOTAUR_TIMER;
+				std::uniform_real_distribution<float> dis(0.0f, 0.02f);
+
+				animationTimer = MINOTAUR_TIMER + dis(getGame()->getNumberEngine());
 
 
 				break;

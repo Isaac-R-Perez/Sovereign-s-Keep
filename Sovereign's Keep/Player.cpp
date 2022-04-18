@@ -650,11 +650,11 @@ void Player::LoadPlayerData()
 void Player::WaveBuff()
 {
 	//Percentage based
-	float hpBuff = 0.05f; // %5
+	float hpBuff = 0.025f; // %5
 	float atkBuff = 0.01f; // %1
 	float defBuff = 0.01f; // %1
 	float speedBuff = 0.02f; // %2
-	float manaBuff = 0.01f;
+	float manaBuff = 0.025f;
 	float manaRegenBuff = 0.01f;
 
 	setBaseMaxHealth(getBaseMaxHealth() + (getBaseMaxHealth() * hpBuff));
