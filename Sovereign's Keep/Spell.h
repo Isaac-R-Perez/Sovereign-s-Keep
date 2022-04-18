@@ -108,6 +108,12 @@ const float EARTH_MINE_WIDTH = 0.05f;
 const float EARTH_MINE_HEIGHT = 0.0625f;
 const float EARTH_MINE_DAMAGE_MULT = 1.5f;
 
+const float FIRE_STORM_TIMER = 0.135f;
+const float FIRE_BEAM_ANIMATION_TIMER = 0.04f;
+const float FIRE_BEAM_WIDTH = 0.16f;
+const float FIRE_BEAM_HEIGHT = 0.75f;
+const float FIRE_BEAM_DAMAGE_MULT = 2.75f;
+
 
 enum class SpellID {
 	

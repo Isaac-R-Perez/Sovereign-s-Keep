@@ -272,9 +272,11 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::FireAirAir: {
 			spellName = "Fire Storm";
-			manaCost = 75.0f;
+			manaCost = 45.0f;
 			castTime = 1.0f;
-			duration = 10.0f;
+			duration = 7.5f;
+			animationFrames = 0;
+			floatDistribution = std::uniform_real_distribution<float>(0.0, 2.0f * glm::pi<float>());
 			break;
 		}
 		case SpellID::WaterWaterWater: {
@@ -405,7 +407,9 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			break;
 		}
 		case SpellID::FirePillar: {
-
+			animationFrames = 9;
+			//setTexture(static_cast<int>(SPRITE_SHEETS::explosion1));
+			resize(FIRE_BEAM_WIDTH, FIRE_BEAM_HEIGHT);
 			break;
 		}
 		case SpellID::SmallEarthSpike: {
@@ -2616,8 +2620,65 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+
+			Renderable* createdPillar = nullptr;
+			glm::mat4 move;
+			glm::mat4 rotation;
+
+
+			//flip the waterBolt direction if player is facing left
+			float angle = 0.0f;
+			float distance = 0.0f;
+
+
+			damageTimer -= dt;
+
+			if (damageTimer <= 0.0f) {
+
+
+				//create a random angle and rotate the base direction by that angle and normalize and then use that to spawn meteor
+				direction = glm::vec3(1.0f, 0.0f, 0.0f);
+
+				floatDistribution = std::uniform_real_distribution<float>(0.0f, (2.0f * glm::pi<float>()));
+
+				angle = floatDistribution(getGame()->getNumberEngine());
+
+				rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+				direction = glm::normalize(rotation * glm::vec4(direction, 0.0f));
+
+				createdPillar = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::fire_beam), SpellID::FirePillar);
+
+
+
+
+				floatDistribution = std::uniform_real_distribution<float>(0.9f, 2.5f);
+				distance = floatDistribution(getGame()->getNumberEngine());
+
+
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x + direction.x / distance,
+					dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().y + direction.y / distance, 0.0f));
+
+				dynamic_cast<Spell*>(createdPillar)->updatePosition(move);
+
+				getGame()->renderableToPendingAdd(createdPillar);
+
+
+				damageTimer = FIRE_STORM_TIMER;
+
+				//animationFrames++;
+
+
+
+
+			}
+
+			duration -= dt;
+
+			if (duration <= 0.0f) {
+				kill();
+			}
+
 			break;
 		}
 		case SpellID::WaterWaterWater: {
@@ -3636,6 +3697,104 @@ void Spell::update(double dt) {
 		}
 		case SpellID::FirePillar: {
 
+			glm::mat4 move;
+
+
+			if (firstUpdate) {
+				//do first update things
+				firstUpdate = false;
+
+				float sizeAlter = 0.95f;
+
+				//update hitbox
+				getHitBox().updateHitBox(getOrigin(), getWidth() * sizeAlter, getWidth() * sizeAlter, getWidth() * sizeAlter, getWidth() * sizeAlter); //explosion size can be set by the creating spell
+
+
+			}
+			else
+			{
+				//initially the explosion cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+				//play explosion animation, enable collision on a certain frame
+				if (currentAnimationFrame == 1) {
+					collisionFrame = true;
+				}
+				else
+				{
+					collisionFrame = false;
+				}
+
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+				}
+				else
+				{
+					animationTimer = FIRE_BEAM_ANIMATION_TIMER;
+					currentAnimationFrame++;
+
+					//destroy explosion at end of animation
+					if (currentAnimationFrame > animationFrames) {
+						kill();
+					}
+				}
+
+
+
+
+
+				//only check collision on the collisionFrame
+				if (collisionFrame && !dealtDamage) {
+
+					//COLLISION CHECK
+					if (!queue.empty())
+					{
+						for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+							//checks collision with ENEMY renderable in the queue
+							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
+
+
+								//deal damage
+								float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * EXPLOSION1_DAMAGE_MULT;
+								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(explosionDamage));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.225f, SpellID::knockback));
+								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin() - getOrigin()));
+
+								//dynamic_cast<Enemy*>(itr->second)->addToDamagedBy(this);
+
+								dealtDamage = true;
+								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+								//break;
+
+
+
+
+							}
+						}
+
+
+
+					}
+				}
+
+
+
+
+
+
+
+
+			}
+
+
+
+
 			break;
 		}
 		case SpellID::SmallEarthSpike: {
@@ -3804,6 +3963,10 @@ void Spell::render() {
 		}
 		case SpellID::Meteor: {
 			renderThisSpell(static_cast<float>(1.0f / 5.0f));//11 frames
+			break;
+		}
+		case SpellID::FirePillar: {
+			renderThisSpell(static_cast<float>(1.0f / 10.0f));//11 frames
 			break;
 		}
 		case SpellID::WaterBolt: {
