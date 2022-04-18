@@ -905,11 +905,11 @@ bool Game::initialize() {
 	//b = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime);
 	//renderableToPendingAdd(b);
 	baseEnemies.clear();
-	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime, Enemy::stats(100.0, 100.0f, 10.0f, 5.0f, 0.2f))); //slime at [0]
-	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::bat), EnemyType::bat, Enemy::stats(65.0, 65.0f, 5.0f, 2.0f, 0.35f))); //bat at [1]
-	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::crab), EnemyType::crab, Enemy::stats(130.0, 130.0f, 5.0f, 3.0f, 0.1f))); //crab at [2]
-	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::minotaur), EnemyType::minotaur, Enemy::stats(200.0, 200.0f, 15.0f, 5.0f, 0.25f))); //minotaur at [3]
-	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::skull), EnemyType::skull, Enemy::stats(75.0, 75.0f, 10.0f, 1.0f, 0.3f))); //skull at [4]
+	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime, Enemy::stats(100.0, 100.0f, 25.0f, 5.0f, 0.2f))); //slime at [0]
+	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::bat), EnemyType::bat, Enemy::stats(65.0, 65.0f, 15.0f, 2.0f, 0.35f))); //bat at [1]
+	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::crab), EnemyType::crab, Enemy::stats(130.0, 130.0f, 45.0f, 3.0f, 0.1f))); //crab at [2]
+	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::minotaur), EnemyType::minotaur, Enemy::stats(200.0, 200.0f, 80.0f, 5.0f, 0.25f))); //minotaur at [3]
+	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::skull), EnemyType::skull, Enemy::stats(75.0, 75.0f, 65.0f, 1.0f, 0.3f))); //skull at [4]
 
 	return true;
 
@@ -982,7 +982,7 @@ void Game::setupBuffers() {
 	glEnableVertexAttribArray(vPosition);
 	
 	GLint vColor = glGetAttribLocation(renderables_programID, "vColor");
-	if (vColor < 0) printf("Couldn't find vColor in shader! SETUP\n");
+	//if (vColor < 0) printf("Couldn't find vColor in shader! SETUP\n");
 	glVertexAttribPointer(vColor, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(vColor);
 	
@@ -1221,6 +1221,8 @@ void Game::updateCamera(glm::vec3& playerOrigin) {
 
 	//const float BACKGROUND_SCALE = BACKGROUND_WIDTH;
 	const float CAMERA_SIZE = 1.0f; //camera is always a square centered at origin with top right corner being (1.0,1.0)
+
+	//printf("%f\n", cameraCenter.x);
 
 	if (playerOrigin.x + CAMERA_SIZE > BACKGROUND_WIDTH)
 	{

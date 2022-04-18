@@ -85,7 +85,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		case SpellID::FireWater: {
 			spellName = "Steam Blast";
 			manaCost = 10.0f;
-			castTime = 0.25f;
+			castTime = 0.2f;
 			animationFrames = 7;
 			setTexture(static_cast<int>(SPRITE_SHEETS::steam_blast));
 			resize(STEAM_BLAST_WIDTH, STEAM_BLAST_WIDTH);
@@ -94,7 +94,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		case SpellID::FireEarth: {
 			spellName = "Fireball";
 			manaCost = 20.0f;
-			castTime = 0.6f;
+			castTime = 0.15f;
 			duration = 1.45f; //lifetime of firebolt
 			animationFrames = 3; //firebolt
 			setTexture(static_cast<int>(SPRITE_SHEETS::fireball));
@@ -133,12 +133,12 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		case SpellID::WaterAir: {
 			spellName = "Bubble Shot";
 			manaCost = 5.0f;
-			castTime = 0.1f;
+			castTime = 0.05f;
 			duration = 1.6f; //lifetime of firebolt
 			animationFrames = 8; //firebolt
 			setTexture(static_cast<int>(SPRITE_SHEETS::bubble_shot));
 			moveSpeed = 0.65f;
-			//direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
 			resize(BUBBLE_SHOT_WIDTH, BUBBLE_SHOT_HEIGHT);
 			break;
 		}
@@ -146,7 +146,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		case SpellID::EarthEarth: {
 			spellName = "Boulder Sling";
 			manaCost = 25.0f;
-			castTime = 0.5f;
+			castTime = 0.56f;
 			duration = 1.45f; //lifetime of firebolt
 			animationFrames = 2; //firebolt
 			setTexture(static_cast<int>(SPRITE_SHEETS::boulder_shot));
@@ -283,6 +283,9 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Tsunami";
 			manaCost = 90.0f;
 			castTime = 2.0f;
+			animationFrames = 13;
+			setTexture(static_cast<int>(SPRITE_SHEETS::tsunami));
+			resize(TSUNAMI_WIDTH, TSUNAMI_HEIGHT);
 			break;
 		}
 		case SpellID::WaterWaterEarth: {
@@ -2692,8 +2695,116 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+
+			glm::mat4 move;
+			////float alterSizeW = 0.75f;
+			//float alterSizeH = 0.525f;
+
+			if (firstUpdate) {
+				//do first update things
+				firstUpdate = false;
+
+				if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft()) {
+					flip();
+					move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
+					updatePosition(move);
+				}
+				else
+				{
+					move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
+					updatePosition(move);
+				}
+
+
+
+				//update hitbox
+				
+				getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getHeight(), getHeight()); //explosion size can be set by the creating spell
+
+
+			}
+			else
+			{
+				//initially the explosion cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+				
+
+				//play explosion animation, enable collision on a certain frame
+				if (currentAnimationFrame == 3) {
+					collisionFrame = true;
+				}
+				else
+				{
+					collisionFrame = false;
+				}
+
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+				}
+				else
+				{
+					animationTimer = TSUNAMI_ANIMATION_TIME;
+					currentAnimationFrame++;
+
+					//destroy explosion at end of animation
+					if (currentAnimationFrame > animationFrames) {
+						kill();
+					}
+				}
+
+
+
+
+
+				//only check collision on the collisionFrame
+				if (collisionFrame && !dealtDamage) {
+
+					//COLLISION CHECK
+					if (!queue.empty())
+					{
+						for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+							//checks collision with ENEMY renderable in the queue
+							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
+
+
+								//deal damage
+								float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * TSUNAMI_DAMAGE_MULT;
+								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(explosionDamage));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(1.5f, SpellID::knockback));
+								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
+
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(5.0f, SpellID::FireWaterAir));
+
+								dealtDamage = true;
+								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+								//break;
+
+
+
+
+							}
+						}
+
+
+
+					}
+				}
+
+
+
+
+
+			}
+
+
+
+
+
 			break;
 		}
 		case SpellID::WaterWaterEarth: {
@@ -3955,6 +4066,10 @@ void Spell::render() {
 		}
 		case SpellID::FireEarthAir: {
 			renderThisSpell(static_cast<float>(1.0f / 10.0f));//4 frames
+			break;
+		}
+		case SpellID::WaterWaterWater: {
+			renderThisSpell(static_cast<float>(1.0f / 14.0f));//4 frames
 			break;
 		}
 		case SpellID::Explosion1: {

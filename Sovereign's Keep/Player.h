@@ -47,6 +47,8 @@ const float PLAYER_WIDTH = 0.0275f;
 
 const int MAX_ELEMENT_LEVEL = 3; //The max level any element can be.
 
+const float INVULNERABLE_TIMER = 0.25f;
+
 class Player : public Character
 {
 private:
@@ -143,7 +145,10 @@ private:
 	Renderable* spellLeftElement;
 	Renderable* spellRightElement;
 
+	//is set when player is hit
+	float invulerableTimer;
 
+	bool GOT_HIT;
 
 public:
 

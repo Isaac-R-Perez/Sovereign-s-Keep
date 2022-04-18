@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Basic_Attack.h"
+#include "Background.h"
 #include "GUI_Element.cpp"
 
 Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
@@ -62,7 +63,7 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	*/
 	setBaseMaxHealth(INITIAL_MAX_HEALTH);
 	setBaseMaxMana(INITIAL_MAX_MANA);
-	setCurrentMaxMana(INITIAL_MAX_MANA);
+	setCurrentMaxMana(getBaseMaxMana());
 	setCurrentMaxHealth(getBaseMaxHealth());
 	setCurrentHealth(10.0f);
 	setCurrentMana(INITIAL_MAX_MANA);
@@ -143,7 +144,7 @@ void Player::update(double dt) {
 	//display current spell elements if not NONE
 	displayCurrentSpell();
 
-
+	GOT_HIT = false;
 
 
 
@@ -476,7 +477,7 @@ void Player::update(double dt) {
 			movementVector.x -= 1.0f;
 		}
 
-		glm::normalize(movementVector);
+		//movementVector = glm::normalize(movementVector);
 
 		move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed(), movementVector.y * dt * getCurrentMoveSpeed(), 0.0f));
 
@@ -485,38 +486,86 @@ void Player::update(double dt) {
 	}
 
 
-	
-	//COLLISION CHECK
-	if (!queue.empty())
-	{
-		for (itr = queue.begin(); itr != queue.end(); ) {
 
-			//checks collision with EVERY renderable in the queue
-			if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
-				switch (itr->second->renderOrder) {
-				
+
+	invulerableTimer -= dt;
+
+	if (invulerableTimer <= 0) {
+
+		//COLLISION CHECK
+		if (!queue.empty())
+		{
+			for (itr = queue.begin(); itr != queue.end(); ) {
+
+				//checks collision with EVERY renderable in the queue
+				if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+					switch (itr->second->renderOrder) {
+
 
 					case 3: {//enemy
-						
 
-						
-						printf("PLAYER IS COLLIDING WITH ENEMY\n");
-						break;
+						float damage = dynamic_cast<Enemy*>(itr->second)->getCurrentAttack();
+						alterHealth(-(damage - getCurrentDefense()));
+
+						invulerableTimer = INVULNERABLE_TIMER;
+						//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+						//break;
+						GOT_HIT = true;
 					}
 
+					}
 				}
+
+				++itr;
+
 			}
-
-			++itr;
-
 		}
+
+
 	}
+	
+	//if player is out of bounds, push them back in
+	const float CAMERA_SIZE = 1.0f; //camera is always a square centered at origin with top right corner being (1.0,1.0)
+
+	//printf("%f\n", cameraCenter.x);
+
+	if (getOrigin().x + (getWidth() / 2.0f)  > BACKGROUND_WIDTH)
+	{
+		move = glm::translate(glm::mat4(1.0f), glm::vec3(-0.015f, 0.0f, 0.0f));
+
+		updatePosition(move);
+	}
+	if (getOrigin().x - (getWidth() / 2.0f) < -BACKGROUND_WIDTH)
+	{
+		move = glm::translate(glm::mat4(1.0f), glm::vec3(0.015f,0.0f, 0.0f));
+
+		updatePosition(move);
+	}
+	if (getOrigin().y + (getHeight() / 2.0f) > BACKGROUND_HEIGHT)
+	{
+		move = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.015f, 0.0f));
+
+		updatePosition(move);
+	}
+	if (getOrigin().y - (getHeight() / 2.0f) < -BACKGROUND_HEIGHT)
+	{
+		move = glm::translate(glm::mat4(1.0f),  glm::vec3(0.0f, 0.015f, 0.0f));
+
+		updatePosition(move);
+	}
+	//printf("%f\n", currentManaRegenRate);
 
 
+	//setHealthLastFrame(getCurrentHealth());
 
 
-	setHealthLastFrame(getCurrentHealth());
+	if (getCurrentHealth() <= 0.0f) {
+		
+		//kill the player
 
+
+		setCurrentHealth(0.1f);
+	}
 
 
 }
@@ -609,7 +658,7 @@ void Player::WaveBuff()
 	float manaRegenBuff = 0.01f;
 
 	setBaseMaxHealth(getBaseMaxHealth() + (getBaseMaxHealth() * hpBuff));
-	setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
+	//setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
 
 	setBaseHealth(getBaseMaxHealth() + (getBaseMaxHealth() * hpBuff));
 	setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
@@ -624,6 +673,9 @@ void Player::WaveBuff()
 	setCurrentMoveSpeed(getCurrentMoveSpeed() + (getCurrentMoveSpeed() * speedBuff));
 
 	setBaseMaxMana(getBaseMaxMana() + (getBaseMaxMana() * manaBuff));
+	//setCurrentMana(getCurrentMana() + (getCurrentMana() * manaBuff));
+
+	setCurrentMaxMana(getBaseMaxMana() + (getBaseMaxMana() * manaBuff));
 	setCurrentMana(getCurrentMana() + (getCurrentMana() * manaBuff));
 
 	setBaseManaRegenRate(getBaseManaRegenRate() + (getBaseManaRegenRate() * manaRegenBuff));
@@ -637,12 +689,11 @@ void Player::render() {
 	float right = 0.0f; //x value
 	float up = 0.0f;
 	
-
-	if (getHealthLastFrame() - getCurrentHealth() >= 1.0f) {
-		//took more than 1 damage, so flash red for one frame
+	//printf("%f\n", getHealthLastFrame());
+	if (GOT_HIT) {
 		getGame()->setGUIFlag(-1);
-	}
 
+	}
 	
 	if (animationState == states::idling) {
 

@@ -114,6 +114,11 @@ const float FIRE_BEAM_WIDTH = 0.16f;
 const float FIRE_BEAM_HEIGHT = 0.75f;
 const float FIRE_BEAM_DAMAGE_MULT = 2.75f;
 
+const float TSUNAMI_ANIMATION_TIME = 0.085;
+const float TSUNAMI_WIDTH = 1.1f;
+const float TSUNAMI_HEIGHT = 1.1f;
+const float TSUNAMI_DAMAGE_MULT = 7.5f;
+
 
 enum class SpellID {
 	

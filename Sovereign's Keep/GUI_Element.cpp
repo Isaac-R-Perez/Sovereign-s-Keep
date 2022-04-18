@@ -32,7 +32,7 @@ void GUI_Element::update(double dt) {
 		//change width of bar to math player's current Health
 		width = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentHealth();
 
-		width = (width / (SCREEN_WIDTH / 1.5f));
+		width = (width / (SCREEN_WIDTH ));
 
 		resize(width, BAR_HEIGHT);
 
@@ -49,7 +49,7 @@ void GUI_Element::update(double dt) {
 		//change width of bar to match player's current Mana
 		width = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentMana();
 
-		width = (width / (SCREEN_WIDTH / 1.5f));
+		width = (width / (SCREEN_WIDTH ));
 
 		resize(width, BAR_HEIGHT);
 
