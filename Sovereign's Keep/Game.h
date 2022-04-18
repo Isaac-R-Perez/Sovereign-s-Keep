@@ -139,7 +139,7 @@ public:
 
 	//Enemy Wave functions
 	void GenerateNextWave();
-	void SpawnEnemy();
+	void SpawnEnemy(int randomNum);
 
 private:
 
