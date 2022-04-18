@@ -265,7 +265,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			duration = EARTH_MINE_DURATION; //lifetime of firebolt
 			animationFrames = 9; //firebolt
 			setTexture(static_cast<int>(SPRITE_SHEETS::earth_mine));
-			moveSpeed = 0.55f;
+			moveSpeed = 0.275f;
 			direction = glm::vec3(1.0f, 0.0f, 0.0f);
 			resize(EARTH_MINE_WIDTH, EARTH_MINE_HEIGHT);
 			break;
