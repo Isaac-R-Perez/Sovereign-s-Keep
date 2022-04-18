@@ -45,6 +45,8 @@ enum class SPRITE_SHEETS
 	mud_pit, boulder_shot,
 	air_spike, barrage, flash_freeze, geyser,
 
+	meteor, fire_beam, earth_spike, tsunami, earth_mine, water_beam, water_spout, earth_impale, saturn_rock, whirlwind,
+
 	fire_golem_walking, fire_golem_attacking, fire_golem_attacking_left,
 	water_golem_walking, water_golem_attacking, water_golem_attacking_left,
 	air_golem_walking, air_golem_attacking, air_golem_attacking_left,

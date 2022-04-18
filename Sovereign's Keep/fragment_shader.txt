@@ -20,6 +20,9 @@ void main(){
 	{
 	FragColor = texture(ourTexture, TexCoord) * vec4(15.0, 0.0, 0.0, 1.0);
 	}
+	else if(gui == -2){
+	FragColor = texture(ourTexture, TexCoord) * vec4(1.0, 1.0, 5.5, 1.0);
+	}
 	else
 	{
 	FragColor = texture(ourTexture, TexCoord);

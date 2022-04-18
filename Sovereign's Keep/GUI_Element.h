@@ -62,5 +62,6 @@ private:
 	//render them based on this vector
 	DisplayElementData IconData;
 
+	bool firstRender;
 
 };

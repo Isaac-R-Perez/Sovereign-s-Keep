@@ -272,6 +272,46 @@ void Game::loadAllTextures() {
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::geyser), generatedTexture));
 
 
+
+	generateTexture(generatedTexture, 220, 44, 3, "images/spell/meteor.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::meteor), generatedTexture));
+
+	generateTexture(generatedTexture, 260, 20, 3, "images/spell/earth_mine.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::earth_mine), generatedTexture));
+	
+	generateTexture(generatedTexture, 300, 32, 3, "images/spell/fire_beam.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::fire_beam), generatedTexture));
+
+
+	generateTexture(generatedTexture, 896, 64, 3, "images/spell/tsunami.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::tsunami), generatedTexture));
+
+	generateTexture(generatedTexture, 150, 17, 3, "images/spell/earth_spike.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::earth_spike), generatedTexture));
+
+
+
+	generateTexture(generatedTexture, 1823, 40, 3, "images/spell/water_beam.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::water_beam), generatedTexture));
+
+	generateTexture(generatedTexture, 672, 93, 3, "images/spell/water_spout.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::water_spout), generatedTexture));
+
+
+
+	generateTexture(generatedTexture, 752, 45, 3, "images/spell/earth_impale.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::earth_impale), generatedTexture));
+
+	generateTexture(generatedTexture, 16, 20, 3, "images/spell/saturns_rock.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::saturn_rock), generatedTexture));
+
+
+
+	generateTexture(generatedTexture, 297, 29, 3, "images/spell/whirlwind.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::whirlwind), generatedTexture));
+
+
+
 	generateTexture(generatedTexture, 180, 32, 3, "images/player/golem/golem_fire_walking.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::fire_golem_walking), generatedTexture));
 
@@ -866,7 +906,7 @@ bool Game::initialize() {
 	//renderableToPendingAdd(b);
 	baseEnemies.clear();
 	baseEnemies.emplace_back( new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime, Enemy::stats(100.0, 100.0f, 10.0f, 5.0f, 0.2f))); //slime at [0]
-	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::bat), EnemyType::bat, Enemy::stats(65.0, 65.0f, 5.0f, 2.0f, 0.35f))); //bat at [1]
+	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::bat), EnemyType::bat, Enemy::stats(65.0, 65.0f, 5.0f, 2.0f, 0.25f))); //bat at [1]
 
 	return true;
 

@@ -61,9 +61,14 @@ const float AIR_SPIKE_DAMAGE_MULT = 1.75f;
 
 
 const float GEYSER_ANIMATION_TIMER = 0.05f;
-const float GEYSER_WIDTH = 0.08;
+const float GEYSER_WIDTH = 0.08f;
 const float GEYSER_HEIGHT = 0.225f;
 const float GEYSER_DAMAGE_MULT = 5.0f;
+
+const float FFREEZE_ANIMATION_TIMER = 0.025;
+const float FFREEZE_WIDTH = 0.25f;
+const float FFREEZE_HEIGHT = 0.4f;
+const float FFREEZE_DAMAGE_MULT = 2.0f;
 
 const float BARRAGE_ANIMATION_TIMER = 0.0175f;
 const float BARRAGE_WIDTH = 0.2f;

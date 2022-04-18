@@ -238,7 +238,7 @@ void Enemy::update(double dt) {
 
 			//movementVector = glm::normalize(movementVector);
 
-			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed(), movementVector.y * dt * getCurrentMoveSpeed() * 0.85f, 0.0f));
+			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed() * 0.85f, movementVector.y * dt * getCurrentMoveSpeed() * 0.85f, 0.0f));
 
 			//ADD this back when testing is done
 
@@ -261,7 +261,26 @@ void Enemy::update(double dt) {
 
 
 	}
-	if (stunned) {
+	else if (frozen) {
+
+
+
+		//also set GUI flag for blue tint
+		if (knockback) {
+			//create a vector TOWARDS the player's origin
+			movementVector = knockbackDirection;
+
+			//movementVector = glm::normalize(movementVector);
+
+			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed() * 0.5f, movementVector.y * dt * getCurrentMoveSpeed() * 0.5f, 0.0f));
+
+			//ADD this back when testing is done
+
+			updatePosition(move);
+		}
+
+	}
+	else if (stunned) {
 
 
 
@@ -271,7 +290,7 @@ void Enemy::update(double dt) {
 
 			//movementVector = glm::normalize(movementVector);
 
-			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed(), movementVector.y * dt * getCurrentMoveSpeed() * 0.85f, 0.0f));
+			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed() * 0.7f, movementVector.y * dt * getCurrentMoveSpeed() * 0.7f, 0.0f));
 
 			//ADD this back when testing is done
 
@@ -281,13 +300,7 @@ void Enemy::update(double dt) {
 
 
 	}
-	if (frozen) {
-
-
-
-		//also set GUI flag for blue tint
-
-	}
+	
 
 
 	
@@ -326,6 +339,10 @@ void Enemy::render() {
 	float idle_stride = 0.0f;
 	float left = 0.0f;
 	float right = 0.0f;
+
+	if (frozen) {
+		getGame()->setGUIFlag(-2);
+	}
 
 	if (getHealthLastFrame() - getCurrentHealth() >= 1.0f) {
 		//took more than 1 damage, so flash red for one frame
@@ -416,6 +433,7 @@ void Enemy::applySpellBuffs() {
 	setCurrentAttack(getBaseAttack());
 
 	stunned = false;
+	frozen = false;
 
 
 	//set all current stats to the BASE stats for this enemy
@@ -425,6 +443,10 @@ void Enemy::applySpellBuffs() {
 
 	if (searchSpellBuff(SpellID::EarthEarth)) {
 		stunned = true;
+	}
+
+	if (searchSpellBuff(SpellID::FireWaterAir)) {
+		frozen = true;
 	}
 
 	amt = buffAmount(SpellID::EarthAir);

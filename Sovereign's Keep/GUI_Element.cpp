@@ -17,6 +17,7 @@ GUI_Element::GUI_Element(Game* g, int rOrder, int defaultSpriteSheet, GUIType t)
 		resize(PLAYER_ICON_WIDTH, PLAYER_ICON_HEIGHT);
 	}
 
+	firstRender = true;
 	
 }
 
@@ -65,7 +66,7 @@ void GUI_Element::update(double dt) {
 	}
 	
 
-
+	
 
 }
 
@@ -74,46 +75,41 @@ void GUI_Element::render() {
 
 	glm::mat4 move;
 	
-
-
-	/*
-		render bars normally
-
-		if icon, then loop through the vector, translate to location and change to set icon
-		then render
-	
-	*/
-
-	
-
-
-	if (guiType == GUIType::HealthBar) {
-		getGame()->setGUIFlag(1);
-
-	}
-	
-	if (guiType == GUIType::ManaBar) {
-		getGame()->setGUIFlag(2);
-	}
-
-
-
-	if (guiType == GUIType::HealthBar || guiType == GUIType::ManaBar) {
-		
-		GLint objectToWorld = glGetUniformLocation(getGame()->getRenderablesProgID(), "objectToWorld");
-		if (objectToWorld < 0) printf("couldn't find objectToWorld in shader\n");
-		glUniformMatrix4fv(objectToWorld, 1, GL_FALSE, glm::value_ptr(getO2W()));
-
-		glBindTexture(GL_TEXTURE_2D, getTexture());
-		glBindVertexArray(getGame()->getVAO());
-
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-
+	if (firstRender) {
+		firstRender = false;
 	}
 	else
 	{
-		
+
+
+
+		if (guiType == GUIType::HealthBar) {
+			getGame()->setGUIFlag(1);
+
+		}
+
+		if (guiType == GUIType::ManaBar) {
+			getGame()->setGUIFlag(2);
+		}
+
+
+
+		if (guiType == GUIType::HealthBar || guiType == GUIType::ManaBar) {
+
+			GLint objectToWorld = glGetUniformLocation(getGame()->getRenderablesProgID(), "objectToWorld");
+			if (objectToWorld < 0) printf("couldn't find objectToWorld in shader\n");
+			glUniformMatrix4fv(objectToWorld, 1, GL_FALSE, glm::value_ptr(getO2W()));
+
+			glBindTexture(GL_TEXTURE_2D, getTexture());
+			glBindVertexArray(getGame()->getVAO());
+
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+		}
+		else
+		{
+
 			//this tells the shader that the renderable is a GUI element, but has a texture
 			getGame()->setGUIFlag(3);
 			//loop through the vector, change to the appropriate icon texture, and move to the correct position.
@@ -156,12 +152,23 @@ void GUI_Element::render() {
 
 
 			kill();
+		}
+
+
+
+
+		getGame()->setGUIFlag(0);
 	}
 
+	/*
+		render bars normally
 
+		if icon, then loop through the vector, translate to location and change to set icon
+		then render
+	
+	*/
 
-
-	getGame()->setGUIFlag(0);
+	
 	//this clears the vector so that a fresh set of data can be sent.
 	
 }

@@ -240,13 +240,21 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		case SpellID::FireWaterAir: {
 			spellName = "Flash Freeze";
 			manaCost = 15.0f;
-			castTime = 0.6f;
+			castTime = 0.45f;
+			animationFrames = 14; //firebolt
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			moveSpeed = 0.01f;
+			setTexture(static_cast<int>(SPRITE_SHEETS::flash_freeze));
+			resize(FFREEZE_WIDTH, FFREEZE_HEIGHT);
 			break;
 		}
 		case SpellID::FireEarthEarth: {
 			spellName = "Meteor Barrage";
 			manaCost = 80.0f;
 			castTime = 1.25f;
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			animationFrames = 0;
+			floatDistribution = std::uniform_real_distribution<float>(0.0, 2.0f * glm::pi<float>());
 			break;
 		}
 		case SpellID::FireEarthAir: {
@@ -2243,61 +2251,31 @@ void Spell::update(double dt) {
 
 
 			glm::mat4 move;
-
+			const float xDistance = 0.35f;
 
 			if (firstUpdate) {
 				//do first update things
 				firstUpdate = false;
 
-				float smallestDistance = 10000.0f;
-				float checkDistance = 0.0f;
-				Renderable* nearestEnemy = nullptr;
-
-				//search for nearest enemy here set location of this spell to that enemy's origin
-
-				if (!queue.empty())
-				{
-					for (itr = queue.begin(); itr != queue.end(); ++itr) {
-
-						if (itr->second->renderOrder == 3) {
-							checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
-
-							if (checkDistance < smallestDistance) {
-								smallestDistance = checkDistance;
-								nearestEnemy = itr->second;
-							}
-						}
 
 
-
-					}
-
-				}
-
-
-				if (nearestEnemy != nullptr) {
-					//move to that enemies origin
-
-					if (dynamic_cast<Enemy*>(nearestEnemy)->getOrigin().x < dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x) {
+					if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft()) {
 						flip();
 						direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+						move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x - xDistance,
+							dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().y, 0.0f));
+						updatePosition(move);
 
 					}
-
-					move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Enemy*>(nearestEnemy)->getOrigin()));
-					updatePosition(move);
-				}
-				else {
-					//move to player origin
-					move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
-					updatePosition(move);
-				}
+					else
+					{
+						move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x + xDistance,
+							dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().y, 0.0f));
+						updatePosition(move);
+					}
 
 
-
-
-
-
+				
 			}
 			else
 			{
@@ -2311,7 +2289,7 @@ void Spell::update(double dt) {
 				move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, 0.0f, 0.0f));
 				updatePosition(move);
 
-				float sizeAlter = 0.9f;
+				float sizeAlter = 0.95f;
 
 				//update hitbox
 				getHitBox().updateHitBox(getOrigin(), getWidth() * sizeAlter, getWidth() * sizeAlter, getHeight() * sizeAlter, getHeight() * sizeAlter); //explosion size can be set by the creating spell
@@ -2319,7 +2297,7 @@ void Spell::update(double dt) {
 
 
 				//play explosion animation, enable collision on a certain frame
-				if (currentAnimationFrame == 3) {
+				if (currentAnimationFrame == 2) {
 					collisionFrame = true;
 				}
 				else
@@ -2332,7 +2310,7 @@ void Spell::update(double dt) {
 				}
 				else
 				{
-					animationTimer = GEYSER_ANIMATION_TIMER;
+					animationTimer = FFREEZE_ANIMATION_TIMER;
 					currentAnimationFrame++;
 
 					//destroy explosion at end of animation
@@ -2359,12 +2337,12 @@ void Spell::update(double dt) {
 
 
 								//deal damage
-								float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * GEYSER_DAMAGE_MULT;
+								float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * FFREEZE_DAMAGE_MULT;
 								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(explosionDamage));
-								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.75f, SpellID::knockback));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.5f, SpellID::knockback));
 								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
 
-								//dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(2.5f, SpellID::EarthAir));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(3.25f, ID));
 
 								dealtDamage = true;
 								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
@@ -2407,8 +2385,100 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+
+			Renderable* createdExplosion = nullptr;
+			glm::mat4 move;
+			glm::mat4 rotation;
+
+
+			//flip the waterBolt direction if player is facing left
+			float angle = 0.0f;
+
+			if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft()) {
+				direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+			}
+			else
+			{
+				direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			}
+
+
+			damageTimer -= dt;
+
+			if (damageTimer <= 0.0f) {
+
+				if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft()) {
+					angle = (-glm::pi<float>()) / 3.0f;
+
+					rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+					direction = rotation * glm::vec4(direction, 0.0f);
+
+
+
+					angle = (((2.0 * glm::pi<float>() / 3.0f)) / (static_cast<float>(FIRECRACKER_AMOUNT))) * static_cast<float>(animationFrames);
+
+
+					//create water bolt and set its direction + random angle
+					createdExplosion = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::explosion1), SpellID::Explosion1);
+
+					//angle += (((2.0 * glm::pi<float>() / 3.0f)) / (static_cast<float>(FIRECRACKER_AMOUNT)));
+
+					rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+				}
+				else
+				{
+					angle = (glm::pi<float>()) / 3.0f;
+
+
+
+
+					rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+					direction = rotation * glm::vec4(direction, 0.0f);
+
+
+
+					angle = (((2.0 * glm::pi<float>() / 3.0f)) / (static_cast<float>(FIRECRACKER_AMOUNT))) * static_cast<float>(animationFrames);
+
+
+					//create water bolt and set its direction + random angle
+					createdExplosion = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::explosion1), SpellID::Explosion1);
+
+					//angle += (((2.0 * glm::pi<float>() / 3.0f)) / (static_cast<float>(FIRECRACKER_AMOUNT)));
+
+					rotation = glm::rotate(glm::mat4(1.0f), -angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+
+				}
+
+
+
+				direction = rotation * glm::vec4(direction, 0.0f);
+
+
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x + direction.x / 2.25f,
+					dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().y + direction.y / 2.25f, 0.0f));
+
+				dynamic_cast<Spell*>(createdExplosion)->updatePosition(move);
+
+				getGame()->renderableToPendingAdd(createdExplosion);
+
+
+				damageTimer = FIRECRACKER_TIMER;
+
+				animationFrames++;
+
+				if (animationFrames == FIRECRACKER_AMOUNT) {
+					kill();
+				}
+
+
+			}
+
+
+
 			break;
 		}
 		case SpellID::FireEarthAir: {
@@ -3480,7 +3550,10 @@ void Spell::render() {
 
 			break;
 		}
-
+		case SpellID::FireWaterAir: {
+			renderThisSpell(static_cast<float>(1.0f / 15.0f));//4 frames
+			break;
+		}
 		case SpellID::Explosion1: {
 			renderThisSpell(static_cast<float>(1.0f / 11.0f));//11 frames
 			break;
