@@ -255,6 +255,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			direction = glm::vec3(1.0f, 0.0f, 0.0f);
 			animationFrames = 0;
 			floatDistribution = std::uniform_real_distribution<float>(0.0, 2.0f * glm::pi<float>());
+			duration = 5.0f;
 			break;
 		}
 		case SpellID::FireEarthAir: {
@@ -353,7 +354,11 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 	These spell IDs are for spells spawned by the main spells
 */
 		case SpellID::Meteor: {
-
+			animationFrames = 4;
+			//setTexture(static_cast<int>(SPRITE_SHEETS::explosion1));
+			resize(METEOR_WIDTH, METEOR_HEIGHT);
+			duration = METEOR_FLIGHT_TIME;
+			moveSpeed = 0.95f;
 			break;
 		}
 		case SpellID::Explosion1: {
@@ -2386,98 +2391,63 @@ void Spell::update(double dt) {
 			*/
 
 
-			Renderable* createdExplosion = nullptr;
+			Renderable* createdMeteor = nullptr;
 			glm::mat4 move;
 			glm::mat4 rotation;
 
 
 			//flip the waterBolt direction if player is facing left
 			float angle = 0.0f;
-
-			if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft()) {
-				direction = glm::vec3(-1.0f, 0.0f, 0.0f);
-			}
-			else
-			{
-				direction = glm::vec3(1.0f, 0.0f, 0.0f);
-			}
-
+			float distance = 0.0f;
+			
 
 			damageTimer -= dt;
 
 			if (damageTimer <= 0.0f) {
 
-				if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft()) {
-					angle = (-glm::pi<float>()) / 3.0f;
+				
+				//create a random angle and rotate the base direction by that angle and normalize and then use that to spawn meteor
+				direction = glm::vec3(1.0f, 0.0f, 0.0f);
 
-					rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+				floatDistribution = std::uniform_real_distribution<float>(0.0f, (glm::pi<float>()));
 
-					direction = rotation * glm::vec4(direction, 0.0f);
+				angle = floatDistribution(getGame()->getNumberEngine());
 
+				rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
 
-
-					angle = (((2.0 * glm::pi<float>() / 3.0f)) / (static_cast<float>(FIRECRACKER_AMOUNT))) * static_cast<float>(animationFrames);
-
-
-					//create water bolt and set its direction + random angle
-					createdExplosion = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::explosion1), SpellID::Explosion1);
-
-					//angle += (((2.0 * glm::pi<float>() / 3.0f)) / (static_cast<float>(FIRECRACKER_AMOUNT)));
-
-					rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
-
-				}
-				else
-				{
-					angle = (glm::pi<float>()) / 3.0f;
+				direction = glm::normalize(rotation * glm::vec4(direction, 0.0f));
+				
+				createdMeteor = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::meteor), SpellID::Meteor);
+				
+				
 
 
+				floatDistribution = std::uniform_real_distribution<float>(1.0f, 2.5f);
+				distance = floatDistribution(getGame()->getNumberEngine());
 
 
-					rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x + direction.x / distance,
+					dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().y + direction.y / distance, 0.0f));
 
-					direction = rotation * glm::vec4(direction, 0.0f);
+				dynamic_cast<Spell*>(createdMeteor)->updatePosition(move);
 
-
-
-					angle = (((2.0 * glm::pi<float>() / 3.0f)) / (static_cast<float>(FIRECRACKER_AMOUNT))) * static_cast<float>(animationFrames);
-
-
-					//create water bolt and set its direction + random angle
-					createdExplosion = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::explosion1), SpellID::Explosion1);
-
-					//angle += (((2.0 * glm::pi<float>() / 3.0f)) / (static_cast<float>(FIRECRACKER_AMOUNT)));
-
-					rotation = glm::rotate(glm::mat4(1.0f), -angle, glm::vec3(0.0f, 0.0f, 1.0f));
+				getGame()->renderableToPendingAdd(createdMeteor);
 
 
-				}
+				damageTimer = METEOR_BARRAGE_TIMER;
 
+				//animationFrames++;
 
-
-				direction = rotation * glm::vec4(direction, 0.0f);
-
-
-				move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x + direction.x / 2.25f,
-					dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().y + direction.y / 2.25f, 0.0f));
-
-				dynamic_cast<Spell*>(createdExplosion)->updatePosition(move);
-
-				getGame()->renderableToPendingAdd(createdExplosion);
-
-
-				damageTimer = FIRECRACKER_TIMER;
-
-				animationFrames++;
-
-				if (animationFrames == FIRECRACKER_AMOUNT) {
-					kill();
-				}
+				
 
 
 			}
 
+			duration -= dt;
 
+			if (duration <= 0.0f) {
+				kill();
+			}
 
 			break;
 		}
@@ -3162,6 +3132,134 @@ void Spell::update(double dt) {
 		*/
 		case SpellID::Meteor: {
 
+			glm::mat4 move;
+			float sizeAlter = 0.95f;
+			Renderable* createdExplosion = nullptr;
+
+			if (firstUpdate) {
+				//do first update things
+				firstUpdate = false;
+
+				
+
+				
+
+			}
+			else
+			{
+				//initially the explosion cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+
+
+				//move meteor down for x seconds, when done check collision and spawn explosion at that point
+
+				duration -= dt;
+
+				if (duration > 0.0f) {
+
+					//move down
+					direction = glm::vec3(0.0f, -1.0 * moveSpeed * dt, 0.0f);
+					glm::mat4 move = glm::translate(glm::mat4(1.0f), direction);
+					updatePosition(move);
+
+				}
+				else {
+
+					
+					//check collision and create explosion/damage
+					//update hitbox
+					getHitBox().updateHitBox(getOrigin(), getWidth()* sizeAlter, getWidth()* sizeAlter, getWidth()* sizeAlter, getWidth()* sizeAlter); //explosion size can be set by the creating spell
+
+
+
+					//COLLISION CHECK
+					if (!queue.empty())
+					{
+						for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+							//checks collision with ENEMY renderable in the queue
+							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
+
+
+								//deal damage
+								float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * METEOR_DAMAGE_MULT;
+								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(explosionDamage));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.45f, SpellID::knockback));
+								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - getOrigin()));
+
+								//dynamic_cast<Enemy*>(itr->second)->addToDamagedBy(this);
+
+								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+								
+								createdExplosion = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::explosion1), SpellID::Explosion1);
+								move = glm::translate(glm::mat4(1.0f), getOrigin());
+								dynamic_cast<Spell*>(createdExplosion)->updatePosition(move);
+								getGame()->renderableToPendingAdd(createdExplosion);
+								
+								//break;
+
+
+
+
+							}
+						}
+
+
+					}
+
+
+					createdExplosion = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::explosion1), SpellID::Explosion1);
+					move = glm::translate(glm::mat4(1.0f), getOrigin());
+					dynamic_cast<Spell*>(createdExplosion)->updatePosition(move);
+					getGame()->renderableToPendingAdd(createdExplosion);
+
+
+
+
+
+
+
+
+					kill();
+				}
+
+
+				
+
+
+
+
+
+				//play explosion animation, enable collision on a certain frame
+			
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+				}
+				else
+				{
+					animationTimer = METEOR_ANIMATION_TIMER;
+					currentAnimationFrame++;
+
+					if (currentAnimationFrame > animationFrames) {
+						currentAnimationFrame = 0;
+					}
+
+
+				}
+
+
+
+			}
+
+
+
+
 			break;
 		}
 		case SpellID::Explosion1: {
@@ -3556,6 +3654,10 @@ void Spell::render() {
 		}
 		case SpellID::Explosion1: {
 			renderThisSpell(static_cast<float>(1.0f / 11.0f));//11 frames
+			break;
+		}
+		case SpellID::Meteor: {
+			renderThisSpell(static_cast<float>(1.0f / 5.0f));//11 frames
 			break;
 		}
 		case SpellID::WaterBolt: {

@@ -19,8 +19,8 @@ const float FLAME_RING_HEIGHT = 0.325f;
 const float FLAME_RING_DAMAGE_MULT = 0.75f;
 
 const float FIREBALL_ANIMATION_TIMER = 0.1f;
-const float FIREBALL_WIDTH = 0.045f;
-const float FIREBALL_HEIGHT = 0.04f;
+const float FIREBALL_WIDTH = 0.065f;
+const float FIREBALL_HEIGHT = 0.06f;
 const float FIREBALL_DAMAGE_MULT = 2.5f; //fireball damage = player_base_damage * 1.25f
 
 
@@ -37,7 +37,7 @@ const float BUBBLE_SHOT_DAMAGE_MULT = 2.5f;
 
 
 //base width, call resize to alter the explosion size
-const float EXPLOSION1_WIDTH = 0.3f;
+const float EXPLOSION1_WIDTH = 0.35f;
 const float EXPLOSION1_ANIMATION_TIMER = 0.021f;
 const float EXPLOSION1_DAMAGE_MULT = 3.5f; //all explosion1s deal the same damage
 
@@ -92,6 +92,15 @@ const float AIR_GOLEM_SIZE_MULT = 1.21f;
 
 const int FIRECRACKER_AMOUNT = 7;
 const float FIRECRACKER_TIMER = 0.135f;
+
+
+const float METEOR_BARRAGE_TIMER = 0.2f;
+const int METEOR_AMOUNT = 1; //how many meteors are spawned by meteor barrage
+const float METEOR_ANIMATION_TIMER = 0.06f;
+const float METEOR_WIDTH = 0.1f;
+const float METEOR_HEIGHT = 0.1125f;
+const float METEOR_DAMAGE_MULT = 3.75f;
+const float METEOR_FLIGHT_TIME = 0.75f;
 
 
 enum class SpellID {
@@ -208,6 +217,7 @@ public:
 
 	void setDirection(glm::vec3 dir) { direction = dir; }
 
+	void setCurrentAnimationFrame(int f) { currentAnimationFrame = f; }
 
 private:
 
