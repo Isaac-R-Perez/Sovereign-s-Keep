@@ -119,60 +119,6 @@ void Enemy::update(double dt) {
 	bool knockback = searchSpellBuff(SpellID::knockback);
 	
 	
-
-	switch (type) {
-	case EnemyType::slime:
-	{
-
-
-		if (current_frame > 2) {
-			current_frame = 0;
-		}
-
-		break;
-	}
-	case EnemyType::bat:
-	{
-
-
-		if (current_frame > 3) {
-			current_frame = 0;
-		}
-
-		break;
-	}
-	case EnemyType::crab:
-	{
-
-
-		if (current_frame > 5) {
-			current_frame = 0;
-		}
-
-		break;
-	}
-	case EnemyType::minotaur:
-	{
-
-
-		if (current_frame > 3) {
-			current_frame = 0;
-		}
-
-		break;
-	}
-	case EnemyType::skull:
-	{
-
-
-		if (current_frame > 3) {
-			current_frame = 0;
-		}
-
-		break;
-	}
-
-	}
 	
 	
 
@@ -231,6 +177,62 @@ void Enemy::update(double dt) {
 			current_frame++;
 		}
 
+
+
+
+		switch (type) {
+		case EnemyType::slime:
+		{
+
+
+			if (current_frame > 2) {
+				current_frame = 0;
+			}
+
+			break;
+		}
+		case EnemyType::bat:
+		{
+
+
+			if (current_frame > 3) {
+				current_frame = 0;
+			}
+
+			break;
+		}
+		case EnemyType::crab:
+		{
+
+
+			if (current_frame > 5) {
+				current_frame = 0;
+			}
+
+			break;
+		}
+		case EnemyType::minotaur:
+		{
+
+
+			if (current_frame > 3) {
+				current_frame = 0;
+			}
+
+			break;
+		}
+		case EnemyType::skull:
+		{
+
+
+			if (current_frame > 2) {
+				current_frame = 0;
+			}
+
+			break;
+		}
+
+		}
 
 		if (knockback) {
 			//create a vector TOWARDS the player's origin
