@@ -1414,7 +1414,7 @@ void Spell::update(double dt) {
 				//do first update things
 				firstUpdate = false;
 
-				float sizeAlter = 0.8f;
+				float sizeAlter = 0.95f;
 				float smallestDistance = 10000.0f;
 				float checkDistance = 0.0f;
 				Renderable* nearestEnemy = nullptr;
@@ -2154,20 +2154,23 @@ void Spell::update(double dt) {
 				{
 					for (itr = queue.begin(); itr != queue.end(); ++itr) {
 
-						if (dynamic_cast<Enemy*>(itr->second)->getAlive())
-						{
-
+						
 
 							if (itr->second->renderOrder == 3) {
-								checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
+								
+								if (dynamic_cast<Enemy*>(itr->second)->getAlive())
+								{
 
-								if (checkDistance < smallestDistance) {
-									smallestDistance = checkDistance;
-									nearestEnemy = itr->second;
+									checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
+
+									if (checkDistance < smallestDistance) {
+										smallestDistance = checkDistance;
+										nearestEnemy = itr->second;
+									}
 								}
 							}
 
-						}
+						
 
 					}
 
@@ -4476,6 +4479,7 @@ void Spell::update(double dt) {
 								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(explosionDamage));
 								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(1.75f, SpellID::knockback));
 								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(1.5f, SpellID::EarthEarth));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(5.0f, ID));
 								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(dynamic_cast<Enemy*>(itr->second)->getOrigin() -
 									dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
 

@@ -653,7 +653,7 @@ void Player::WaveBuff()
 	float hpBuff = 0.025f; // %5
 	float atkBuff = 0.01f; // %1
 	float defBuff = 0.01f; // %1
-	float speedBuff = 0.02f; // %2
+	float speedBuff = 0.01f; // %2
 	float manaBuff = 0.025f;
 	float manaRegenBuff = 0.01f;
 

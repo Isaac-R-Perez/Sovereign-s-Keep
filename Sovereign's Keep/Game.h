@@ -145,8 +145,12 @@ public:
 	void GenerateNextWave();
 	void SpawnEnemy(int randomNum);
 
+	void setFullscreen();
+
 private:
 
+	bool FULLSCREEN;
+	
 	//window that everything is rendered to
 	GLFWwindow* window;
 

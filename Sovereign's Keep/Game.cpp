@@ -134,6 +134,7 @@ Game::Game() {
 	View = glm::mat4(1.0f);
 	SpawnTickRate = 2.0f;
 	WaveTimer = MAX_WAVE_TIME;
+	FULLSCREEN = false;
 }
 
 
@@ -429,10 +430,26 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 	}
 
+	if (key == GLFW_KEY_F && action == GLFW_PRESS)
+	{
+		gameREFERENCE->setFullscreen();
 
+	}
+
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	{
+		if (gameREFERENCE->isPaused()) {
+			gameREFERENCE->setPaused(false);
+		}
+		else
+		{
+			gameREFERENCE->setPaused(true);
+		}
+
+	}
 
 	//player logic
-	if (gameREFERENCE->getPlayer() != nullptr) {
+	if (gameREFERENCE->getPlayer() != nullptr && !gameREFERENCE->isPaused()) {
 
 
 
@@ -1054,34 +1071,48 @@ void Game::update(double dt) {
 
 	//printf("%d\n", renderQueue.size());
 	
-	//Enemy Wave
-	if (WaveTimer > 0)
-	{
-		WaveTimer -= dt;
-		if (SpawnTickRate <= 0)
-		{
-			SpawnTickRate = 2.0f;
-			SpawnEnemy(rand() % 5);
-		}
-		else
-		{
-			SpawnTickRate -= dt;
-		}
-	}
-	else
-	{
-		
-		WaveTimer = MAX_WAVE_TIME;
-		WaveNumber++;
-		dynamic_cast<Player*>(player)->WaveBuff();
-		dynamic_cast<Player*>(player)->SavePlayerData();
-	}
+	
 
 
 	if (!paused) {
 		//this means that the game is not paused, so update all renderables here
 
-		
+
+		//update in-game timer here
+
+
+
+		//Enemy Wave
+		if (WaveTimer > 0)
+		{
+			WaveTimer -= dt;
+			if (SpawnTickRate <= 0)
+			{
+				std::uniform_int_distribution<int> typeOfEnemy(0, 4);
+				std::uniform_int_distribution<int> amtOfEnemy(3, 10);
+
+				SpawnTickRate = 1.75f;
+				for (int i = 0; i < amtOfEnemy(numberEngine); i++) {
+					SpawnEnemy(typeOfEnemy(numberEngine));
+				}
+				
+			}
+			else
+			{
+				SpawnTickRate -= dt;
+			}
+		}
+		else
+		{
+
+			WaveTimer = MAX_WAVE_TIME;
+			WaveNumber++;
+			dynamic_cast<Player*>(player)->WaveBuff();
+			dynamic_cast<Player*>(player)->SavePlayerData();
+		}
+
+
+
 		if (!renderQueue.empty())
 		{
 			//update the SHIFT gui first
@@ -1333,14 +1364,16 @@ void Game::GenerateNextWave()
 
 void Game::SpawnEnemy(int randomNum)
 {
-	enemyPosition = std::uniform_real_distribution<float>(1.1, 1.5);
+	enemyPosition = std::uniform_real_distribution<float>(1.35, 1.5);
 	float offset = enemyPosition(numberEngine);
-	glm::vec3 direction = glm::vec3(offset + player->getOrigin().x, 0.0 + player->getOrigin().y, 0.0);
+
+
+	glm::vec3 direction = glm::vec3(offset, 0.0, 0.0);
 	enemyPosition = std::uniform_real_distribution<float>(0.0, 2.0f * glm::pi<float>());
 	float angle = enemyPosition(numberEngine);
 	glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
 	direction = rotation * glm::vec4(direction, 0.0f);
-	glm::mat4 move = glm::translate(glm::mat4(1.0f), direction);
+	glm::mat4 move = glm::translate(glm::mat4(1.0f), direction + dynamic_cast<Player*>(player)->getOrigin());
 
 	Renderable* newEnemy = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime, dynamic_cast<Enemy*>(baseEnemies[0])->getEnemyStats());
 
@@ -1364,4 +1397,26 @@ void Game::SpawnEnemy(int randomNum)
 	dynamic_cast<Enemy*>(newEnemy)->WaveBuff(WaveNumber); //Will buff the base stats based on the wave number.
 
 	renderableToPendingAdd(newEnemy);
+}
+
+
+
+
+void Game::setFullscreen() {
+	
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+	
+	if (!FULLSCREEN) {
+		
+		glfwSetWindowMonitor(window, monitor, 0, 0, 1920, 1080, 60);
+		glfwSwapInterval(1); //Sets VSync for enforced 60 fps
+		FULLSCREEN = true;
+	}
+	else
+	{
+		glfwSetWindowMonitor(window, nullptr, 0, 0, 1920, 1080, 60);
+		glfwSwapInterval(1); //Sets VSync for enforced 60 fps
+		FULLSCREEN = false;
+	}
 }

@@ -55,8 +55,8 @@ const float BOULDER_DAMAGE_MULT = 3.0f;
 
 
 const float AIR_SPIKE_ANIMATION_TIMER = 0.02f;
-const float AIR_SPIKE_WIDTH = 0.05f;
-const float AIR_SPIKE_HEIGHT = 0.15f;
+const float AIR_SPIKE_WIDTH = 0.125f;
+const float AIR_SPIKE_HEIGHT = 0.175f;
 const float AIR_SPIKE_DAMAGE_MULT = 1.75f;
 
 

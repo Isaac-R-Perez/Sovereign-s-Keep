@@ -649,6 +649,7 @@ int Enemy::getSoulDrop()
 
 const float MUD_SLOW = 0.5f;
 const float AIR_SPIKE_SLOW = 0.75f;
+const float FISSURE_DEFENSE_REDUCTION = 0.75f;
 
 //all buffs are searched and all stats are calculated for this frame
 void Enemy::applySpellBuffs() {
@@ -682,6 +683,13 @@ void Enemy::applySpellBuffs() {
 	if (amt > 0) {
 		for (int i = 0; i < amt; i++) {
 			setCurrentMoveSpeed(getCurrentMoveSpeed() * AIR_SPIKE_SLOW);
+		}
+	}
+
+	amt = buffAmount(SpellID::EarthEarthEarth);
+	if (amt > 0) {
+		for (int i = 0; i < amt; i++) {
+			setCurrentDefense(getCurrentDefense() * FISSURE_DEFENSE_REDUCTION);
 		}
 	}
 
