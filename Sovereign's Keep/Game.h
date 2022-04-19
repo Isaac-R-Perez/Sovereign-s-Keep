@@ -150,6 +150,9 @@ public:
 private:
 
 	bool FULLSCREEN;
+
+	bool IN_LEVEL;
+	bool IN_MAIN_MENU;
 	
 	//window that everything is rendered to
 	GLFWwindow* window;

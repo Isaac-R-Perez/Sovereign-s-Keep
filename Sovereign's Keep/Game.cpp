@@ -135,6 +135,7 @@ Game::Game() {
 	SpawnTickRate = 2.0f;
 	WaveTimer = MAX_WAVE_TIME;
 	FULLSCREEN = false;
+	
 }
 
 
@@ -944,6 +945,13 @@ bool Game::initialize() {
 	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::minotaur), EnemyType::minotaur, Enemy::stats(200.0, 200.0f, 80.0f, 5.0f, 0.25f))); //minotaur at [3]
 	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::skull), EnemyType::skull, Enemy::stats(75.0, 75.0f, 65.0f, 1.0f, 0.3f))); //skull at [4]
 
+
+
+
+	IN_LEVEL = true;
+	IN_MAIN_MENU = false;
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
 	return true;
 
 }
@@ -1091,7 +1099,7 @@ void Game::update(double dt) {
 				std::uniform_int_distribution<int> typeOfEnemy(0, 4);
 				std::uniform_int_distribution<int> amtOfEnemy(3, 10);
 
-				SpawnTickRate = 1.75f;
+				SpawnTickRate = 2.5f;
 				for (int i = 0; i < amtOfEnemy(numberEngine); i++) {
 					SpawnEnemy(typeOfEnemy(numberEngine));
 				}
