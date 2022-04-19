@@ -647,21 +647,26 @@ void Player::LoadPlayerData()
 	}
 }
 
+const float PLAYER_HEALTH_CAP = 1920.0f;
+const float PLAYER_MANA_CAP = 1920.0f;
+const float PLAYER_MOVE_SPEED_CAP = 6.0f;
+const float PLAYER_DEFENSE_CAP = 50.0f;
+
 void Player::WaveBuff()
 {
 	//Percentage based
-	float hpBuff = 0.025f; // %5
+	float hpBuff = 0.02f; // %5
 	float atkBuff = 0.01f; // %1
 	float defBuff = 0.01f; // %1
 	float speedBuff = 0.01f; // %2
-	float manaBuff = 0.025f;
+	float manaBuff = 0.0185f;
 	float manaRegenBuff = 0.01f;
 
 	setBaseMaxHealth(getBaseMaxHealth() + (getBaseMaxHealth() * hpBuff));
 	//setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
 
 	setBaseHealth(getBaseMaxHealth() + (getBaseMaxHealth() * hpBuff));
-	setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
+	//setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
 
 	setBaseAttack(getBaseAttack() + (getBaseAttack() * atkBuff));
 	setCurrentAttack(getCurrentAttack() + (getCurrentAttack() * atkBuff));
@@ -676,10 +681,29 @@ void Player::WaveBuff()
 	//setCurrentMana(getCurrentMana() + (getCurrentMana() * manaBuff));
 
 	setCurrentMaxMana(getBaseMaxMana() + (getBaseMaxMana() * manaBuff));
-	setCurrentMana(getCurrentMana() + (getCurrentMana() * manaBuff));
+	//setCurrentMana(getCurrentMana() + (getCurrentMana() * manaBuff));
 
 	setBaseManaRegenRate(getBaseManaRegenRate() + (getBaseManaRegenRate() * manaRegenBuff));
 	setCurrentManaRegenRate(getCurrentManaRegenRate() + (getCurrentManaRegenRate() * manaRegenBuff));
+
+
+	if (getBaseMaxHealth() > PLAYER_HEALTH_CAP) {
+		setBaseMaxHealth(PLAYER_HEALTH_CAP);
+	}
+
+	if (getBaseMaxMana() > PLAYER_MANA_CAP) {
+		setBaseMaxMana(PLAYER_MANA_CAP);
+	}
+
+	if (getBaseMoveSpeed() > PLAYER_MOVE_SPEED_CAP) {
+		setBaseMoveSpeed(PLAYER_MOVE_SPEED_CAP);
+	}
+
+	if (getBaseDefense() > PLAYER_DEFENSE_CAP) {
+		setBaseDefense(PLAYER_DEFENSE_CAP);
+	}
+
+
 }
 
 void Player::render() {
