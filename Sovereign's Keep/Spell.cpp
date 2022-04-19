@@ -1426,12 +1426,19 @@ void Spell::update(double dt) {
 					for (itr = queue.begin(); itr != queue.end(); ++itr) {
 
 						if (itr->second->renderOrder == 3) {
-							checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
+							
+							if (dynamic_cast<Enemy*>(itr->second)->getAlive())
+							{
 
-							if (checkDistance < smallestDistance) {
-								smallestDistance = checkDistance;
-								nearestEnemy = itr->second;
+								checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
+
+								if (checkDistance < smallestDistance) {
+									smallestDistance = checkDistance;
+									nearestEnemy = itr->second;
+								}
 							}
+							
+							
 						}
 						
 						
@@ -1779,11 +1786,17 @@ void Spell::update(double dt) {
 						for (itr = queue.begin(); itr != queue.end(); ++itr) {
 
 							if (itr->second->renderOrder == 3 && !itr->second->shouldDestroy()) {
-								checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - getOrigin());
+								
+								if (dynamic_cast<Enemy*>(itr->second)->getAlive())
+								{
 
-								if (checkDistance < smallestDistance) {
-									smallestDistance = checkDistance;
-									closestEnemy = itr->second;
+
+									checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - getOrigin());
+
+									if (checkDistance < smallestDistance) {
+										smallestDistance = checkDistance;
+										closestEnemy = itr->second;
+									}
 								}
 							}
 
@@ -2141,16 +2154,20 @@ void Spell::update(double dt) {
 				{
 					for (itr = queue.begin(); itr != queue.end(); ++itr) {
 
-						if (itr->second->renderOrder == 3) {
-							checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
+						if (dynamic_cast<Enemy*>(itr->second)->getAlive())
+						{
 
-							if (checkDistance < smallestDistance) {
-								smallestDistance = checkDistance;
-								nearestEnemy = itr->second;
+
+							if (itr->second->renderOrder == 3) {
+								checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
+
+								if (checkDistance < smallestDistance) {
+									smallestDistance = checkDistance;
+									nearestEnemy = itr->second;
+								}
 							}
+
 						}
-
-
 
 					}
 
@@ -2886,11 +2903,17 @@ void Spell::update(double dt) {
 					for (itr = queue.begin(); itr != queue.end(); ++itr) {
 
 						if (itr->second->renderOrder == 3 && !itr->second->shouldDestroy()) {
-							checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - getOrigin());
 
-							if (checkDistance < smallestDistance) {
-								smallestDistance = checkDistance;
-								closestEnemy = itr->second;
+							if (dynamic_cast<Enemy*>(itr->second)->getAlive())
+							{
+
+
+								checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - getOrigin());
+
+								if (checkDistance < smallestDistance) {
+									smallestDistance = checkDistance;
+									closestEnemy = itr->second;
+								}
 							}
 						}
 
@@ -3584,11 +3607,17 @@ void Spell::update(double dt) {
 					for (itr = queue.begin(); itr != queue.end(); ++itr) {
 
 						if (itr->second->renderOrder == 3 && !itr->second->shouldDestroy()) {
-							checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - getOrigin());
 
-							if (checkDistance < smallestDistance) {
-								smallestDistance = checkDistance;
-								closestEnemy = itr->second;
+							if (dynamic_cast<Enemy*>(itr->second)->getAlive())
+							{
+
+
+								checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - getOrigin());
+
+								if (checkDistance < smallestDistance) {
+									smallestDistance = checkDistance;
+									closestEnemy = itr->second;
+								}
 							}
 						}
 

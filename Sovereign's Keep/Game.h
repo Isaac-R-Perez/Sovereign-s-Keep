@@ -52,6 +52,8 @@ enum class SPRITE_SHEETS
 	air_golem_walking, air_golem_attacking, air_golem_attacking_left,
 
 	bat, crab, minotaur, skull,
+	slime_death,bat_death, crab_death, minotaur_death, skull_death,
+
 
 
 

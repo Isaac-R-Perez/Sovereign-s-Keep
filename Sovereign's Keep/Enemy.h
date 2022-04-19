@@ -14,22 +14,28 @@ const float ENEMY_WALKING_BASE_TIME = 0.1f;
 const float SLIME_WIDTH = 0.0625f;
 const float SLIME_HEIGHT = 0.0625f;
 const float SLIME_TIMER = 0.1f;
+const float SLIME_DEATH_TIMER = 0.1f;
 
 const float BAT_WIDTH = 0.04f;
 const float BAT_HEIGHT = 0.045f;
 const float BAT_TIMER = 0.05f;
+const float BAT_DEATH_TIMER = 0.05f;
 
 const float CRAB_WIDTH = 0.129f;
 const float CRAB_HEIGHT = 0.115f;
 const float CRAB_TIMER = 0.125f;
+const float CRAB_DEATH_TIMER = 0.125f;
 
 const float MINOTAUR_WIDTH = 0.145f;
 const float MINOTUAR_HEIGHT = 0.145f;
 const  float MINOTAUR_TIMER = 0.0325f;
+const  float MINOTAUR_DEATH_TIMER = 0.0325f;
 
 const float SKULL_WIDTH = 0.035f;
 const float SKULL_HEIGHT = 0.045f;
 const float SKULL_TIMER = 0.09f;
+const float SKULL_DEATH_TIMER = 0.09f;
+
 
 
 
@@ -65,6 +71,9 @@ private:
 
 	//a buff as applied this, so stop animation, SET RENDER FLAG TO frozen (blue shifted), and set movespeed to 0.0 until frozen buff is gone
 	bool frozen;
+
+	//true when HP is above 0.0f
+	bool alive;
 
 
 public:
@@ -105,7 +114,7 @@ public:
 
 	void WaveBuff(int wave);
 
-
+	bool getAlive() { return alive; }
 	/*
 	
 	

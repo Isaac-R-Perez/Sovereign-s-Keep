@@ -7,7 +7,7 @@ Basic_Attack::Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet, float an
 
 
 	damage = BASE_DAMAGE;
-	speed = BULLET_BASE_SPEED;
+	speed = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentMoveSpeed() + 0.35f;
 	angle = ang;
 	direction = glm::vec3(1.0f, 0.0f, 0.0f); //points down x axis initially
 
@@ -35,7 +35,7 @@ Basic_Attack::Basic_Attack(Game* g, int rOrder, int defaultSpriteSheet, float an
 
 
 	damage = BASE_DAMAGE;
-	speed = BULLET_BASE_SPEED * speedModifier;
+	speed = (dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentMoveSpeed() + 0.35f) * speedModifier;
 	angle = ang;
 	direction = glm::vec3(1.0f, 0.0f, 0.0f); //points down x axis initially
 
@@ -86,18 +86,20 @@ void Basic_Attack::update(double dt) {
 				
 
 
-				
+					if (dynamic_cast<Enemy*>(itr->second)->getAlive()) {
+						//need to process the hit here and calculate bullet damage done to the enemy
+						float playerAttack = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack();
+						float enemyDefense = dynamic_cast<Enemy*>(itr->second)->getBaseDefense();
+						dynamic_cast<Enemy*>(itr->second)->alterHealth(-(playerAttack - enemyDefense));
+						dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.2f, SpellID::knockback));
+						dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
+						kill();
 
-					//need to process the hit here and calculate bullet damage done to the enemy
-					float playerAttack = dynamic_cast<Player*>(getGame()->getPlayer())->getBaseAttack();
-					float enemyDefense = dynamic_cast<Enemy*>(itr->second)->getBaseDefense();
-					dynamic_cast<Enemy*>(itr->second)->alterHealth(-(playerAttack - enemyDefense));
-					dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.2f, SpellID::knockback));
-					dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
-					kill();
+						//printf("Bullet IS COLLIDING WITH Enemy\n");
+						break;
+					}
 
-					//printf("Bullet IS COLLIDING WITH Enemy\n");
-					break;
+					
 				
 			}
 

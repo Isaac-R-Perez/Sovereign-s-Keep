@@ -73,6 +73,8 @@ Enemy::Enemy(Game* g, int rOrder, int defaultSpriteSheet, EnemyType T, stats s)
 
 	glm::vec3 knockbackDirection = glm::vec3(1.0f);
 
+	alive = true;
+
 }
 
 /*
@@ -93,40 +95,294 @@ void Enemy::update(double dt) {
 	glm::vec3 movementVector = glm::vec3(0.0f);
 
 
-	updateEffects(dt);
 
-	applySpellBuffs();
+	if (alive) {
 
 
-	if (dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x > getOrigin().x)
-	{
-		if (facingLeft) {
-			flip();
-			facingRight = true;
-			facingLeft = false;
+
+
+		updateEffects(dt);
+
+		applySpellBuffs();
+
+
+		if (dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x > getOrigin().x)
+		{
+			if (facingLeft) {
+				flip();
+				facingRight = true;
+				facingLeft = false;
+			}
 		}
-	}
-	if (dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x < getOrigin().x)
-	{
-		if (facingRight) {
-			flip();
-			facingRight = false;
-			facingLeft = true;
+		if (dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x < getOrigin().x)
+		{
+			if (facingRight) {
+				flip();
+				facingRight = false;
+				facingLeft = true;
+			}
 		}
+
+
+		//the direction of the last knockback is what the enemy travels in
+		bool knockback = searchSpellBuff(SpellID::knockback);
+
+
+
+
+
+		if (!stunned && !frozen) {
+
+			if (animationTimer > 0.0f) {
+				animationTimer -= dt;
+			}
+			else
+			{
+
+
+				switch (type) {
+				case EnemyType::slime:
+				{
+
+
+					animationTimer = SLIME_TIMER;
+
+					break;
+				}
+				case EnemyType::bat:
+				{
+
+					animationTimer = BAT_TIMER;
+
+					break;
+				}
+				case EnemyType::crab:
+				{
+
+					animationTimer = CRAB_TIMER;
+
+
+					break;
+				}
+				case EnemyType::minotaur:
+				{
+					std::uniform_real_distribution<float> dis(0.0f, 0.02f);
+
+					animationTimer = MINOTAUR_TIMER + dis(getGame()->getNumberEngine());
+
+
+					break;
+				}
+				case EnemyType::skull:
+				{
+					animationTimer = SKULL_TIMER;
+
+
+					break;
+				}
+
+				}
+
+
+
+				current_frame++;
+			}
+
+
+
+
+			switch (type) {
+			case EnemyType::slime:
+			{
+
+
+				if (current_frame > 2) {
+					current_frame = 0;
+				}
+
+				break;
+			}
+			case EnemyType::bat:
+			{
+
+
+				if (current_frame > 3) {
+					current_frame = 0;
+				}
+
+				break;
+			}
+			case EnemyType::crab:
+			{
+
+
+				if (current_frame > 5) {
+					current_frame = 0;
+				}
+
+				break;
+			}
+			case EnemyType::minotaur:
+			{
+
+
+				if (current_frame > 3) {
+					current_frame = 0;
+				}
+
+				break;
+			}
+			case EnemyType::skull:
+			{
+
+
+				if (current_frame > 2) {
+					current_frame = 0;
+				}
+
+				break;
+			}
+
+			}
+
+			if (knockback) {
+				//create a vector TOWARDS the player's origin
+				movementVector = knockbackDirection;
+
+				//movementVector = glm::normalize(movementVector);
+
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed() * 0.85f, movementVector.y * dt * getCurrentMoveSpeed() * 0.85f, 0.0f));
+
+				//ADD this back when testing is done
+
+				updatePosition(move);
+			}
+			else
+			{
+
+				//create a vector TOWARDS the player's origin
+				movementVector = dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin() - getOrigin();
+
+				movementVector = glm::normalize(movementVector);
+
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed(), movementVector.y * dt * getCurrentMoveSpeed(), 0.0f));
+
+				//ADD this back when testing is done
+
+				updatePosition(move);
+			}
+
+
+		}
+		else if (frozen) {
+
+
+
+			//also set GUI flag for blue tint
+			if (knockback) {
+				//create a vector TOWARDS the player's origin
+				movementVector = knockbackDirection;
+
+				//movementVector = glm::normalize(movementVector);
+
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed() * 0.5f, movementVector.y * dt * getCurrentMoveSpeed() * 0.5f, 0.0f));
+
+				//ADD this back when testing is done
+
+				updatePosition(move);
+			}
+
+		}
+		else if (stunned) {
+
+
+
+			if (knockback) {
+				//create a vector TOWARDS the player's origin
+				movementVector = knockbackDirection;
+
+				//movementVector = glm::normalize(movementVector);
+
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed() * 0.7f, movementVector.y * dt * getCurrentMoveSpeed() * 0.7f, 0.0f));
+
+				//ADD this back when testing is done
+
+				updatePosition(move);
+			}
+
+
+
+		}
+
+		getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getHeight(), getHeight());
+
+
+		if (getCurrentHealth() <= 0.0f)
+		{
+			alive = false;
+			animationTimer = 0.0f;
+			current_frame = 0;
+
+		
+
+			switch (type) {
+			case EnemyType::slime:
+			{
+				
+				
+				setTexture(static_cast<int>(SPRITE_SHEETS::slime_death));
+				
+				
+				break;
+			}
+			case EnemyType::bat:
+			{
+				
+				setTexture(static_cast<int>(SPRITE_SHEETS::bat_death));
+				
+				break;
+			}
+			case EnemyType::crab:
+			{
+
+
+				setTexture(static_cast<int>(SPRITE_SHEETS::crab_death));
+				break;
+			}
+			case EnemyType::minotaur:
+			{
+				setTexture(static_cast<int>(SPRITE_SHEETS::minotaur_death));
+
+				break;
+			}
+			case EnemyType::skull:
+			{
+				
+				setTexture(static_cast<int>(SPRITE_SHEETS::skull_death));
+
+
+				break;
+			}
+
+			}
+
+			
+
+		}
+
+		
+
+
+
 	}
+	else
+	{
 
 
-	//the direction of the last knockback is what the enemy travels in
-	bool knockback = searchSpellBuff(SpellID::knockback);
-	
-	
-	
-	
-
-	if (!stunned && !frozen) {
 
 		if (animationTimer > 0.0f) {
 			animationTimer -= dt;
+			
 		}
 		else
 		{
@@ -137,46 +393,46 @@ void Enemy::update(double dt) {
 			{
 
 
-				animationTimer = SLIME_TIMER;
+				animationTimer = SLIME_DEATH_TIMER;
 
 				break;
 			}
 			case EnemyType::bat:
 			{
 
-				animationTimer = BAT_TIMER;
+				animationTimer = BAT_DEATH_TIMER;
 
 				break;
 			}
 			case EnemyType::crab:
 			{
 
-				animationTimer = CRAB_TIMER;
+				animationTimer = CRAB_DEATH_TIMER;
 
 
 				break;
 			}
 			case EnemyType::minotaur:
 			{
-				std::uniform_real_distribution<float> dis(0.0f, 0.02f);
 
-				animationTimer = MINOTAUR_TIMER + dis(getGame()->getNumberEngine());
+				animationTimer = MINOTAUR_DEATH_TIMER;
 
 
 				break;
 			}
 			case EnemyType::skull:
 			{
-				animationTimer = SKULL_TIMER;
+				animationTimer = SKULL_DEATH_TIMER;
 
+				
 
 				break;
 			}
 
 			}
-			
-			
-			
+
+
+
 			current_frame++;
 		}
 
@@ -188,18 +444,24 @@ void Enemy::update(double dt) {
 		{
 
 
-			if (current_frame > 2) {
-				current_frame = 0;
+			if (current_frame > 4) {
+				kill();
 			}
 
 			break;
 		}
 		case EnemyType::bat:
 		{
+			if (current_frame < 7) {
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.075f * dt, 0.0f));
 
+				//ADD this back when testing is done
 
-			if (current_frame > 3) {
-				current_frame = 0;
+				updatePosition(move);
+			}
+
+			if (current_frame > 10) {
+				kill();
 			}
 
 			break;
@@ -208,8 +470,8 @@ void Enemy::update(double dt) {
 		{
 
 
-			if (current_frame > 5) {
-				current_frame = 0;
+			if (current_frame > 4) {
+				kill();
 			}
 
 			break;
@@ -218,108 +480,36 @@ void Enemy::update(double dt) {
 		{
 
 
-			if (current_frame > 3) {
-				current_frame = 0;
+			if (current_frame > 7) {
+				kill();
 			}
 
 			break;
 		}
 		case EnemyType::skull:
 		{
+			
+			if (current_frame < 6) {
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.095f * dt, 0.0f));
 
+				//ADD this back when testing is done
 
-			if (current_frame > 2) {
-				current_frame = 0;
+				updatePosition(move);
+			}
+			
+
+			if (current_frame > 9) {
+				kill();
 			}
 
 			break;
 		}
 
-		}
 
-		if (knockback) {
-			//create a vector TOWARDS the player's origin
-			movementVector = knockbackDirection;
-
-			//movementVector = glm::normalize(movementVector);
-
-			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed() * 0.85f, movementVector.y * dt * getCurrentMoveSpeed() * 0.85f, 0.0f));
-
-			//ADD this back when testing is done
-
-			updatePosition(move);
-		}
-		else
-		{
-
-			//create a vector TOWARDS the player's origin
-			movementVector = dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin() - getOrigin();
-
-			movementVector = glm::normalize(movementVector);
-
-			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed(), movementVector.y * dt * getCurrentMoveSpeed(), 0.0f));
-
-			//ADD this back when testing is done
-
-			updatePosition(move);
 		}
 
 
 	}
-	else if (frozen) {
-
-
-
-		//also set GUI flag for blue tint
-		if (knockback) {
-			//create a vector TOWARDS the player's origin
-			movementVector = knockbackDirection;
-
-			//movementVector = glm::normalize(movementVector);
-
-			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed() * 0.5f, movementVector.y * dt * getCurrentMoveSpeed() * 0.5f, 0.0f));
-
-			//ADD this back when testing is done
-
-			updatePosition(move);
-		}
-
-	}
-	else if (stunned) {
-
-
-
-		if (knockback) {
-			//create a vector TOWARDS the player's origin
-			movementVector = knockbackDirection;
-
-			//movementVector = glm::normalize(movementVector);
-
-			move = glm::translate(glm::mat4(1.0f), glm::vec3(movementVector.x * dt * getCurrentMoveSpeed() * 0.7f, movementVector.y * dt * getCurrentMoveSpeed() * 0.7f, 0.0f));
-
-			//ADD this back when testing is done
-
-			updatePosition(move);
-		}
-
-
-
-	}
-	
-
-
-	
-	
-	
-	
-	
-	
-	getHitBox().updateHitBox(getOrigin(), getWidth(), getWidth(), getHeight(), getHeight());
-
-
-
-
-
 
 
 	//printf("TR: %f %f \n", getHitBox().topRight.x, getHitBox().topRight.y);
@@ -328,10 +518,7 @@ void Enemy::update(double dt) {
 
 		setHealthLastFrame(getCurrentHealth());
 
-		if (getCurrentHealth() <= 0.0f)
-		{
-			kill();
-		}
+		
 
 		//add these function to player as well
 		//clearDamagedBy();
@@ -351,33 +538,70 @@ void Enemy::render() {
 
 	if (getHealthLastFrame() - getCurrentHealth() >= 1.0f) {
 		//took more than 1 damage, so flash red for one frame
-		getGame()->setGUIFlag(-1);
+		if (alive)
+		{
+			getGame()->setGUIFlag(-1);
+		}
+		
 	}
 
 	switch (type) {
 	case EnemyType::slime:
 	{
-		idle_stride = 0.25f;
+		if (alive) {
+			idle_stride = 0.25f;
+		}
+		else
+		{
+			idle_stride = static_cast<float>(1.0f / 6.0f);
+		}
+		
 		break;
 	}
 	case EnemyType::bat:
 	{
-		idle_stride = static_cast<float>(1.0f / 4.0f);
+		if (alive) {
+			idle_stride = static_cast<float>(1.0f / 4.0f);
+		}
+		else
+		{
+			idle_stride = static_cast<float>(1.0f / 11.0f);
+		}
+		
 		break;
 	}
 	case EnemyType::crab:
 	{
-		idle_stride = static_cast<float>(1.0f / 6.0f);
+		if (alive) {
+			idle_stride = static_cast<float>(1.0f / 6.0f);
+		}
+		else
+		{
+			idle_stride = static_cast<float>(1.0f / 5.0f);
+		}
 		break;
 	}
 	case EnemyType::minotaur:
 	{
-		idle_stride = static_cast<float>(1.0f / 4.0f);
+		if (alive) {
+			idle_stride = static_cast<float>(1.0f / 4.0f);
+		}
+		else
+		{
+			idle_stride = static_cast<float>(1.0f / 8.0f);
+		}
+		
 		break;
 	}
 	case EnemyType::skull:
 	{
-		idle_stride = static_cast<float>(1.0f / 4.0f);
+		if (alive) {
+			idle_stride = static_cast<float>(1.0f / 4.0f);
+		}
+		else
+		{
+			idle_stride = static_cast<float>(1.0f / 10.0f);
+		}
 		break;
 	}
 

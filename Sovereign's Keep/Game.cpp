@@ -359,6 +359,22 @@ void Game::loadAllTextures() {
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::skull), generatedTexture));
 
 
+	generateTexture(generatedTexture, 80, 10, 3, "images/enemy/skull_death.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::skull_death), generatedTexture));
+	
+	generateTexture(generatedTexture, 198, 16, 3, "images/enemy/bat_death.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::bat_death), generatedTexture));
+	
+	generateTexture(generatedTexture, 105, 11, 3, "images/enemy/crab_death.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::crab_death), generatedTexture));
+	
+	generateTexture(generatedTexture, 432, 41, 3, "images/enemy/minotaur_death.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::minotaur_death), generatedTexture));
+
+	generateTexture(generatedTexture, 180, 22, 3, "images/enemy/slime_death.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::slime_death), generatedTexture));
+
+
 
 }
 
