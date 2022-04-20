@@ -37,12 +37,12 @@ const float BUBBLE_SHOT_DAMAGE_MULT = 2.5f;
 
 
 //base width, call resize to alter the explosion size
-const float EXPLOSION1_WIDTH = 0.35f;
+const float EXPLOSION1_WIDTH = 0.385f;
 const float EXPLOSION1_ANIMATION_TIMER = 0.021f;
 const float EXPLOSION1_DAMAGE_MULT = 3.5f; //all explosion1s deal the same damage
 
-const float STEAM_BLAST_WIDTH = 0.3f;
-const float STEAM_BLAST_ANIMATION_TIMER = 0.021f;
+const float STEAM_BLAST_WIDTH = 0.55f;
+const float STEAM_BLAST_ANIMATION_TIMER = 0.02f;
 const float STEAM_BLAST_DAMAGE_MULT = 1.75f; //all explosion1s deal the same damage
 
 const float MUD_WIDTH = 0.21f;
@@ -97,8 +97,8 @@ const float FIRECRACKER_TIMER = 0.135f;
 const float METEOR_BARRAGE_TIMER = 0.2f;
 const int METEOR_AMOUNT = 1; //how many meteors are spawned by meteor barrage
 const float METEOR_ANIMATION_TIMER = 0.042f;
-const float METEOR_WIDTH = 0.125f;
-const float METEOR_HEIGHT = 0.145f;
+const float METEOR_WIDTH = 0.1f;
+const float METEOR_HEIGHT = 0.12f;
 const float METEOR_DAMAGE_MULT = 3.75f;
 const float METEOR_FLIGHT_TIME = 0.575f;
 
@@ -143,6 +143,21 @@ const float FISSURE_HEIGHT = 0.375f;
 const float FISSURE_DAMAGE_MULT = 3.0f;
 const float FISSURE_ANIMATION_TIMER = 0.0375f;
 
+
+const float SATURN_ROCK_SPAWN_TIMER = 0.5f;
+const float SATURN_ROCK_DAMAGE_MULT = 0.65f;
+const float SATURN_ROCK_WIDTH = 0.035f;
+const float SATURN_ROCK_HEIGHT = 0.04f;
+const float SATURN_ROCK_AIR_TIME = 5.0f;
+const float SATURN_ROCK_BASE_ROTATION_SPEED = (glm::pi<float>() / 180.0f);
+
+
+const float WHIRLWIND_WIDTH = 0.075f;
+const float WHIRLWIND_HEIGHT = 0.15f;
+const float WHIRLWIND_ANIMATION_TIMER = 0.01f;
+const float WHIRLWIND_DAMAGE_MULT = 3.0f;
+const float WHIRLWIND_DURATION = 2.0f;
+const float WHIRLWIND_SPAWN_TIMER = 0.6125f;
 
 
 enum class SpellID {
@@ -230,6 +245,8 @@ enum class SpellID {
 
 	knockback, //used for when an enemy is hit by a basic attack(/spell?)
 
+	Whirlwind,
+
 };
 
 
@@ -263,6 +280,8 @@ public:
 
 	void setFlipped(bool f) { flipped = f; }
 	bool getFlipped() { return flipped; }
+
+	void setAnimationTimer(float f) { animationTimer = f; }
 
 private:
 

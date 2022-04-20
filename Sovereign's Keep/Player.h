@@ -47,7 +47,7 @@ const float PLAYER_WIDTH = 0.0275f;
 
 const int MAX_ELEMENT_LEVEL = 3; //The max level any element can be.
 
-const float INVULNERABLE_TIMER = 0.25f;
+const float INVULNERABLE_TIMER = 0.125f;
 
 class Player : public Character
 {

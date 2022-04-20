@@ -4,6 +4,7 @@
 #include "Basic_Attack.h"
 #include <cstdio>
 #include "GLM/gtx/vector_angle.hpp"
+#include "GLM/gtx/transform.hpp"
 
 //const float FLIP_TIME = 0.25f;
 
@@ -169,7 +170,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Swift Speed II";
 			manaCost = 25.0f;
 			castTime = 0.5f;
-			duration = 15.0f;
+			duration = 10.0f;
 			direction = glm::vec3(1.0f, 0.0f, 0.0f);
 
 			break;
@@ -349,7 +350,11 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Saturn's Storm";
 			manaCost = 60.0f;
 			castTime = 1.0f;
-			duration = 8.0f;
+			duration = 5.0f;
+			// from 
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			floatDistribution = std::uniform_real_distribution<float>(0.0, 2.0f * glm::pi<float>());
+			damageTimer = 0.0f;
 			break;
 		}
 		case SpellID::EarthAirAir: {
@@ -368,7 +373,10 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Swift Speed III";
 			manaCost = 50.0f;
 			castTime = 0.5f;
-			duration = 20.0f;
+			duration = 5.0f;
+			direction = glm::vec3(1.0f, 0.0f, 0.0f);
+			animationFrames = 0;
+			damageTimer = WHIRLWIND_SPAWN_TIMER;
 			break;
 		}
 
@@ -382,6 +390,14 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			resize(METEOR_WIDTH, METEOR_HEIGHT);
 			duration = METEOR_FLIGHT_TIME;
 			moveSpeed = 1.25f;
+			break;
+		}
+		case SpellID::Whirlwind: {
+			animationFrames = 10;
+			//setTexture(static_cast<int>(SPRITE_SHEETS::explosion1));
+			resize(WHIRLWIND_WIDTH, WHIRLWIND_HEIGHT);
+			duration = WHIRLWIND_DURATION;
+			moveSpeed = 1.0f;
 			break;
 		}
 		case SpellID::Explosion1: {
@@ -441,11 +457,13 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::SaturnRock: {
 			//animationFrames = 11;
-			moveSpeed = 0.2f;
+			castTime = 0.0f; //used for angle
+			duration = SATURN_ROCK_AIR_TIME;
+			moveSpeed = SATURN_ROCK_BASE_ROTATION_SPEED;
 			direction = glm::vec3(1.0f, 0.0f, 0.0f);
-			damageTimer = WATER_SPOUT_DAMAGE_TIMER;
+			damageTimer = 0.1f;
 			setTexture(static_cast<int>(SPRITE_SHEETS::saturn_rock));
-			resize(WATER_SPOUT_WIDTH, WATER_SPOUT_HEIGHT);
+			resize(SATURN_ROCK_WIDTH, SATURN_ROCK_HEIGHT);
 			break;
 		}
 
@@ -719,7 +737,7 @@ void Spell::update(double dt) {
 				firstUpdate = false;
 
 				float sizeAlter = 0.9f;
-				float xDistance = 0.3f;
+				float xDistance = 0.0f;
 
 				flipped = dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft();
 
@@ -3549,8 +3567,60 @@ void Spell::update(double dt) {
 
 			*/
 
-			//remove later
-			kill();
+
+			Renderable* createdRock = nullptr;
+			glm::mat4 move;
+			glm::mat4 rotation;
+
+
+			//flip the waterBolt direction if player is facing left
+			float angle = 0.0f;
+			float distance = 0.0f;
+
+
+			damageTimer -= dt;
+
+			if (damageTimer <= 0.0f) {
+
+				floatDistribution = std::uniform_real_distribution<float>(0.15f, 0.425f);
+
+				//create a random angle and rotate the base direction by that angle and normalize and then use that to spawn meteor
+				direction = glm::vec3(floatDistribution(getGame()->getNumberEngine()), 0.0f, 0.0f);
+
+				floatDistribution = std::uniform_real_distribution<float>(0.0f, (2.0f * glm::pi<float>()));
+
+				angle = floatDistribution(getGame()->getNumberEngine());
+
+				rotation = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+				direction = rotation * glm::vec4(direction, 0.0f);
+
+				createdRock = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::saturn_rock), SpellID::SaturnRock);
+
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x + direction.x,
+					dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().y + direction.y, 0.0f));
+
+				dynamic_cast<Spell*>(createdRock)->updatePosition(move);
+				dynamic_cast<Spell*>(createdRock)->setDirection(direction);
+				dynamic_cast<Spell*>(createdRock)->setAnimationTimer(angle);
+				getGame()->renderableToPendingAdd(createdRock);
+
+
+				damageTimer = SATURN_ROCK_SPAWN_TIMER;
+
+				//animationFrames++;
+
+
+
+
+			}
+
+			duration -= dt;
+
+			if (duration <= 0.0f) {
+				kill();
+			}
+
 			break;
 		}
 		case SpellID::EarthAirAir: {
@@ -3820,10 +3890,103 @@ void Spell::update(double dt) {
 			destroy this spell
 
 			*/
-			dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(duration, ID));
+			
+			if (firstUpdate) {
+				firstUpdate = false;
+				dynamic_cast<Player*>(getGame()->getPlayer())->addBuff(spellBuff(duration, ID));
+			}
+			else
+			{
 
-			//remove later
-			kill();
+				
+
+				Renderable* createdWhirlwind = nullptr;
+				glm::mat4 move;
+				glm::mat4 rotation;
+
+
+				//flip the waterBolt direction if player is facing left
+				float angle = 0.0f;
+				float distance = 0.0f;
+
+
+				damageTimer -= dt;
+
+				if (damageTimer <= 0.0f) {
+
+
+
+					closestEnemy = nullptr;
+
+					//play explosion animation, enable collision on a certain frame
+
+					float smallestDistance = 10000.0f;
+					float checkDistance = 0.0f;
+
+
+					//search for nearest enemy here set location of this spell to that enemy's origin
+
+					if (!queue.empty())
+					{
+						for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+							if (itr->second->renderOrder == 3 && !itr->second->shouldDestroy()) {
+
+								if (dynamic_cast<Enemy*>(itr->second)->getAlive())
+								{
+
+
+									checkDistance = glm::length(dynamic_cast<Enemy*>(itr->second)->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin());
+
+									if (checkDistance < smallestDistance) {
+										smallestDistance = checkDistance;
+										closestEnemy = itr->second;
+									}
+								}
+							}
+
+
+
+						}
+
+					}
+
+
+					if (closestEnemy != nullptr) {
+
+						//create a random angle and rotate the base direction by that angle and normalize and then use that to spawn meteor
+						direction = dynamic_cast<Enemy*>(closestEnemy)->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin();
+
+
+						createdWhirlwind = new Spell(getGame(), 4, static_cast<int>(SPRITE_SHEETS::whirlwind), SpellID::Whirlwind);
+
+						move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
+
+						dynamic_cast<Spell*>(createdWhirlwind)->updatePosition(move);
+						dynamic_cast<Spell*>(createdWhirlwind)->setDirection(glm::normalize(direction));
+						getGame()->renderableToPendingAdd(createdWhirlwind);
+
+
+						damageTimer = WHIRLWIND_SPAWN_TIMER;
+					}
+
+
+					//animationFrames++;
+
+
+
+
+				}
+
+				duration -= dt;
+
+				if (duration <= 0.0f) {
+					kill();
+				}
+			}
+			
+			
+
 			break;
 		}
 
@@ -3982,6 +4145,12 @@ void Spell::update(double dt) {
 				firstUpdate = false;
 
 				float sizeAlter = 0.75f;
+
+				//flip the fireball if player is facing left
+				if (dynamic_cast<Player*>(getGame()->getPlayer())->getFacingLeft())
+				{
+					flip();
+				}
 
 				//update hitbox
 				getHitBox().updateHitBox(getOrigin(), getWidth() * sizeAlter, getWidth() * sizeAlter, getWidth() * sizeAlter, getWidth() * sizeAlter); //explosion size can be set by the creating spell
@@ -4516,10 +4685,244 @@ void Spell::update(double dt) {
 		}
 		case SpellID::SaturnRock: {
 
+
+			glm::mat4 move;
+			glm::mat4 rotation;
+
+			if (firstUpdate) {
+				//do first update things
+
+
+				std::uniform_int_distribution<int> clock(0, 1);
+
+				//create random rotation speed for rock texture, and for orbiting player
+				floatDistribution = std::uniform_real_distribution<float>(1.5f, 2.5f);
+				moveSpeed = SATURN_ROCK_BASE_ROTATION_SPEED * floatDistribution(getGame()->getNumberEngine());
+				
+				int i = clock(getGame()->getNumberEngine());
+
+				if (i == 1) {
+					moveSpeed *= -1.0f;
+				}
+
+				damageTimer = 0.0f;
+				firstUpdate = false;
+			}
+			else
+			{
+				//initially the fireball cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+				//move in circle around player
+				setOrigin(glm::vec3(0.0f, 0.0f, 0.0f));
+				setO2W(glm::mat4(1.0f));
+				resize(SATURN_ROCK_WIDTH, SATURN_ROCK_HEIGHT);
+
+
+				//have the fireball travel
+				
+					
+				rotation = glm::rotate(glm::mat4(1.0f), moveSpeed, glm::vec3(0.0f, 0.0f, 1.0f));
+
+				direction = rotation * glm::vec4(direction, 0.0f);
+
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().x + direction.x,
+					dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin().y + direction.y, 0.0f));
+
+				updatePosition(move);
+
+
+				
+
+
+
+
+
+				//update hitbox
+				getHitBox().updateHitBox(getOrigin(), SATURN_ROCK_WIDTH, SATURN_ROCK_WIDTH, SATURN_ROCK_HEIGHT, SATURN_ROCK_HEIGHT);
+
+
+
+
+
+				//check collisions here, if collision, destroy this spell and create an explosion spell at that point
+
+				damageTimer -= dt;
+				if (damageTimer <= 0.0f) {
+
+
+					//COLLISION CHECK
+					if (!queue.empty())
+					{
+
+
+
+						for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+							//checks collision with ENEMY renderable in the queue
+							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
+								if (dynamic_cast<Enemy*>(itr->second)->getAlive()) {
+
+
+									//deal fireball damage
+									float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * SATURN_ROCK_DAMAGE_MULT;
+									dynamic_cast<Enemy*>(itr->second)->alterHealth(-(damage));
+									dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.65f, SpellID::knockback));
+									dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
+
+
+									damageTimer = 0.1f;
+
+								}
+
+
+
+							}
+
+						}
+
+
+					}
+				}
+
+
+
+
+
+				//lifetime of spell
+				duration -= dt;
+				if (duration <= 0.0f) {
+					kill();
+				}
+
+			}
+
+
+
+
+
+
 			break;
 		}
 
+		case SpellID::Whirlwind: {
 
+
+			glm::mat4 move;
+
+
+			if (firstUpdate) {
+				//do first update things
+
+				firstUpdate = false;
+			}
+			else
+			{
+				//initially the fireball cannot collide since it is at the origin, so set it to collidable after first frame
+				if (!getCanCollide()) {
+					setCanCollide(true);
+				}
+
+
+
+
+				//play fireball animation
+				if (currentAnimationFrame > animationFrames) {
+					currentAnimationFrame = 0;
+				}
+
+				if (animationTimer > 0.0f) {
+					animationTimer -= dt;
+				}
+				else
+				{
+					animationTimer = WHIRLWIND_ANIMATION_TIMER;
+					currentAnimationFrame++;
+
+					if (currentAnimationFrame > animationFrames) {
+						currentAnimationFrame = 5;
+					}
+				}
+
+				//have the fireball travel
+				move = glm::translate(glm::mat4(1.0f), glm::vec3(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt, 0.0f));
+				updatePosition(move);
+
+
+				//update hitbox
+				getHitBox().updateHitBox(getOrigin(), WHIRLWIND_WIDTH, WHIRLWIND_WIDTH, WHIRLWIND_HEIGHT, WHIRLWIND_HEIGHT);
+
+
+
+
+
+				//check collisions here, if collision, destroy this spell and create an explosion spell at that point
+
+			//COLLISION CHECK
+				damageTimer -= dt;
+				if (damageTimer <= 0.0f) {
+
+
+					if (!queue.empty())
+					{
+
+
+
+						for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+							//checks collision with ENEMY renderable in the queue
+							if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+
+
+
+								//deal fireball damage
+								float damage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * WHIRLWIND_DAMAGE_MULT;
+								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(damage));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.85f, SpellID::knockback));
+								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(direction);
+
+								damageTimer = 0.25f;
+
+
+								//destroy fireball
+								//kill();
+
+
+								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+								//break;
+
+							}
+
+						}
+
+
+					}
+
+				}
+
+
+
+
+				//lifetime of spell
+				duration -= dt;
+				if (duration <= 0.0f) {
+					kill();
+				}
+
+			}
+
+
+
+
+
+
+			break;
+		}
 
 
 	}
@@ -4700,6 +5103,14 @@ void Spell::render() {
 		}
 		case SpellID::BigEarthSpike: {
 			renderThisSpell(static_cast<float>(1.0f / 16.0f));//11 frames
+			break;
+		}
+		case SpellID::SaturnRock: {
+			renderThisSpell(1.0);//11 frames
+			break;
+		}
+		case SpellID::Whirlwind: {
+			renderThisSpell(static_cast<float>(1.0f / 11.0f));//11 frames
 			break;
 		}
 		}

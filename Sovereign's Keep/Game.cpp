@@ -1099,7 +1099,7 @@ void Game::update(double dt) {
 				std::uniform_int_distribution<int> typeOfEnemy(0, 4);
 				std::uniform_int_distribution<int> amtOfEnemy(3, 10);
 
-				SpawnTickRate = 2.5f;
+				SpawnTickRate = 3.5f;
 				for (int i = 0; i < amtOfEnemy(numberEngine); i++) {
 					SpawnEnemy(typeOfEnemy(numberEngine));
 				}

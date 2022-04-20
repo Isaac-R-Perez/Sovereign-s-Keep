@@ -504,13 +504,17 @@ void Player::update(double dt) {
 
 					case 3: {//enemy
 
-						float damage = dynamic_cast<Enemy*>(itr->second)->getCurrentAttack();
-						alterHealth(-(damage - getCurrentDefense()));
+						if (dynamic_cast<Enemy*>(itr->second)->getAlive()) {
+							float damage = dynamic_cast<Enemy*>(itr->second)->getCurrentAttack();
+							alterHealth(-(damage - getCurrentDefense()));
 
-						invulerableTimer = INVULNERABLE_TIMER;
-						//printf("PLAYER IS COLLIDING WITH ENEMY\n");
-						//break;
-						GOT_HIT = true;
+							invulerableTimer = INVULNERABLE_TIMER;
+							//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+							//break;
+							GOT_HIT = true;
+
+						}
+						
 					}
 
 					}
@@ -531,25 +535,25 @@ void Player::update(double dt) {
 
 	if (getOrigin().x + (getWidth() / 2.0f)  > BACKGROUND_WIDTH)
 	{
-		move = glm::translate(glm::mat4(1.0f), glm::vec3(-0.015f, 0.0f, 0.0f));
+		move = glm::translate(glm::mat4(1.0f), glm::vec3(-0.025f, 0.0f, 0.0f));
 
 		updatePosition(move);
 	}
 	if (getOrigin().x - (getWidth() / 2.0f) < -BACKGROUND_WIDTH)
 	{
-		move = glm::translate(glm::mat4(1.0f), glm::vec3(0.015f,0.0f, 0.0f));
+		move = glm::translate(glm::mat4(1.0f), glm::vec3(0.025f,0.0f, 0.0f));
 
 		updatePosition(move);
 	}
 	if (getOrigin().y + (getHeight() / 2.0f) > BACKGROUND_HEIGHT)
 	{
-		move = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.015f, 0.0f));
+		move = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.025f, 0.0f));
 
 		updatePosition(move);
 	}
 	if (getOrigin().y - (getHeight() / 2.0f) < -BACKGROUND_HEIGHT)
 	{
-		move = glm::translate(glm::mat4(1.0f),  glm::vec3(0.0f, 0.015f, 0.0f));
+		move = glm::translate(glm::mat4(1.0f),  glm::vec3(0.0f, 0.025f, 0.0f));
 
 		updatePosition(move);
 	}
@@ -669,13 +673,13 @@ void Player::WaveBuff()
 	//setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
 
 	setBaseAttack(getBaseAttack() + (getBaseAttack() * atkBuff));
-	setCurrentAttack(getCurrentAttack() + (getCurrentAttack() * atkBuff));
+	//setCurrentAttack(getCurrentAttack() + (getCurrentAttack() * atkBuff));
 
 	setBaseDefense(getBaseDefense() + (getBaseDefense() * defBuff));
-	setCurrentDefense(getCurrentDefense() + (getCurrentDefense() * defBuff));
+	//setCurrentDefense(getCurrentDefense() + (getCurrentDefense() * defBuff));
 
 	setBaseMoveSpeed(getBaseMoveSpeed() + (getBaseMoveSpeed() * speedBuff));
-	setCurrentMoveSpeed(getCurrentMoveSpeed() + (getCurrentMoveSpeed() * speedBuff));
+	//setCurrentMoveSpeed(getCurrentMoveSpeed() + (getCurrentMoveSpeed() * speedBuff));
 
 	setBaseMaxMana(getBaseMaxMana() + (getBaseMaxMana() * manaBuff));
 	//setCurrentMana(getCurrentMana() + (getCurrentMana() * manaBuff));
@@ -684,7 +688,7 @@ void Player::WaveBuff()
 	//setCurrentMana(getCurrentMana() + (getCurrentMana() * manaBuff));
 
 	setBaseManaRegenRate(getBaseManaRegenRate() + (getBaseManaRegenRate() * manaRegenBuff));
-	setCurrentManaRegenRate(getCurrentManaRegenRate() + (getCurrentManaRegenRate() * manaRegenBuff));
+	//setCurrentManaRegenRate(getCurrentManaRegenRate() + (getCurrentManaRegenRate() * manaRegenBuff));
 
 
 	if (getBaseMaxHealth() > PLAYER_HEALTH_CAP) {
@@ -2179,9 +2183,9 @@ void Player::displayCurrentSpell() {
 
 
 
-const float AIR_MOVESPEED_BUFF = 1.15f; //25 percent buff
-const float AIR_AIR_MOVESPEED_BUFF = 1.35f;
-const float AIR_AIR_AIR_MOVESPEED_BUFF = 1.5f;
+const float AIR_MOVESPEED_BUFF = 1.1f; //25 percent buff
+const float AIR_AIR_MOVESPEED_BUFF = 1.2f;
+const float AIR_AIR_AIR_MOVESPEED_BUFF = 1.3f;
 
 const float FIRE_AIR_ATTACK_SPEED_BUFF = 0.75f; //reduces timer by 25% making it faster
 const float WATER_MANA_REGEN_BUFF = 2.5f; //multiplies base mana regen (base regen is saved in file?)
