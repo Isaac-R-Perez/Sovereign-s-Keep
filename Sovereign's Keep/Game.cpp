@@ -135,7 +135,7 @@ Game::Game() {
 	SpawnTickRate = 2.0f;
 	WaveTimer = MAX_WAVE_TIME;
 	FULLSCREEN = false;
-	
+	DISPLAY_INSTRUCTIONS = false;
 }
 
 
@@ -345,6 +345,9 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 506, 42, 3, "images/player/golem/golem_air_attacking_L.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::air_golem_attacking_left), generatedTexture));
 
+	generateTexture(generatedTexture, 180, 28, 3, "images/player/player_dying.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::player_death), generatedTexture));
+
 
 
 	//new enemies
@@ -378,6 +381,20 @@ void Game::loadAllTextures() {
 
 
 
+	generateTexture(generatedTexture, 1920, 1080, 3, "images/menu/menu_background.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::main_menu), generatedTexture));
+
+	generateTexture(generatedTexture, 956, 98, 3, "images/menu/start_button.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::start_button), generatedTexture));
+
+	generateTexture(generatedTexture, 956, 98, 3, "images/menu/how_to_play_button.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::how_to_play_button), generatedTexture));
+
+	generateTexture(generatedTexture, 956, 98, 3, "images/menu/exit_button.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::exit_button), generatedTexture));
+
+
+
 }
 
 
@@ -402,6 +419,50 @@ void mouse_position_callback(GLFWwindow* window, double x, double y)
 	Last_Mouse_X = x;
 	Last_Mouse_Y = y;
 
+	glm::mat4 inverse = glm::inverse(gameREFERENCE->getView());
+
+	glm::vec4 coords((2.0f * Last_Mouse_X / 1920.0f) - 1.0f, 1.0f - (2.0f * Last_Mouse_Y/ 1080.0f), 0.0f, 1.0);
+
+	coords = coords * inverse;
+
+	Last_Mouse_X = coords.x;
+	Last_Mouse_Y = coords.y;
+
+	//printf("x %f, y %f \n", coords.x, coords.y);
+
+
+	if (gameREFERENCE->getGameMode() == 0) {
+
+		//returns true if start button is being hovered
+		if (gameREFERENCE->checkButtonHitBox(gameREFERENCE->getStartButton())) {
+			dynamic_cast<GUI_Element*>(gameREFERENCE->getStartButton())->setHovered(true);
+			//printf("x %f, y %f \n", coords.x, coords.y);
+		}
+		else
+		{
+			dynamic_cast<GUI_Element*>(gameREFERENCE->getStartButton())->setHovered(false);
+		}
+
+		//returns true if start button is being hovered
+		if (gameREFERENCE->checkButtonHitBox(gameREFERENCE->getHowToPlayButton())) {
+			dynamic_cast<GUI_Element*>(gameREFERENCE->getHowToPlayButton())->setHovered(true);
+		}
+		else
+		{
+			dynamic_cast<GUI_Element*>(gameREFERENCE->getHowToPlayButton())->setHovered(false);
+		}
+
+		if (gameREFERENCE->checkButtonHitBox(gameREFERENCE->getExitButton())) {
+			dynamic_cast<GUI_Element*>(gameREFERENCE->getExitButton())->setHovered(true);
+		}
+		else
+		{
+			dynamic_cast<GUI_Element*>(gameREFERENCE->getExitButton())->setHovered(false);
+		}
+
+
+	}
+
 
 }
 
@@ -411,8 +472,25 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 
 	//need to check where mouse is, and what clicking will do
+	
+	if (gameREFERENCE->getGameMode() == 0) {
 
+		// hovered and clicked so begin new game process
+		if (dynamic_cast<GUI_Element*>(gameREFERENCE->getStartButton())->getHovered()) {
+			gameREFERENCE->setGameMode(1);
+		}
 
+		//toggle bool to display instruction
+		if (dynamic_cast<GUI_Element*>(gameREFERENCE->getHowToPlayButton())->getHovered()) {
+			gameREFERENCE->setGameMode(1);
+		}
+		
+		//set game to close
+		if (dynamic_cast<GUI_Element*>(gameREFERENCE->getExitButton())->getHovered()) {
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+
+	}
 }
 if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_REPEAT) {
 	//do nothing
@@ -450,347 +528,341 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	}
 
 	//player logic
-	if (gameREFERENCE->getPlayer() != nullptr && !gameREFERENCE->isPaused()) {
+	if (gameREFERENCE->getGameMode() == 1 && !gameREFERENCE->isPaused()) {
+
+
+		if (!dynamic_cast<Player*>(gameREFERENCE->getPlayer())->isDying())
+		{
+
+			//casting logic should be checked first?
+
+			//move up
+			if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+
+				/*
+					Check if the player can cast current spell
+					If they cant, ignore this.
+					If they can, start casting animation, and make the casting time specific to the spell being cast.
+				*/
+
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setCasting(true);
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->resetCastingVariables();
+
+
+			}
+			if (key == GLFW_KEY_SPACE && action == GLFW_REPEAT) {
+				if (!dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getCasting()) {
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setCasting(true);
+
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->resetCastingVariables();
+				}
+			}
+
+			if (key == GLFW_KEY_SPACE && action == GLFW_RELEASE) {
+
+			}
 
 
 
 
 
-		//casting logic should be checked first?
 
-		//move up
-		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+
+
+			//player's movement states are dependent on if a key is currently held down
+			//if w is held, they will move up until it is released.
+
+			//move up
+			if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+
+				//printf("w key pressed\n");
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingUp(true);
+
+			}
+			if (key == GLFW_KEY_W && action == GLFW_REPEAT) {
+
+			}
+
+			if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
+
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingUp(false);
+			}
+
+
+			//move down
+			if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingDown(true);
+			}
+			if (key == GLFW_KEY_S && action == GLFW_REPEAT) {
+
+			}
+			//move backward
+			if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingDown(false);
+			}
+
+
+			//move left
+			if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+
+
+				if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingRight() && !dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getAttackingRight()) {
+
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+				}
+				else if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getAttackingRight()) {
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
+				}
+				else {
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+				}
+
+
+			}
+			if (key == GLFW_KEY_A && action == GLFW_REPEAT) {
+
+			}
+			//move left
+			if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(false);
+
+
+			}
+
+			//move right
+			if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+
+
+				if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingLeft() && !dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getAttackingLeft()) {
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
+
+				}
+				else if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getAttackingLeft()) {
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
+				}
+				else {
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
+				}
+
+
+			}
+			if (key == GLFW_KEY_D && action == GLFW_REPEAT) {
+
+			}
+			//move right
+			if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(false);
+			}
+
+
+
+			//if SHIFT is pressed/held, then the arrow keys will add their corresponding elements into a vector?
+			//else they will just try to shoot a basic attack
+
+			if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS) {
+				gameREFERENCE->setSpellComboMode(true);
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(false);
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(false);
+			}
+			if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_REPEAT) {
+
+			}
+			if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE) {
+				gameREFERENCE->setSpellComboMode(false);
+
+				//this is where you tell the player to combine their current elements into a spell
+				SpellID createdSpellID = dynamic_cast<Player*>(gameREFERENCE->getPlayer())->combineElements();
+
+				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setPlayerCurrentSpellID(createdSpellID);
+
+
+			}
+
+
+
 
 			/*
-				Check if the player can cast current spell
-				If they cant, ignore this.
-				If they can, start casting animation, and make the casting time specific to the spell being cast.
+				ELEMENT 1 = LEFT_ARROW
+				ELEMENT 2 = UP_ARROW
+				ELEMENT 3 = RIGHT_ARROW
+				ELEMENT 4 = DOWN_ARROW
 			*/
 
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setCasting(true);
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->resetCastingVariables();
+			//basic attack left
+			if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
 
+				if (gameREFERENCE->getSpellComboMode() == true) {
+					//this means that the player is trying to input their element 1.
+					//printf("input element 1\n");
 
-		}
-		if (key == GLFW_KEY_SPACE && action == GLFW_REPEAT) {
-			if (!dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getCasting()) {
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setCasting(true);
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->addElementToInputVector(
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getElementFromSlot(0));
 
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->resetCastingVariables();
-			}
-		}
-
-		if (key == GLFW_KEY_SPACE && action == GLFW_RELEASE) {
-
-		}
-
-
-
-
-
-
-
-
-		//player's movement states are dependent on if a key is currently held down
-		//if w is held, they will move up until it is released.
-
-		//move up
-		if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-
-			//printf("w key pressed\n");
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingUp(true);
-
-		}
-		if (key == GLFW_KEY_W && action == GLFW_REPEAT) {
-
-		}
-
-		if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
-
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingUp(false);
-		}
-
-
-		//move down
-		if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingDown(true);
-		}
-		if (key == GLFW_KEY_S && action == GLFW_REPEAT) {
-
-		}
-		//move backward
-		if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingDown(false);
-		}
-
-
-		//move left
-		if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-
-
-			if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingRight() && !dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getAttackingRight()) {
-
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
-
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
-			}
-			else if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getAttackingRight()) {
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
-			}
-			else {
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(true);
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
-			}
-
-
-		}
-		if (key == GLFW_KEY_A && action == GLFW_REPEAT) {
-
-		}
-		//move left
-		if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingLeft(false);
-
-
-		}
-
-		//move right
-		if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-
-
-			if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingLeft() && !dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getAttackingLeft()) {
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
-
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
-
-			}
-			else if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getAttackingLeft()) {
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
-			}
-			else {
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(true);
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
-			}
-
-
-		}
-		if (key == GLFW_KEY_D && action == GLFW_REPEAT) {
-
-		}
-		//move right
-		if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setMovingRight(false);
-		}
-
-
-
-		//if SHIFT is pressed/held, then the arrow keys will add their corresponding elements into a vector?
-		//else they will just try to shoot a basic attack
-
-		if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS) {
-			gameREFERENCE->setSpellComboMode(true);
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(false);
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(false);
-		}
-		if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_REPEAT) {
-			
-		}
-		if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE) {
-			gameREFERENCE->setSpellComboMode(false);
-
-			//this is where you tell the player to combine their current elements into a spell
-			SpellID createdSpellID = dynamic_cast<Player*>(gameREFERENCE->getPlayer())->combineElements();
-
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setPlayerCurrentSpellID(createdSpellID);
-
-
-		}
-
-
-
-
-		/*
-			ELEMENT 1 = LEFT_ARROW
-			ELEMENT 2 = UP_ARROW
-			ELEMENT 3 = RIGHT_ARROW
-			ELEMENT 4 = DOWN_ARROW
-		*/
-
-		//basic attack left
-		if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-
-			if (gameREFERENCE->getSpellComboMode() == true) {
-				//this means that the player is trying to input their element 1.
-				//printf("input element 1\n");
-
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->addElementToInputVector(
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getElementFromSlot(0));
-
-			}
-			else
-			{
-				//SHIFT IS NOT HELD, so fire a basic attack in the left direction
-				//printf("basic attack left\n");
-				if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingRight()) {
-
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setStartAttacking(true);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(true);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
 				}
 				else
 				{
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setStartAttacking(true);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(true);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+					//SHIFT IS NOT HELD, so fire a basic attack in the left direction
+					//printf("basic attack left\n");
+					if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingRight()) {
+
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setStartAttacking(true);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(true);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+					}
+					else
+					{
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setStartAttacking(true);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(true);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+					}
+
 				}
 
 			}
-
-		}
-		if (key == GLFW_KEY_LEFT && action == GLFW_REPEAT) {
+			if (key == GLFW_KEY_LEFT && action == GLFW_REPEAT) {
 
 
-
-		}
-
-		if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
-
-			if (gameREFERENCE->getSpellComboMode() == true) {
-				//DO NOTHING, the element was already added when it was initally pressed
 
 			}
-			else
-			{
-				//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(false);
 
-				if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getMovingRight()) {
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
-				}
+			if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
 
-			}
-		}
+				if (gameREFERENCE->getSpellComboMode() == true) {
+					//DO NOTHING, the element was already added when it was initally pressed
 
-
-
-		//basic attack up
-		if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-
-			if (gameREFERENCE->getSpellComboMode() == true) {
-				//this means that the player is trying to input their element 2.
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->addElementToInputVector(
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getElementFromSlot(1));
-			}
-
-		}
-		if (key == GLFW_KEY_UP && action == GLFW_REPEAT) {
-
-		}
-
-		if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
-
-
-		}
-
-
-		//basic attack right
-		if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-
-			if (gameREFERENCE->getSpellComboMode() == true) {
-				//this means that the player is trying to input their element 3.
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->addElementToInputVector(
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getElementFromSlot(2));
-			}
-			else
-			{
-				//SHIFT IS NOT HELD, so fire a basic attack in the left direction
-
-				if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingLeft()) {
-
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setStartAttacking(true);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(true);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
 				}
 				else
 				{
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setStartAttacking(true);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(true);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
+					//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackLeft(false);
+
+					if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getMovingRight()) {
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
+					}
+
+				}
+			}
+
+
+
+			//basic attack up
+			if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+
+				if (gameREFERENCE->getSpellComboMode() == true) {
+					//this means that the player is trying to input their element 2.
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->addElementToInputVector(
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getElementFromSlot(1));
 				}
 
 			}
-
-		}
-		if (key == GLFW_KEY_RIGHT && action == GLFW_REPEAT) {
-
-		}
-
-		if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
-
-			if (gameREFERENCE->getSpellComboMode() == true) {
-				//DO NOTHING, the element was already added when it was initally pressed
+			if (key == GLFW_KEY_UP && action == GLFW_REPEAT) {
 
 			}
-			else
-			{
-				//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(false);
 
-				if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getMovingLeft()) {
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+			if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
+
+
+			}
+
+
+			//basic attack right
+			if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+
+				if (gameREFERENCE->getSpellComboMode() == true) {
+					//this means that the player is trying to input their element 3.
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->addElementToInputVector(
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getElementFromSlot(2));
+				}
+				else
+				{
+					//SHIFT IS NOT HELD, so fire a basic attack in the left direction
+
+					if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getFacingLeft()) {
+
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setStartAttacking(true);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(true);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
+					}
+					else
+					{
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setStartAttacking(true);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(true);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(false);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(true);
+					}
+
 				}
 
 			}
-		}
+			if (key == GLFW_KEY_RIGHT && action == GLFW_REPEAT) {
+
+			}
+
+			if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
+
+				if (gameREFERENCE->getSpellComboMode() == true) {
+					//DO NOTHING, the element was already added when it was initally pressed
+
+				}
+				else
+				{
+					//SHIFT IS NOT HELD, tell the player class to stop attack with left arrow
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setAttackRight(false);
+
+					if (dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getMovingLeft()) {
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->flip();
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingLeft(true);
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->setFacingRight(false);
+					}
+
+				}
+			}
 
 
 
 
-		//basic attack down
-		if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+			//basic attack down
+			if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
 
-			if (gameREFERENCE->getSpellComboMode() == true) {
-				//this means that the player is trying to input their element 4.
-				dynamic_cast<Player*>(gameREFERENCE->getPlayer())->addElementToInputVector(
-					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getElementFromSlot(3));
+				if (gameREFERENCE->getSpellComboMode() == true) {
+					//this means that the player is trying to input their element 4.
+					dynamic_cast<Player*>(gameREFERENCE->getPlayer())->addElementToInputVector(
+						dynamic_cast<Player*>(gameREFERENCE->getPlayer())->getElementFromSlot(3));
+				}
+
+			}
+			if (key == GLFW_KEY_DOWN && action == GLFW_REPEAT) {
+
+			}
+
+			if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
+
+
 			}
 
 		}
-		if (key == GLFW_KEY_DOWN && action == GLFW_REPEAT) {
-
-		}
-
-		if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
-
-
-		}
 
 
 
-
-
-
-		//test
-		if (key == GLFW_KEY_H && action == GLFW_PRESS) {
-
-			dynamic_cast<Player*>(gameREFERENCE->getPlayer())->kill();
-		}
 
 
 	}
@@ -919,6 +991,11 @@ bool Game::initialize() {
 
 	numberEngine.seed(time(0));
 	
+
+
+
+
+	setGameMode(0);
 	
 
 	//update
@@ -926,15 +1003,6 @@ bool Game::initialize() {
 	
 	//renderQueue.insert(pair<int, Renderable*>(b->renderOrder, b));
 	
-	Renderable* b = new Background(this, 1, static_cast<int>(SPRITE_SHEETS::background));
-	renderQueue.insert(pair<int, Renderable*>(b->renderOrder, b));
-	
-
-	player = new Player(this, 2, static_cast<int>(SPRITE_SHEETS::player_default));
-	//Load data from file
-	dynamic_cast<Player*>(player)->LoadPlayerData();
-	
-	renderQueue.insert(pair<int, Renderable*>(player->renderOrder, player));
 
 	//b = new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime);
 	//renderableToPendingAdd(b);
@@ -947,10 +1015,6 @@ bool Game::initialize() {
 
 
 
-
-	IN_LEVEL = true;
-	IN_MAIN_MENU = false;
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 	return true;
 
@@ -1082,41 +1146,44 @@ void Game::update(double dt) {
 	
 
 
-	if (!paused) {
+	if (!paused && IN_LEVEL) {
 		//this means that the game is not paused, so update all renderables here
 
 
 		//update in-game timer here
 
+		if (!dynamic_cast<Player*>(player)->isDying()) {
 
 
-		//Enemy Wave
-		if (WaveTimer > 0)
-		{
-			WaveTimer -= dt;
-			if (SpawnTickRate <= 0)
+			//Enemy Wave
+			if (WaveTimer > 0)
 			{
-				std::uniform_int_distribution<int> typeOfEnemy(0, 4);
-				std::uniform_int_distribution<int> amtOfEnemy(3, 10);
+				WaveTimer -= dt;
+				if (SpawnTickRate <= 0)
+				{
+					std::uniform_int_distribution<int> typeOfEnemy(0, 4);
+					std::uniform_int_distribution<int> amtOfEnemy(3, 10);
 
-				SpawnTickRate = 3.5f;
-				for (int i = 0; i < amtOfEnemy(numberEngine); i++) {
-					SpawnEnemy(typeOfEnemy(numberEngine));
+					SpawnTickRate = 3.5f;
+					for (int i = 0; i < amtOfEnemy(numberEngine); i++) {
+						SpawnEnemy(typeOfEnemy(numberEngine));
+					}
+
 				}
-				
+				else
+				{
+					SpawnTickRate -= dt;
+				}
 			}
 			else
 			{
-				SpawnTickRate -= dt;
-			}
-		}
-		else
-		{
 
-			WaveTimer = MAX_WAVE_TIME;
-			WaveNumber++;
-			dynamic_cast<Player*>(player)->WaveBuff();
-			dynamic_cast<Player*>(player)->SavePlayerData();
+				WaveTimer = MAX_WAVE_TIME;
+				WaveNumber++;
+				dynamic_cast<Player*>(player)->WaveBuff();
+				dynamic_cast<Player*>(player)->SavePlayerData();
+			}
+
 		}
 
 
@@ -1269,7 +1336,7 @@ GLuint& Game::getTextureFromMap(int a)
 //getters and setters
 GLFWwindow* Game::getWindow() { return window; }
 
-void Game::updateCamera(glm::vec3& playerOrigin) {
+void Game::updateCamera(glm::vec3 playerOrigin) {
 	
 	glm::vec3 cameraCenter = playerOrigin;
 
@@ -1427,4 +1494,99 @@ void Game::setFullscreen() {
 		glfwSwapInterval(1); //Sets VSync for enforced 60 fps
 		FULLSCREEN = false;
 	}
+}
+
+
+
+void Game::setGameMode(int mode) {
+
+	//flag all renderables to be destroyed
+	Renderable* b = nullptr;
+	glm::mat4 move;
+
+	std::multimap<int, Renderable*>::iterator itr;
+
+
+	if (!renderQueue.empty())
+	{
+		//remove any renderables that should be destroyed
+		for (itr = renderQueue.begin(); itr != renderQueue.end(); ++itr) {
+
+			itr->second->kill();
+
+		}
+	}
+
+
+
+	if (mode == 0) {
+		b = new Background(this, 1, static_cast<int>(SPRITE_SHEETS::main_menu));
+		renderQueue.insert(pair<int, Renderable*>(b->renderOrder, b));
+
+
+		//create the 3 buttons
+		startButton = new GUI_Element(this, 5, static_cast<int>(SPRITE_SHEETS::start_button), GUIType::Start);
+		startButton->getHitBox().updateHitBox(startButton->getOrigin(), startButton->getWidth(), startButton->getWidth(), startButton->getHeight(), startButton->getHeight());
+		renderQueue.insert(pair<int, Renderable*>(startButton->renderOrder, startButton));
+
+
+		howToPlayButton = new GUI_Element(this, 5, static_cast<int>(SPRITE_SHEETS::how_to_play_button), GUIType::HowToPlay);
+		move = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.25f, 0.0f));
+		howToPlayButton->updatePosition(move);
+		howToPlayButton->getHitBox().updateHitBox(howToPlayButton->getOrigin(), howToPlayButton->getWidth(), howToPlayButton->getWidth(), howToPlayButton->getHeight(), howToPlayButton->getHeight());
+		renderQueue.insert(pair<int, Renderable*>(howToPlayButton->renderOrder, howToPlayButton));
+
+		exitButton = new GUI_Element(this, 5, static_cast<int>(SPRITE_SHEETS::exit_button), GUIType::Exit);
+		move = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
+		exitButton->updatePosition(move);
+		exitButton->getHitBox().updateHitBox(exitButton->getOrigin(), exitButton->getWidth(), exitButton->getWidth(), exitButton->getHeight(), exitButton->getHeight());
+		renderQueue.insert(pair<int, Renderable*>(exitButton->renderOrder, exitButton));
+
+		updateCamera(glm::vec3(0.0f, 0.0f, 0.0f));
+
+		IN_LEVEL = false;
+		IN_MAIN_MENU = true;
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+	else if (mode == 1) {
+
+		b = new Background(this, 1, static_cast<int>(SPRITE_SHEETS::background));
+		renderQueue.insert(pair<int, Renderable*>(b->renderOrder, b));
+
+
+		player = new Player(this, 2, static_cast<int>(SPRITE_SHEETS::player_default));
+		//Load data from file
+		dynamic_cast<Player*>(player)->LoadPlayerData();
+
+		renderQueue.insert(pair<int, Renderable*>(player->renderOrder, player));
+
+
+
+
+		IN_LEVEL = true;
+		IN_MAIN_MENU = false;
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	}
+
+
+
+	
+
+
+
+}
+
+
+bool Game::checkButtonHitBox(Renderable* b) {
+	//check if b's hitbox's TOP LEFT is inside of the hitbox
+	//check if b's hitbox's TOP LEFT is inside of the hitbox
+	
+
+	if (Last_Mouse_X > b->getHitBox().topLeft.x && Last_Mouse_X < b->getHitBox().topRight.x) {
+		if (Last_Mouse_Y < b->getHitBox().topLeft.y && Last_Mouse_Y > b->getHitBox().bottomLeft.y) {
+			return true;
+		}
+	}
+
+	return false;
 }

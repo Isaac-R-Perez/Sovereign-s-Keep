@@ -12,12 +12,26 @@ GUI_Element::GUI_Element(Game* g, int rOrder, int defaultSpriteSheet, GUIType t)
 	{
 		resize(SHIFT_ICON_WIDTH, SHIFT_ICON_HEIGHT);
 	}
+	else if (guiType == GUIType::Start) {
+		resize(BUTTON_WIDTH, BUTTON_HEIGHT);
+
+	}
+	else if (guiType == GUIType::HowToPlay) {
+		resize(BUTTON_WIDTH, BUTTON_HEIGHT);
+
+	}
+	else if (guiType == GUIType::Exit) {
+		resize(BUTTON_WIDTH, BUTTON_HEIGHT);
+		
+
+	}
 	else
 	{
 		resize(PLAYER_ICON_WIDTH, PLAYER_ICON_HEIGHT);
 	}
 
 	firstRender = true;
+	HOVERED = false;
 	
 }
 
@@ -58,6 +72,12 @@ void GUI_Element::update(double dt) {
 		move = glm::translate(glm::mat4(1.0f), glm::vec3(getWidth() / 2.0f, 0.0f, 0.0f));
 
 		updatePosition(move);
+
+	}
+	else if (guiType == GUIType::Start || guiType == GUIType::HowToPlay || guiType == GUIType::Exit) {
+		//check if player has clicked hovered over this button, if they have, make it larger, if not reset size
+		
+		
 
 	}
 	else
@@ -106,6 +126,27 @@ void GUI_Element::render() {
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 
+		}
+		else if (guiType == GUIType::Start || guiType == GUIType::HowToPlay || guiType == GUIType::Exit) {
+			
+			const float HOVER = 1.075f;
+
+			if (HOVERED) {
+				resize(BUTTON_WIDTH * HOVER, BUTTON_HEIGHT * HOVER);
+			}
+			else
+			{
+				resize(BUTTON_WIDTH, BUTTON_HEIGHT);
+			}
+			
+			GLint objectToWorld = glGetUniformLocation(getGame()->getRenderablesProgID(), "objectToWorld");
+			if (objectToWorld < 0) printf("couldn't find objectToWorld in shader\n");
+			glUniformMatrix4fv(objectToWorld, 1, GL_FALSE, glm::value_ptr(getO2W()));
+
+			glBindTexture(GL_TEXTURE_2D, getTexture());
+			glBindVertexArray(getGame()->getVAO());
+
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		}
 		else
 		{

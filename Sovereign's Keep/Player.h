@@ -26,12 +26,13 @@ const float PLAYER_IDLE_FRAME_TIME = 0.55f;
 const float PLAYER_WALKING_FRAME_TIME = 0.1f;
 const float PLAYER_ATTACKING_FRAME_TIME = 0.08f; //max attack speed is 0.016, double shot does not work at this speed...
 const float PLAYER_CASTING_FRAME_TIME = 0.125f; //1 full second! 8 * 0.125 = 1
-
+const float PLAYER_DYING_FRAME_TIME = 0.75f;
 
 const int IDLE_FRAMES = 3;
 const int ATTACK_FRAMES = 9;
 const int WALKING_FRAMES = 5;
 const int CASTING_FRAMES = 7;
+const int DYING_FRAME = 4;
 
 
 const float ATTACK_SCALE_START_X = 1.85f;
@@ -114,6 +115,7 @@ private:
 	float walkingTimer;
 	float attackingTimer;
 	float castingTimer;
+	float dyingTimer;
 
 
 	//use the enum to track this
@@ -153,7 +155,7 @@ private:
 public:
 
 	enum states {
-		idling, walking, attacking, casting
+		idling, walking, attacking, casting, dying,
 	};
 
 	Player(Game* g, int rOrder, int defaultSpriteSheet);
@@ -292,5 +294,16 @@ public:
 
 	//spawn multishot bullets IN FACING DIRECTION
 	void spawnMultiShotBullets(bool flip);
+
+
+	bool isDying() {
+		if (animationState == states::dying) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 
 };

@@ -3,7 +3,15 @@
 Background::Background(Game* g, int rOrder, int defaultSpriteSheet)
 	:Renderable(g, rOrder, defaultSpriteSheet) //the constructor of renderable class will be called with these arguements!
 {
-	resize(BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+	if (defaultSpriteSheet == static_cast<int>(SPRITE_SHEETS::main_menu)) {
+		resize(MAIN_MENU_WIDTH, MAIN_MENU_WIDTH);
+
+	}
+	else
+	{
+		resize(BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+
+	}
 }
 
 

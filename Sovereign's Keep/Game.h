@@ -54,7 +54,7 @@ enum class SPRITE_SHEETS
 	bat, crab, minotaur, skull,
 	slime_death,bat_death, crab_death, minotaur_death, skull_death,
 
-
+	player_death, main_menu, start_button, how_to_play_button, exit_button,
 
 
 
@@ -126,7 +126,7 @@ public:
 	//send in the enum name that corresponds to the spritesheet, should get a reference to that texture in the form of a GLuint
 	GLuint& getTextureFromMap(int a);
 
-	void updateCamera(glm::vec3& playerOrigin);
+	void updateCamera(glm::vec3 playerOrigin);
 
 	std::multimap<int, Renderable*>& getRenderQueue() { return renderQueue; }
 
@@ -147,12 +147,42 @@ public:
 
 	void setFullscreen();
 
+
+	//send a 0 for main menu
+	//send a 1 for level
+	//use this function for destroying then spawning all renderables needed
+	//and for starting the logic of that mode
+	void setGameMode(int mode);
+
+	int getGameMode() {
+		if (IN_MAIN_MENU) {
+			return 0;
+		}
+
+		if (IN_LEVEL) {
+			return 1;
+		}
+	}
+
+	//returns true of the given renderable is being hovered over
+	bool checkButtonHitBox(Renderable* b);
+
+
+	Renderable* getStartButton() { return startButton; }
+	Renderable* getHowToPlayButton() { return howToPlayButton; }
+	Renderable* getExitButton() { return exitButton; }
+
+	void setDisplayInstructions(bool b) { DISPLAY_INSTRUCTIONS = b; }
+
+	glm::mat4& getView() { return View; }
+
 private:
 
 	bool FULLSCREEN;
 
 	bool IN_LEVEL;
 	bool IN_MAIN_MENU;
+	bool DISPLAY_INSTRUCTIONS;
 	
 	//window that everything is rendered to
 	GLFWwindow* window;
@@ -204,6 +234,10 @@ private:
 
 	//use this pointer for ease of referencing the player, be sure to also add/change this pointer to/and the renderQueue!
 	Renderable* player;
+
+	Renderable* startButton;
+	Renderable* howToPlayButton;
+	Renderable* exitButton;
 
 	//true if SHIFT is held
 	bool spellComboMode;

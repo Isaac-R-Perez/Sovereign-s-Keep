@@ -12,10 +12,14 @@ const float PLAYER_ICON_HEIGHT = 0.125f;
 
 const float BAR_HEIGHT = 0.025f;
 
+const float BUTTON_WIDTH = 956.0f / 1920.0f;
+const float BUTTON_HEIGHT = 98.0f / 1080.0f;
+
 
 
 enum class GUIType {
 	HealthBar, ManaBar, FireIcon, WaterIcon, EarthIcon, AirIcon,
+	Start, HowToPlay, Exit,
 };
 
 
@@ -52,6 +56,8 @@ public:
 
 	void addToIconData(DisplayElementData d) { IconData = d; }
 
+	void setHovered(bool b) { HOVERED = b; }
+	bool getHovered() { return HOVERED; }
 
 private:
 
@@ -64,4 +70,7 @@ private:
 
 	bool firstRender;
 
+	bool HOVERED;
+
+	
 };

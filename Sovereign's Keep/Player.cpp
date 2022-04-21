@@ -41,7 +41,7 @@ Player::Player(Game* g, int rOrder, int defaultSpriteSheet)
 	walkingTimer = PLAYER_WALKING_FRAME_TIME;
 	attackingTimer = PLAYER_ATTACKING_FRAME_TIME;
 	castingTimer = PLAYER_CASTING_FRAME_TIME;
-
+	dyingTimer = PLAYER_DYING_FRAME_TIME;
 	current_frame = 0;
 
 	animationState = states::idling;
@@ -146,52 +146,87 @@ void Player::update(double dt) {
 
 	GOT_HIT = false;
 
+	if (animationState != states::dying) {
 
+		//true if ONE OF THESE IS TRUE
+		MOVING = (MOVING_UP || MOVING_RIGHT || MOVING_DOWN || MOVING_LEFT);
+		ATTACKING = (ATTACK_LEFT || ATTACK_RIGHT);
 
-	//true if ONE OF THESE IS TRUE
-	MOVING = (MOVING_UP || MOVING_RIGHT || MOVING_DOWN || MOVING_LEFT);
-	ATTACKING = (ATTACK_LEFT || ATTACK_RIGHT);
+		if (CASTING) {
+			MOVING = false;
+			ATTACKING = false;
+		}
 
-	if (CASTING) {
-		MOVING = false;
-		ATTACKING = false;
-	}
-	
-	if (currentSpellID == SpellID::None) {
-		CASTING = false;
-	}
-	else {
-		
+		if (currentSpellID == SpellID::None) {
+			CASTING = false;
+		}
+		else {
+
 			//dont let the player cast if they dont have enough mana
 			if (getCurrentMana() < referenceSpell->getManaCost()) {
 				//printf("%f\n", getCurrentMana());
 				CASTING = false;
 			}
+		}
+
+		if (MOVING && ATTACKING) {
+			//player is current moving with WASD, so set animation to walking
+			//even if the player is attacking, the walking animation overrides this, but player will attack slower
+
+			animationState = states::attacking;
+
+		}
+		else if (ATTACKING) {
+			//if the player is just attacking and standing still
+			animationState = states::attacking;
+
+		}
+		else if (MOVING) {
+			animationState = states::walking;
+		}
+		else if (CASTING) {
+			//player is just initiated a spell, so STOP MOVEMENT AND DO NOT LET PLAYER ATTACK
+			animationState = states::casting;
+		}
+		else {
+			animationState = states::idling;
+		}
 	}
 
-	if (MOVING && ATTACKING) {
-		//player is current moving with WASD, so set animation to walking
-		//even if the player is attacking, the walking animation overrides this, but player will attack slower
 
-		animationState = states::attacking;
-
-	}
-	else if (ATTACKING) {
-		//if the player is just attacking and standing still
-		animationState = states::attacking;
-		
-	}
-	else if (MOVING) {
-		animationState = states::walking;
-	}
-	else if (CASTING) {
-		//player is just initiated a spell, so STOP MOVEMENT AND DO NOT LET PLAYER ATTACK
-		animationState = states::casting;
-	}
-	else {
-		animationState = states::idling;
-	}
 	
+
+	if (getCurrentHealth() <= 0.0f && animationState != states::dying) {
+
+		//kill the player
+		animationState = states::dying;
+
+
+		//kill all enemies
+
+		if (!queue.empty())
+		{
+			for (itr = queue.begin(); itr != queue.end(); ++itr) {
+
+				if (itr->second->renderOrder == 3) {
+
+					itr->second->kill();
+
+
+				}
+
+
+
+			}
+
+		}
+		current_frame = 0;
+
+		//setCurrentHealth(0.1f);
+	}
+
+
+
 
 	if (animationState == states::idling)
 	{
@@ -456,7 +491,45 @@ void Player::update(double dt) {
 		}
 
 	}
+	else if (animationState == states::dying) {
+	//play idle animation
+	if (!queue.empty())
+	{
+		for (itr = queue.begin(); itr != queue.end(); ++itr) {
 
+			if (itr->second->renderOrder == 3) {
+
+				itr->second->kill();
+
+
+			}
+
+
+
+		}
+
+	}
+
+	if (dyingTimer > 0.0f) {
+		dyingTimer -= dt;
+	}
+	else
+	{
+		dyingTimer = PLAYER_DYING_FRAME_TIME;
+		current_frame++;
+	}
+
+	if (current_frame > DYING_FRAME) {
+		getGame()->setGameMode(0);
+	}
+
+
+	MOVING = false;
+	ATTACKING = false;
+	CASTING = false;
+	IDLE = false;
+
+	}
 
 
 	if (MOVING) {
@@ -486,47 +559,49 @@ void Player::update(double dt) {
 	}
 
 
+	if (animationState != states::dying) {
+
+		invulerableTimer -= dt;
+
+		if (invulerableTimer <= 0) {
+
+			//COLLISION CHECK
+			if (!queue.empty())
+			{
+				for (itr = queue.begin(); itr != queue.end(); ) {
+
+					//checks collision with EVERY renderable in the queue
+					if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
+						switch (itr->second->renderOrder) {
 
 
-	invulerableTimer -= dt;
+						case 3: {//enemy
 
-	if (invulerableTimer <= 0) {
+							if (dynamic_cast<Enemy*>(itr->second)->getAlive()) {
+								float damage = dynamic_cast<Enemy*>(itr->second)->getCurrentAttack();
+								alterHealth(-(damage - getCurrentDefense()));
 
-		//COLLISION CHECK
-		if (!queue.empty())
-		{
-			for (itr = queue.begin(); itr != queue.end(); ) {
+								invulerableTimer = INVULNERABLE_TIMER;
+								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
+								//break;
+								GOT_HIT = true;
 
-				//checks collision with EVERY renderable in the queue
-				if (itr->second->getCanCollide() && checkCollision(itr->second, 3)) {
-					switch (itr->second->renderOrder) {
-
-
-					case 3: {//enemy
-
-						if (dynamic_cast<Enemy*>(itr->second)->getAlive()) {
-							float damage = dynamic_cast<Enemy*>(itr->second)->getCurrentAttack();
-							alterHealth(-(damage - getCurrentDefense()));
-
-							invulerableTimer = INVULNERABLE_TIMER;
-							//printf("PLAYER IS COLLIDING WITH ENEMY\n");
-							//break;
-							GOT_HIT = true;
+							}
 
 						}
-						
+
+						}
 					}
 
-					}
+					++itr;
+
 				}
-
-				++itr;
-
 			}
+
+
 		}
-
-
 	}
+
 	
 	//if player is out of bounds, push them back in
 	const float CAMERA_SIZE = 1.0f; //camera is always a square centered at origin with top right corner being (1.0,1.0)
@@ -563,13 +638,7 @@ void Player::update(double dt) {
 	//setHealthLastFrame(getCurrentHealth());
 
 
-	if (getCurrentHealth() <= 0.0f) {
-		
-		//kill the player
-
-
-		setCurrentHealth(0.1f);
-	}
+	
 
 
 }
@@ -1188,6 +1257,27 @@ void Player::render() {
 			left, 0.0f,
 			left, 1.0f);
 	}
+	else if (animationState == states::dying) {
+	idle_stride = 0.2f;
+
+	scale(1.75f, 1.35f);
+
+	//put this code in render function???
+	setTexture(static_cast<int>(SPRITE_SHEETS::player_death));
+
+
+	left = static_cast<float>((current_frame)*idle_stride);
+	left += 0.002f;
+	//0.002 is a constant here? without it there is clipping issues...
+
+	right = static_cast<float>((current_frame + 1) * idle_stride);
+	right -= 0.002f;
+
+	getGame()->setTextureCoordinates(right, 1.0f,
+		right, 0.0f,
+		left, 0.0f,
+		left, 1.0f);
+	}
 	else
 	{
 		//put this code in render function???
@@ -1211,7 +1301,7 @@ void Player::render() {
 
 
 	//reset the character size SAFELY!!!
-	if (animationState == states::walking || animationState == states::attacking || animationState  == states::casting) {
+	if (animationState == states::walking || animationState == states::attacking || animationState  == states::casting || animationState == states::dying) {
 		if (FACING_LEFT) {
 			resize(PLAYER_WIDTH, PLAYER_HEIGHT);
 			flip();
