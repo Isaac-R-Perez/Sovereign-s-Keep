@@ -393,6 +393,8 @@ void Game::loadAllTextures() {
 	generateTexture(generatedTexture, 956, 98, 3, "images/menu/exit_button.png");
 	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::exit_button), generatedTexture));
 
+	generateTexture(generatedTexture, 1920, 1080, 3, "images/menu/HowToPlay.png");
+	allSpriteSheets.insert(std::pair<int, GLuint>(static_cast<int>(SPRITE_SHEETS::how_to_play), generatedTexture));
 
 
 }
@@ -431,7 +433,7 @@ void mouse_position_callback(GLFWwindow* window, double x, double y)
 	//printf("x %f, y %f \n", coords.x, coords.y);
 
 
-	if (gameREFERENCE->getGameMode() == 0) {
+	if (gameREFERENCE->getGameMode() == 0 && !gameREFERENCE->getDisplayInstructions()) {
 
 		//returns true if start button is being hovered
 		if (gameREFERENCE->checkButtonHitBox(gameREFERENCE->getStartButton())) {
@@ -475,20 +477,31 @@ if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 	
 	if (gameREFERENCE->getGameMode() == 0) {
 
-		// hovered and clicked so begin new game process
-		if (dynamic_cast<GUI_Element*>(gameREFERENCE->getStartButton())->getHovered()) {
-			gameREFERENCE->setGameMode(1);
+		if (gameREFERENCE->getDisplayInstructions()) {
+			gameREFERENCE->displayInstructions(false);
+			
+		}
+		else
+		{
+			// hovered and clicked so begin new game process
+			if (dynamic_cast<GUI_Element*>(gameREFERENCE->getStartButton())->getHovered()) {
+				gameREFERENCE->setGameMode(1);
+			}
+
+			//toggle bool to display instruction
+			if (dynamic_cast<GUI_Element*>(gameREFERENCE->getHowToPlayButton())->getHovered()) {
+				gameREFERENCE->displayInstructions(true);
+
+			}
+
+			//set game to close
+			if (dynamic_cast<GUI_Element*>(gameREFERENCE->getExitButton())->getHovered()) {
+				glfwSetWindowShouldClose(window, GL_TRUE);
+			}
 		}
 
-		//toggle bool to display instruction
-		if (dynamic_cast<GUI_Element*>(gameREFERENCE->getHowToPlayButton())->getHovered()) {
-			gameREFERENCE->setGameMode(1);
-		}
+
 		
-		//set game to close
-		if (dynamic_cast<GUI_Element*>(gameREFERENCE->getExitButton())->getHovered()) {
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
 
 	}
 }
@@ -1544,6 +1557,9 @@ void Game::setGameMode(int mode) {
 
 		updateCamera(glm::vec3(0.0f, 0.0f, 0.0f));
 
+
+		
+
 		IN_LEVEL = false;
 		IN_MAIN_MENU = true;
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -1589,4 +1605,21 @@ bool Game::checkButtonHitBox(Renderable* b) {
 	}
 
 	return false;
+}
+
+void Game::displayInstructions(bool b) {
+
+	if (b) {
+		howToPlay = new Background(gameREFERENCE, 6, static_cast<int>(SPRITE_SHEETS::how_to_play));
+		renderQueue.insert(pair<int, Renderable*>(howToPlay->renderOrder, howToPlay));
+		DISPLAY_INSTRUCTIONS = true;
+	}
+	else
+	{
+		howToPlay->kill();
+		DISPLAY_INSTRUCTIONS = false;
+	}
+	
+
+
 }

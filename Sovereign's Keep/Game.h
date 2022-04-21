@@ -56,7 +56,7 @@ enum class SPRITE_SHEETS
 
 	player_death, main_menu, start_button, how_to_play_button, exit_button,
 
-
+	how_to_play,
 
 };
 
@@ -172,6 +172,11 @@ public:
 	Renderable* getHowToPlayButton() { return howToPlayButton; }
 	Renderable* getExitButton() { return exitButton; }
 
+	void displayInstructions(bool b);
+
+	void setHowToPlayButton(Renderable* r) { howToPlayButton = r; }
+
+	bool getDisplayInstructions() { return DISPLAY_INSTRUCTIONS; }
 	void setDisplayInstructions(bool b) { DISPLAY_INSTRUCTIONS = b; }
 
 	glm::mat4& getView() { return View; }
@@ -238,6 +243,7 @@ private:
 	Renderable* startButton;
 	Renderable* howToPlayButton;
 	Renderable* exitButton;
+	Renderable* howToPlay;
 
 	//true if SHIFT is held
 	bool spellComboMode;
