@@ -124,8 +124,8 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		case SpellID::WaterEarth: {
 			spellName = "Mud Pit";
 			manaCost = 50.0f;
-			castTime = 0.8f;
-			duration = 15.0f;
+			castTime = 0.65f;
+			duration = 20.0f;
 			setTexture(static_cast<int>(SPRITE_SHEETS::mud_pit));
 			resize(MUD_WIDTH, MUD_HEIGHT);
 			
@@ -1107,7 +1107,11 @@ void Spell::update(double dt) {
 
 								//deal damage
 								
-								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(5.0f, SpellID::WaterEarth));
+								if (!dynamic_cast<Enemy*>(itr->second)->searchSpellBuff(SpellID::WaterEarth)) {
+									dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(5.0f, SpellID::WaterEarth));
+								}
+
+								
 
 								damageTimer = 0.15f; //can apply effect every 0.15 seconds
 

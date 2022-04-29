@@ -647,7 +647,7 @@ int Enemy::getSoulDrop()
 	return soulDrop;
 }
 
-const float MUD_SLOW = 0.5f;
+const float MUD_SLOW = 0.6f;
 const float AIR_SPIKE_SLOW = 0.75f;
 const float FISSURE_DEFENSE_REDUCTION = 0.75f;
 
