@@ -214,7 +214,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::FireFireAir: {
 			spellName = "Firecracker";
-			manaCost = 40.0f;
+			manaCost = 50.0f;
 			castTime = 0.5f;
 			direction = glm::vec3(1.0f, 0.0f, 0.0f);
 			animationFrames = 0;
@@ -222,7 +222,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::FireWaterWater: {
 			spellName = "Soothing Waters";
-			manaCost = 20.0f;
+			manaCost = 30.0f;
 			castTime = 0.61f;
 			duration = 15.0f;
 			break;
