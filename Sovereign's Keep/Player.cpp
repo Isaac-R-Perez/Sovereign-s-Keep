@@ -728,7 +728,7 @@ const float PLAYER_DEFENSE_CAP = 50.0f;
 void Player::WaveBuff()
 {
 	//Percentage based
-	float hpBuff = 0.02f; // %5
+	float hpBuff = 0.03f; // %5
 	float atkBuff = 0.01f; // %1
 	float defBuff = 0.01f; // %1
 	float speedBuff = 0.01f; // %2
