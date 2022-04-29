@@ -106,9 +106,9 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::FireAir: {
 			spellName = "Fanned Flames I";
-			manaCost = 25.0f;
+			manaCost = 50.0f;
 			castTime = 0.25f;
-			duration = 15.0f;
+			duration = 10.0f;
 			break;
 		}
 
