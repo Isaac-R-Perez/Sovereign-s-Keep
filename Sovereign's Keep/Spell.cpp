@@ -291,8 +291,8 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::WaterWaterEarth: {
 			spellName = "Water Elemental";
-			manaCost = 25.0f;
-			castTime = 0.8f;
+			manaCost = 75.0f;
+			castTime = 0.9f;
 			duration = 45.0f; //golem lasts this long
 			moveSpeed = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentMoveSpeed() / 3.0f;
 			WALKING = true;
@@ -359,8 +359,8 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::EarthAirAir: {
 			spellName = "Air Elemental";
-			manaCost = 25.0f;
-			castTime = 0.8f;
+			manaCost = 75.0f;
+			castTime = 0.9f;
 			duration = 45.0f; //golem lasts this long
 			moveSpeed = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentMoveSpeed();
 			WALKING = true;
