@@ -146,7 +146,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 
 		case SpellID::EarthEarth: {
 			spellName = "Boulder Sling";
-			manaCost = 25.0f;
+			manaCost = 45.0f;
 			castTime = 0.56f;
 			duration = 1.45f; //lifetime of firebolt
 			animationFrames = 2; //firebolt
