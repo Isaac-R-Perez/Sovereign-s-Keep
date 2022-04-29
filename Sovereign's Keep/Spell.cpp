@@ -199,8 +199,8 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::FireFireEarth: {
 			spellName = "Fire Elemental";
-			manaCost = 25.0f;
-			castTime = 0.8f;
+			manaCost = 75.0f;
+			castTime = 0.9f;
 			duration = 45.0f; //golem lasts this long
 			moveSpeed = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentMoveSpeed();
 			//set animation frames in update
