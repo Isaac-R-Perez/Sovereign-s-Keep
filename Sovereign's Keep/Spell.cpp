@@ -182,8 +182,8 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		//triple element spells
 		case SpellID::FireFireFire: {
 			spellName = "Fire Soul";
-			manaCost = 50.0f;
-			castTime = 1.5f;
+			manaCost = 75.0f;
+			castTime = 1.2f;
 			duration = 15.0f;
 			break;
 		}

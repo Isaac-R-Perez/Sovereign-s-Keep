@@ -2275,7 +2275,7 @@ void Player::displayCurrentSpell() {
 
 const float AIR_MOVESPEED_BUFF = 1.25f; //25 percent buff
 const float AIR_AIR_MOVESPEED_BUFF = 1.3f;
-const float AIR_AIR_AIR_MOVESPEED_BUFF = 1.3f;
+const float AIR_AIR_AIR_MOVESPEED_BUFF = 1.5f;
 
 const float FIRE_AIR_ATTACK_SPEED_BUFF = 0.75f; //reduces timer by 25% making it faster
 const float WATER_MANA_REGEN_BUFF = 2.5f; //multiplies base mana regen (base regen is saved in file?)
