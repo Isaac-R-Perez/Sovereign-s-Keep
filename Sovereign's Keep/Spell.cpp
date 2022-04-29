@@ -3452,7 +3452,7 @@ void Spell::update(double dt) {
 								//deal damage
 								float explosionDamage = dynamic_cast<Player*>(getGame()->getPlayer())->getCurrentAttack() * WATER_BEAM_DAMAGE_MULT;
 								dynamic_cast<Enemy*>(itr->second)->alterHealth(-(explosionDamage));
-								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.5f, SpellID::knockback));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.75f, SpellID::knockback));
 								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - getGame()->getPlayer()->getOrigin()));
 
 								//tell the game to not process anymore possible collisions for this spell
