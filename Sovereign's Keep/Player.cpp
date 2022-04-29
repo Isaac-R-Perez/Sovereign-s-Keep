@@ -2273,8 +2273,8 @@ void Player::displayCurrentSpell() {
 
 
 
-const float AIR_MOVESPEED_BUFF = 1.1f; //25 percent buff
-const float AIR_AIR_MOVESPEED_BUFF = 1.2f;
+const float AIR_MOVESPEED_BUFF = 1.25f; //25 percent buff
+const float AIR_AIR_MOVESPEED_BUFF = 1.4f;
 const float AIR_AIR_AIR_MOVESPEED_BUFF = 1.3f;
 
 const float FIRE_AIR_ATTACK_SPEED_BUFF = 0.75f; //reduces timer by 25% making it faster
