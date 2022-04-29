@@ -108,7 +108,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Fanned Flames I";
 			manaCost = 50.0f;
 			castTime = 0.25f;
-			duration = 10.0f;
+			duration = 17.0f;
 			break;
 		}
 
