@@ -303,7 +303,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::WaterWaterAir: {
 			spellName = "Waterspout";
-			manaCost = 60.0f;
+			manaCost = 75.0f;
 			castTime = 0.95f;
 			duration = 4.5f;
 			animationFrames = 11;
