@@ -2273,7 +2273,7 @@ void Player::displayCurrentSpell() {
 
 
 
-const float AIR_MOVESPEED_BUFF = 1.25f; //25 percent buff
+const float AIR_MOVESPEED_BUFF = 1.325f; //25 percent buff
 const float AIR_AIR_MOVESPEED_BUFF = 1.3f;
 const float AIR_AIR_AIR_MOVESPEED_BUFF = 1.5f;
 
