@@ -85,7 +85,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::FireWater: {
 			spellName = "Steam Blast";
-			manaCost = 10.0f;
+			manaCost = 35.0f;
 			castTime = 0.2f;
 			animationFrames = 7;
 			setTexture(static_cast<int>(SPRITE_SHEETS::steam_blast));

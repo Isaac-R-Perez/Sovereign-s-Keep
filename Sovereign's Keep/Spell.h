@@ -43,7 +43,7 @@ const float EXPLOSION1_DAMAGE_MULT = 3.5f; //all explosion1s deal the same damag
 
 const float STEAM_BLAST_WIDTH = 0.55f;
 const float STEAM_BLAST_ANIMATION_TIMER = 0.02f;
-const float STEAM_BLAST_DAMAGE_MULT = 1.75f; //all explosion1s deal the same damage
+const float STEAM_BLAST_DAMAGE_MULT = 1.5f; //all explosion1s deal the same damage
 
 const float MUD_WIDTH = 0.21f;
 const float MUD_HEIGHT = 0.325f;
