@@ -709,7 +709,7 @@ void Enemy::WaveBuff(int wave)
 	hpBuff = (static_cast<float>(wave) * 0.20f); //10% per wave
 	atkBuff = (static_cast<float>(wave) * 0.075f); //5% per wave
 	defBuff = (static_cast<float>(wave) * 0.075f); //7.5% per wave
-	speedBuff = (static_cast<float>(wave) * 0.1f); //6% per wave
+	speedBuff = (static_cast<float>(wave) * 0.05f); //6% per wave
 
 	setBaseMaxHealth(getBaseMaxHealth() + (getBaseMaxHealth() * hpBuff));
 	setCurrentHealth(getCurrentHealth() + (getCurrentHealth() * hpBuff));
