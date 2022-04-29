@@ -2424,7 +2424,7 @@ void Spell::update(double dt) {
 								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(0.5f, SpellID::knockback));
 								dynamic_cast<Enemy*>(itr->second)->setKnockbackDirection(glm::normalize(itr->second->getOrigin() - dynamic_cast<Player*>(getGame()->getPlayer())->getOrigin()));
 
-								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(3.25f, ID));
+								dynamic_cast<Enemy*>(itr->second)->addBuff(spellBuff(4.5f, ID));
 
 								dealtDamage = true;
 								//printf("PLAYER IS COLLIDING WITH ENEMY\n");
