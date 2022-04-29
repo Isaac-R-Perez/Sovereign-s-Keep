@@ -251,7 +251,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::FireEarthEarth: {
 			spellName = "Meteor Barrage";
-			manaCost = 80.0f;
+			manaCost = 120.0f;
 			castTime = 1.25f;
 			direction = glm::vec3(1.0f, 0.0f, 0.0f);
 			animationFrames = 0;
