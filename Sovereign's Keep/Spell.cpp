@@ -256,7 +256,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			direction = glm::vec3(1.0f, 0.0f, 0.0f);
 			animationFrames = 0;
 			floatDistribution = std::uniform_real_distribution<float>(0.0, 2.0f * glm::pi<float>());
-			duration = 5.0f;
+			duration = 8.0f;
 			break;
 		}
 		case SpellID::FireEarthAir: {
