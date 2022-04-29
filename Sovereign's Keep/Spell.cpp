@@ -224,7 +224,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Soothing Waters";
 			manaCost = 30.0f;
 			castTime = 0.61f;
-			duration = 15.0f;
+			duration = 10.0f;
 			break;
 		}
 		case SpellID::FireWaterEarth: {
