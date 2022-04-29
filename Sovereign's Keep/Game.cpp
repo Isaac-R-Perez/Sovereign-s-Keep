@@ -1022,8 +1022,8 @@ bool Game::initialize() {
 	baseEnemies.clear();
 	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::slime), EnemyType::slime, Enemy::stats(100.0, 100.0f, 25.0f, 5.0f, 0.15f))); //slime at [0]
 	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::bat), EnemyType::bat, Enemy::stats(65.0, 65.0f, 15.0f, 2.0f, 0.25f))); //bat at [1]
-	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::crab), EnemyType::crab, Enemy::stats(130.0, 130.0f, 45.0f, 3.0f, 0.1f))); //crab at [2]
-	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::minotaur), EnemyType::minotaur, Enemy::stats(200.0, 200.0f, 55.0f, 5.0f, 0.15f))); //minotaur at [3]
+	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::crab), EnemyType::crab, Enemy::stats(250.0, 250.0f, 45.0f, 27.0f, 0.1f))); //crab at [2]
+	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::minotaur), EnemyType::minotaur, Enemy::stats(175.0, 175.0f, 55.0f, 35.0f, 0.15f))); //minotaur at [3]
 	baseEnemies.emplace_back(new Enemy(this, 3, static_cast<int>(SPRITE_SHEETS::skull), EnemyType::skull, Enemy::stats(75.0, 75.0f, 65.0f, 1.0f, 0.2f))); //skull at [4]
 
 
