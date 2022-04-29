@@ -335,7 +335,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::WaterAirAir: {
 			spellName = "Multishot";
-			manaCost = 45.0f;
+			manaCost = 50.0f;
 			castTime = 0.5f;
 			duration = 20.0f;
 			break;
