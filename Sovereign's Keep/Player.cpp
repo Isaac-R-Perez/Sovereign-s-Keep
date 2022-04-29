@@ -2280,7 +2280,7 @@ const float AIR_AIR_AIR_MOVESPEED_BUFF = 1.5f;
 const float FIRE_AIR_ATTACK_SPEED_BUFF = 0.75f; //reduces timer by 25% making it faster
 const float WATER_MANA_REGEN_BUFF = 2.5f; //multiplies base mana regen (base regen is saved in file?)
 const float EARTH_DEFENSE_BUFF = 25.0f;
-const float FIRE_ATTACK_BUFF = 1.75f;
+const float FIRE_ATTACK_BUFF = 2.25f;
 
 const float SOOTHING_WATERS_HEAL = 0.01f / 60.0f; //1% per second
 
