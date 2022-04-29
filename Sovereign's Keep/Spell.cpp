@@ -158,7 +158,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::EarthAir: {
 			spellName = "Air Spike";
-			manaCost = 8.0f;
+			manaCost = 15.0f;
 			castTime = 0.12f;
 			animationFrames = 10; //firebolt
 			setTexture(static_cast<int>(SPRITE_SHEETS::air_spike));
