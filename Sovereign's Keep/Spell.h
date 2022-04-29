@@ -125,7 +125,7 @@ const float EARTH_WAVE_WIDTH = 0.15f;
 const float EARTH_WAVE_HEIGHT = 0.24f;
 const float EARTH_WAVE_DAMAGE_MULT = 3.5f;
 
-const float WATER_BEAM_ANIMATION_TIMER = 0.01f;
+const float WATER_BEAM_ANIMATION_TIMER = 0.02f;
 const float WATER_BEAM_WIDTH = 0.675f;
 const float WATER_BEAM_HEIGHT = 0.25f;
 const float WATER_BEAM_DAMAGE_MULT = 1.95f;
