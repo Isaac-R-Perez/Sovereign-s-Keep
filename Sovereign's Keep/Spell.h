@@ -117,7 +117,7 @@ const float FIRE_BEAM_DAMAGE_MULT = 2.75f;
 const float TSUNAMI_ANIMATION_TIME = 0.085;
 const float TSUNAMI_WIDTH = 1.1f;
 const float TSUNAMI_HEIGHT = 1.1f;
-const float TSUNAMI_DAMAGE_MULT = 7.5f;
+const float TSUNAMI_DAMAGE_MULT = 6.0f;
 
 const float EARTH_WAVE_SPAWN_TIMER = 0.35f;
 const float EARTH_WAVE_ANIMATION_TIMER = 0.06f;
