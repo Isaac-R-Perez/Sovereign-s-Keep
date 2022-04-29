@@ -273,9 +273,9 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::FireAirAir: {
 			spellName = "Fire Storm";
-			manaCost = 45.0f;
+			manaCost = 100.0f;
 			castTime = 1.0f;
-			duration = 7.5f;
+			duration = 7.0f;
 			animationFrames = 0;
 			floatDistribution = std::uniform_real_distribution<float>(0.0, 2.0f * glm::pi<float>());
 			break;
