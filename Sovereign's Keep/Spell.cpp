@@ -261,7 +261,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::FireEarthAir: {
 			spellName = "Fiery Earth Mine";
-			manaCost = 7.0f;
+			manaCost = 14.0f;
 			castTime = 0.2f;
 			duration = EARTH_MINE_DURATION; //lifetime of firebolt
 			animationFrames = 9; //firebolt
