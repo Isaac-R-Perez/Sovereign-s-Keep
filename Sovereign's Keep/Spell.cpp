@@ -240,7 +240,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::FireWaterAir: {
 			spellName = "Flash Freeze";
-			manaCost = 15.0f;
+			manaCost = 25.0f;
 			castTime = 0.45f;
 			animationFrames = 14; //firebolt
 			direction = glm::vec3(1.0f, 0.0f, 0.0f);
