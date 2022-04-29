@@ -342,8 +342,8 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::EarthEarthEarth: {
 			spellName = "Fissure";
-			manaCost = 55.0f;
-			castTime = 0.75f;
+			manaCost = 75.0f;
+			castTime = 1.0f;
 			break;
 		}
 		case SpellID::EarthEarthAir: {
