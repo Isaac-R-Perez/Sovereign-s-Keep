@@ -122,7 +122,7 @@ const float TSUNAMI_DAMAGE_MULT = 6.0f;
 const float EARTH_WAVE_SPAWN_TIMER = 0.35f;
 const float EARTH_WAVE_ANIMATION_TIMER = 0.06f;
 const float EARTH_WAVE_WIDTH = 0.15f;
-const float EARTH_WAVE_HEIGHT = 0.175f;
+const float EARTH_WAVE_HEIGHT = 0.2f;
 const float EARTH_WAVE_DAMAGE_MULT = 3.5f;
 
 const float WATER_BEAM_ANIMATION_TIMER = 0.01f;
