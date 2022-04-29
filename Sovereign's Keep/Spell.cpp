@@ -371,7 +371,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 		}
 		case SpellID::AirAirAir: {
 			spellName = "Swift Speed III";
-			manaCost = 50.0f;
+			manaCost = 75.0f;
 			castTime = 0.5f;
 			duration = 5.0f;
 			direction = glm::vec3(1.0f, 0.0f, 0.0f);
