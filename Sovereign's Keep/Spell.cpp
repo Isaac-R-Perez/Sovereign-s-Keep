@@ -350,7 +350,7 @@ Spell::Spell(Game* g, int rOrder, int defaultSpriteSheet, SpellID id)
 			spellName = "Saturn's Storm";
 			manaCost = 60.0f;
 			castTime = 1.0f;
-			duration = 5.0f;
+			duration = 7.5f;
 			// from 
 			direction = glm::vec3(1.0f, 0.0f, 0.0f);
 			floatDistribution = std::uniform_real_distribution<float>(0.0, 2.0f * glm::pi<float>());
